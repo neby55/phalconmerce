@@ -1,0 +1,40 @@
+Gérer les emplacements (genre widget wordpress)
+Affecter du contenu aux emplacements
+	- bannières
+	- bannières + bouton
+	- custom HTML
+
+Séparer currency et lang
+	- permettre de gérer un objet "SiteLang" composé de lang et currency
+	- ou permettre de gérer Lang et Currency séparemment
+
+Voir comment gérer les filtres produits
+	- annotations
+	- metod dans la classe enfant
+
+Proposer les données "SESSION" par Ajax
+	- contenu du panier
+	- connecté à mon compte
+	- wishlist
+	- produit visités
+	- etc.
+
+Breadcrumbs ?
+
+Gestion des formats d'image ?
+
+Pouvoir intégrer du contenu aux menus (mêmes contenus que emplacements)
+
+Penser à affecter des produits à une catégorie, mais aussi à son parent, mais manuellement !
+
+Gérer les emails...
+
+Paiements !!!!!
+
+Factures
+
+Retours de commande
+
+Customers, si BtoB, tax à 0, et ajout de champs dans customers
+
+Traductions des produits/categories, permettre de générer des fichiers .po puis l'uploader pour les mises à jour de lang
