@@ -1,5 +1,7 @@
 <?php
 
+namespace Phalconmerce\Popo\Popogenerator;
+
 class Property {
 	/** @var string */
 	public $name;
@@ -22,6 +24,8 @@ class Property {
 		3 => 'string',
 		4 => 'boolean'
 	);
+
+	const FK_SEPARATOR = '_';
 
 	public function __construct($name) {
 		$this->name = $name;
@@ -60,6 +64,25 @@ class Property {
 		return in_array($this->type, array(1,2));
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isForeignKey() {
+		return self::isForeignKeyFromName($this->name);
+	}
+
+	/**
+	 * @param string $propertyNameOrColumnName
+	 * @return bool
+	 */
+	public static function isForeignKeyFromName($propertyNameOrColumnName) {
+		return substr($propertyNameOrColumnName, 0, 3) == 'fk'.self::FK_SEPARATOR;
+	}
+
+	/**
+	 * @param string $startLineCharacter
+	 * @return string
+	 */
 	public function getPhpContent($startLineCharacter='') {
 		$content = $startLineCharacter.'/**'.PHP_EOL;
 		$content .= $startLineCharacter.' * @Column(type="'.$this->getAnnotationType().'"';
