@@ -7,27 +7,20 @@ use Phalconmerce\Utils;
 class TableCreatorController extends \Phalcon\Mvc\Controller {
 
 	public function indexAction() {
-		echo 'Category => '.Utils::getTableNameFromClassName('Category').'<br>';
-		echo 'Country => '.Utils::getTableNameFromClassName('Country').'<br>';
-		echo 'Shipment => '.Utils::getTableNameFromClassName('Shipment').'<br>';
-		echo 'other way<br>';
-		echo 'invoices => '.Utils::getClassNameFromTableName('invoices').'<br>';
-		echo 'order_returns => '.Utils::getClassNameFromTableName('order_returns').'<br>';
-		echo 'delivery_delays => '.Utils::getClassNameFromTableName('delivery_delays').'<br>';
 		if ($handle = opendir($this->getDI()->get('configPhalconmerce')->phalconmerce->modelsDir)) {
 			while (false !== ($entry = readdir($handle))) {
 				if ($entry != '.' && $entry != '..' && substr($entry, -4) == '.php') {
 					$currentClassName =  substr($entry, 0, -4);
+					$fqcn = \Phalconmerce\Popo\Popogenerator\PhpClass::POPO_NAMESPACE.'\\'.$currentClassName;
 
 					include_once $this->getDI()->get('configPhalconmerce')->phalconmerce->modelsDir . DIRECTORY_SEPARATOR . $entry;
 
-					$reader = new MemoryAdapter();
-					// Reflect the annotations in the class Example
-					$reflector = $reader->get('Phalconmerce\\Popo\\'.$currentClassName);
-					//echo 'Phalconmerce\\Popo\\'.$currentClassName;
-					//Utils::debug($reflector);
+					// Get the object
+					/** @var AbstractModel $currentObject */
+					$currentObject = new $fqcn;
+
 					// Get properties
-					$properties = $reflector->getPropertiesAnnotations();
+					$properties = \Phalconmerce\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
 
 					// Get table name from class name
 					$tableObject = new Table(Utils::getTableNameFromClassName($currentClassName));
@@ -36,7 +29,7 @@ class TableCreatorController extends \Phalcon\Mvc\Controller {
 						foreach ($properties as $currentPropertyName=>$currentPropertyReflect) {
 							//Utils::debug($currentPropertyReflect);
 
-							if ($tableObject->addByAnnotations($currentPropertyName, $currentPropertyReflect)) {
+							if ($tableObject->addByAnnotations($currentPropertyName, $currentPropertyReflect, $currentObject->getPrefix())) {
 								echo $currentPropertyName.' added<br>';
 							}
 							else {
@@ -54,7 +47,7 @@ class TableCreatorController extends \Phalcon\Mvc\Controller {
 
 					//print_r($properties);
 					// Read the annotations in the class' docblock
-					$annotations = $reflector->getClassAnnotations();
+					/*$annotations = $reflector->getClassAnnotations();
 
 					// Traverse the annotations
 					foreach ($annotations as $annotation) {
@@ -66,7 +59,7 @@ class TableCreatorController extends \Phalcon\Mvc\Controller {
 
 						// Print the arguments
 						print_r($annotation->getArguments());
-					}
+					}*/
 				}
 			}
 			closedir($handle);

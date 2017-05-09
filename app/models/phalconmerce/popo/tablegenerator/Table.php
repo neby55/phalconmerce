@@ -13,6 +13,7 @@ use Phalcon\Db\Column;
 use Phalcon\Db\Index as Index;
 use Phalcon\Db\Reference as Reference;
 use Phalcon\DI;
+use Phalconmerce\AbstractModel;
 use Phalconmerce\Services\TableGenerator;
 use Phalconmerce\Utils;
 
@@ -37,6 +38,7 @@ class Table {
 	const TABLES_TYPE = 'BASE TABLE';
 	const TABLES_ENGINE = 'InnoDB';
 	const TABLES_CHARSET = 'utf8_general_ci';
+	const FK_WORD_SEPARATOR = '_';
 
 	public function __construct($tableName) {
 		$this->tableName = $tableName;
@@ -78,10 +80,36 @@ class Table {
 	/**
 	 * @param string $propertyName
 	 * @param Collection $collection
+	 * @param string $prefix
 	 * @return bool
 	 */
-	public function addByAnnotations($propertyName, Collection $collection) {
+	public function addByAnnotations($propertyName, Collection $collection, $prefix) {
 		if ($propertyName != '') {
+			// foreign key exception
+			if (substr($propertyName, 0, 3) == 'fk'.self::FK_WORD_SEPARATOR) {
+				if (strpos($propertyName, self::FK_WORD_SEPARATOR) === false) {
+					throw new \InvalidArgumentException('Foreign Key properies must follow this pattern : fk_tablename_idpropertyname'.PHP_EOL.'For example : fk_product_id');
+				}
+				else {
+					$tmp = explode(self::FK_WORD_SEPARATOR, $propertyName);
+					if (sizeof($tmp) != 3) {
+						throw new \InvalidArgumentException('Foreign Key properies must follow this pattern : fk_tablename_idpropertyname'.PHP_EOL.'For example : fk_product_id');
+					}
+					$fkData = array(
+						'tableName' => $tmp[1],
+						'className' => Utils::getClassNameFromTableName($tmp[1]),
+						'propertyName' => $tmp[2]
+					);
+
+					$columnName = $propertyName;
+				}
+
+			}
+			else {
+				$fkTableName = '';
+				$columnName = $prefix.$propertyName;
+			}
+
 			if ($collection->has('Column')) {
 				$columnCollection = $collection->get('Column');
 				if ($columnCollection->hasArgument('type')) {
@@ -121,6 +149,8 @@ class Table {
 						if ($collection->has('Primary')) {
 							if ($collection->has('Identity')) {
 								$columnOptions['autoIncrement'] = true;
+								// Force unsigned
+								$columnOptions['unsigned'] = true;
 							}
 						}
 					}
@@ -139,31 +169,38 @@ class Table {
 					if ($columnCollection->hasArgument('unique') && $columnCollection->getArgument('unique') == 'true') {
 						$this->addIndex(new Index(
 							'UNIQUE',
-							[$propertyName]
+							[$columnName]
 						));
 					}
 					// index for status/active fields
 					if ($propertyName == 'status' || $propertyName == 'active') {
 						$this->addIndex(new Index(
-							$propertyName,
-							[$propertyName]
+							$columnName,
+							[$columnName]
+						));
+					}
+					// index for foreign keys
+					if (!empty($fkData)) {
+						$this->addIndex(new Index(
+							$columnName,
+							[$columnName]
 						));
 					}
 					// primary
 					if ($collection->has('Primary')) {
 						//$columnOptions['primary'] = true;
 						$columnOptions['notNull'] = true;
-						$this->addPrimaryKey($propertyName);
+						$this->addPrimaryKey($columnName);
 					}
 
 					// Add columun
 					$this->addColumn(new Column(
-						$propertyName,
+						$columnName,
 						$columnOptions
 					));
 
 					// For columns added after
-					$this->lastPropertyName = $propertyName;
+					$this->lastPropertyName = $columnName;
 
 					return true;
 				}

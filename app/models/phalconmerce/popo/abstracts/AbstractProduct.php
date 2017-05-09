@@ -36,7 +36,7 @@ abstract class AbstractProduct extends AbstractModel {
 	 * @Column(type="float", nullable=false)
 	 * @var float
 	 */
-	protected $price_vat_excluded;
+	protected $priceVatExcluded;
 	/**
 	 * @Column(type="float", nullable=true)
 	 * @var float
@@ -54,9 +54,9 @@ abstract class AbstractProduct extends AbstractModel {
 	protected $status;
 	/**
 	 * @Column(type="integer", nullable=true)
-	 * @var AbstractProduct
+	 * @var int
 	 */
-	protected $parent_product_id;
+	protected $parentProductId;
 
 	/**
 	 * @var AbstractProductFilter[]
@@ -78,13 +78,6 @@ abstract class AbstractProduct extends AbstractModel {
 	 */
 	public function getId() {
 		return $this->id;
-	}
-
-	/**
-	 * @return AbstractProduct
-	 */
-	public function getParentProduct() {
-		return $this->parentProduct;
 	}
 
 	/**

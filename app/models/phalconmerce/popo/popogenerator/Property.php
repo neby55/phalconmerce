@@ -2,21 +2,24 @@
 
 namespace Phalconmerce\Popo\Popogenerator;
 
+use Phalconmerce\AbstractModel;
+use Phalconmerce\Utils;
+
 class Property {
 	/** @var string */
-	public $name;
+	protected $name;
 	/** @var int */
-	public $type;
+	protected $type;
 	/** @var int */
-	public $length;
+	protected $length;
 	/** @var boolean */
-	public $unsigned;
+	protected $unsigned;
 	/** @var boolean */
-	public $nullable;
+	protected $nullable;
 	/** @var boolean */
-	public $unique;
+	protected $unique;
 	/** @var string */
-	public $default;
+	protected $default;
 
 	public static $phpTypesList = array(
 		1 => 'int',
@@ -80,6 +83,41 @@ class Property {
 	}
 
 	/**
+	 * @return mixed|string
+	 */
+	public function getForeignKeyClassName() {
+		if ($this->isForeignKey()) {
+			$tmp = explode(self::FK_SEPARATOR, $this->name);
+			if (sizeof($tmp) >= 3) {
+				return Utils::getClassNameFromTableName($tmp[1]);
+			}
+			else {
+				throw new \InvalidArgumentException('ForeignKey properties should follow this pattern : fk_tablename_idproperty');
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @return mixed|string
+	 */
+	public function getForeignKeyFieldName() {
+		if ($this->isForeignKey()) {
+			$tmp = explode(self::FK_SEPARATOR, $this->name);
+			if (sizeof($tmp) >= 3) {
+				$tableName = $tmp[1];
+				unset($tmp[0]);
+				unset($tmp[1]);
+				return Utils::getPrefixFromTableName($tableName).join(self::FK_SEPARATOR, $tmp);
+			}
+			else {
+				throw new \InvalidArgumentException('ForeignKey properties should follow this pattern : fk_tablename_idproperty');
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @param string $startLineCharacter
 	 * @return string
 	 */
@@ -105,5 +143,96 @@ class Property {
 		$content .= $startLineCharacter.'protected $'.$this->name.';'.PHP_EOL;
 
 		return $content;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getType() {
+		return $this->type;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getLength() {
+		return $this->length;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isUnsigned() {
+		return $this->unsigned;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isNullable() {
+		return $this->nullable;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isUnique() {
+		return $this->unique;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDefault() {
+		return $this->default;
+	}
+
+	/**
+	 * @param int $type
+	 */
+	public function setType($type) {
+		$this->type = $type;
+	}
+
+	/**
+	 * @param int $length
+	 */
+	public function setLength($length) {
+		$this->length = $length;
+	}
+
+	/**
+	 * @param boolean $unsigned
+	 */
+	public function setUnsigned($unsigned) {
+		$this->unsigned = $unsigned;
+	}
+
+	/**
+	 * @param boolean $nullable
+	 */
+	public function setNullable($nullable) {
+		$this->nullable = $nullable;
+	}
+
+	/**
+	 * @param boolean $unique
+	 */
+	public function setUnique($unique) {
+		$this->unique = $unique;
+	}
+
+	/**
+	 * @param string $default
+	 */
+	public function setDefault($default) {
+		$this->default = $default;
 	}
 }

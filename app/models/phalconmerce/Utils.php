@@ -129,6 +129,14 @@ class Utils {
 		return $className;
 	}
 
+	/**
+	 * @param string $tableName
+	 * @return string
+	 */
+	public static function getPrefixFromTableName($tableName) {
+		return strtolower(substr(str_replace('_', '', $tableName),0,3).'_');
+	}
+
 	public static function debug($var) {
 		echo '<pre style="background: black;color:white;">'.print_r($var,1).'</pre>';
 	}

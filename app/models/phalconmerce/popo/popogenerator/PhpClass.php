@@ -7,31 +7,39 @@ use Phalconmerce\Utils;
 
 class PhpClass {
 	/** @var string */
-	public $className;
+	protected $className;
 	/** @var string */
-	public $extendedClassName;
+	protected $extendedClassName;
 	/** @var string */
-	public $tableName;
+	protected $tableName;
 	/** @var Property[] */
-	public $propertiesList;
+	protected $propertiesList;
+	/** @var \Phalcon\Annotations\Collection[] */
+	protected $parentPropertiesList;
+	/** @var \Phalcon\Annotations\Collection[] */
+	protected $parentForeignKeysList;
 
-	/** @var array */
-	protected static $abstractProductClassesList = array(
-		'AbstractConfigurableProduct',
-		'AbstractConfiguredProduct',
-		'AbstractProduct',
-		'AbstractSimpleProduct'
-	);
-
-	const CORE_TYPE_SIMPLE_PRODUCT = 1;
-	const CORE_TYPE_CONFIGURABLE_PRODUCT = 2;
-	const CORE_TYPE_GROUPED_PRODUCT = 3;
 	const TAB_CHARACTER = "\t";
+	const POPO_NAMESPACE = 'Phalconmerce\\Popo';
+	const POPO_ABSTRACT_NAMESPACE = 'Phalconmerce\\Popo\\Abstracts';
 
 	public function __construct($className, $extendedClassName='', $tableName='') {
 		$this->className = $className;
 		$this->extendedClassName = $extendedClassName;
 		$this->tableName = $tableName;
+		$this->propertiesList = array();
+		$this->isThereForeignKey = false;
+
+		// Load properties of parent abstract class
+		$fqcn = self::POPO_NAMESPACE.'\\'.$className;
+		$this->parentPropertiesList = self::getClassProperties($fqcn);
+
+		// Search for FK in parent abstract properties
+		foreach ($this->parentPropertiesList as $currentPropertyName=>$currentPropertyReflection) {
+			if (Property::isForeignKeyFromName($currentPropertyName)) {
+				$this->parentForeignKeysList[$currentPropertyName] = $currentPropertyReflection;
+			}
+		}
 	}
 
 	/**
@@ -39,11 +47,11 @@ class PhpClass {
 	 */
 	public function getPhpContent() {
 		$phpContent = '<?php'.PHP_EOL.PHP_EOL;
-		$phpContent .= 'namespace Phalconmerce\\Popo;'.PHP_EOL.PHP_EOL;
-		$phpContent .= 'use Phalconmerce\\Popo\\Abstracts\\%s;'.PHP_EOL.PHP_EOL;
+		$phpContent .= 'namespace '.self::POPO_NAMESPACE.';'.PHP_EOL.PHP_EOL;
+		$phpContent .= 'use '.self::POPO_ABSTRACT_NAMESPACE.'\\%s;'.PHP_EOL.PHP_EOL;
 		$phpContent .= 'class %s extends %s {'.PHP_EOL;
 		if (is_array($this->propertiesList) && sizeof($this->propertiesList) > 0) {
-			$phpContent .= self::TAB_CHARACTER.'/** Properies generated with utils/popo_product_generator.php script */'.PHP_EOL;
+			$phpContent .= self::TAB_CHARACTER.'/** Properties generated with Popo Cli Generator */'.PHP_EOL;
 			foreach ($this->propertiesList as $currentProperty) {
 				$phpContent .= $currentProperty->getPhpContent(self::TAB_CHARACTER);
 			}
@@ -58,6 +66,19 @@ class PhpClass {
 		$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// You can add here instructions that will be executed by the framework, after construction'.PHP_EOL.PHP_EOL;
 		$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// Uncomment the following line to specify the table name'.PHP_EOL;
 		$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// $this->setSource(\'%s\');'.PHP_EOL;
+
+		// If ForeignKeys
+		if (sizeof($this->parentForeignKeysList)) {
+			foreach ($this->parentForeignKeysList as $currentPropertyName=>$currentPropertyReflection) {
+				$currentPropertyObject = new Property($currentPropertyName);
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'$this->belongsTo('.PHP_EOL;
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentPropertyObject->getName().'",'.PHP_EOL;
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.addslashes(self::POPO_NAMESPACE.'\\'.$currentPropertyObject->getForeignKeyClassName()).'",'.PHP_EOL;
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentPropertyObject->getForeignKeyFieldName().'"'.PHP_EOL;
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.');'.PHP_EOL;
+			}
+		}
+
 		$phpContent .= self::TAB_CHARACTER.'}'.PHP_EOL;
 		$phpContent .= '}'.PHP_EOL;
 
@@ -70,17 +91,7 @@ class PhpClass {
 		);
 	}
 
-	public function setExtendedClassNameFromCoreTypeResponse($coreProductType) {
-		if ($coreProductType == self::CORE_TYPE_SIMPLE_PRODUCT) {
-			$this->extendedClassName = 'AbstractSimpleProduct';
-		}
-		else if ($coreProductType == self::CORE_TYPE_CONFIGURABLE_PRODUCT) {
-			$this->extendedClassName = 'AbstractConfigurableProduct';
-		}
-		else if ($coreProductType == self::CORE_TYPE_GROUPED_PRODUCT) {
-			$this->extendedClassName = 'AbstractGroupedProduct';
-		}
-	}
+	public function setExtendedClassNameFromCoreTypeResponse($coreProductType) { }
 
 	/**
 	 * @param string $content
@@ -91,8 +102,8 @@ class PhpClass {
 		return file_put_contents($currentNewClassFilename, $content);
 	}
 
-	public function initTableName() {
-		$this->tableName = Utils::getTableNameFromClassName($this->className);
+	public function initTableName($prefix='') {
+		$this->tableName = $prefix.Utils::getTableNameFromClassName($this->className);
 	}
 
 	/**
@@ -105,7 +116,7 @@ class PhpClass {
 				if ($entry != '.' && $entry != '..' && substr($entry, -4) == '.php') {
 					$abstractClassName = substr($entry, 0, -4);
 					// We cannot generate Product, there is another script to do that
-					if (!in_array($abstractClassName, self::$abstractProductClassesList)) {
+					if (!in_array($abstractClassName, PhpProductClass::$abstractProductClassesList)) {
 						$abstractClassesList[str_replace('Abstract', '', $abstractClassName)] = $abstractClassName;
 					}
 				}
@@ -119,5 +130,28 @@ class PhpClass {
 	 */
 	public static function getPopoDirectory() {
 		return DI::getDefault()->get('configPhalconmerce')->modelsDir;
+	}
+
+	/**
+	 * @param string $fullyQualifiedClassName
+	 * @return bool|\Phalcon\Annotations\Collection[]
+	 */
+	public static function getClassProperties($fullyQualifiedClassName) {
+		$reader = new \Phalcon\Annotations\Adapter\Memory();
+		// Reflect the annotations in the class Example
+		$reflector = $reader->get($fullyQualifiedClassName);
+
+		return $reflector->getPropertiesAnnotations();
+	}
+
+	public function addProperty(Property $propertyObject) {
+		$this->propertiesList[$propertyObject->getName()] = $propertyObject;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getClassName() {
+		return $this->className;
 	}
 }

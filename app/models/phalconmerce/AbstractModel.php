@@ -16,21 +16,24 @@ class AbstractModel extends Model {
 	 * "usr_" for example
 	 * @var string
 	 */
-	protected $prefix;
+	public $prefix;
 
 	public function initialize() {
 		$classname = (new \ReflectionClass($this))->getShortName();
 		$tableName = $classname;
 
 		$this->setSource($tableName);
-		$this->setPrefix(substr($tableName,0,3).'_');
+		$this->setPrefix(Utils::getPrefixFromTableName($tableName));
 	}
 
 	public function columnMap() {
 		$propertiesList = get_object_vars($this);
 		$prefixedList = array();
-		foreach($propertiesList as $currentProprety) {
-			$prefixedList[$this->getPrefix().$currentProprety] = $currentProprety;
+		foreach($propertiesList as $currentPropertyName=>$currentProprety) {
+			// Avoid FactoryDefault property
+			if ($currentPropertyName != 'prefix' && substr($currentPropertyName,0,1) != '_') {
+				$prefixedList[$this->getPrefix() . $currentProprety] = $currentProprety;
+			}
 		}
 		return $prefixedList;
 	}
