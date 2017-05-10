@@ -1,5 +1,6 @@
 <?php
 
 return new \Phalcon\Config(array(
-	'modelsDir' => $config->application->modelsDir.DIRECTORY_SEPARATOR.'phalconmerce'.DIRECTORY_SEPARATOR.'popo'
+	'modelsDir' => $config->application->modelsDir.'phalconmerce'.DIRECTORY_SEPARATOR.'popo',
+	'cacheDir' => $config->application->cacheDir.'phalconmerce',
 ));

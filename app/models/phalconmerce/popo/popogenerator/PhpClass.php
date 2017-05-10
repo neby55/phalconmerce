@@ -16,8 +16,8 @@ class PhpClass {
 	protected $propertiesList;
 	/** @var \Phalcon\Annotations\Collection[] */
 	protected $parentPropertiesList;
-	/** @var \Phalcon\Annotations\Collection[] */
-	protected $parentForeignKeysList;
+	/** @var Relationship[] */
+	protected $relationshipsList;
 
 	const TAB_CHARACTER = "\t";
 	const POPO_NAMESPACE = 'Phalconmerce\\Popo';
@@ -34,10 +34,11 @@ class PhpClass {
 		$fqcn = self::POPO_NAMESPACE.'\\'.$className;
 		$this->parentPropertiesList = self::getClassProperties($fqcn);
 
-		// Search for FK in parent abstract properties
-		foreach ($this->parentPropertiesList as $currentPropertyName=>$currentPropertyReflection) {
-			if (Property::isForeignKeyFromName($currentPropertyName)) {
-				$this->parentForeignKeysList[$currentPropertyName] = $currentPropertyReflection;
+		// Load relationships for this Class
+		$relationshipsList = Utils::loadData(Relationship::DATA_FILENAME);
+		if (is_array($relationshipsList) && sizeof($relationshipsList) > 0) {
+			if (array_key_exists($this->className, $relationshipsList)) {
+				$this->relationshipsList = $relationshipsList[$this->className];
 			}
 		}
 	}
@@ -68,13 +69,14 @@ class PhpClass {
 		$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// $this->setSource(\'%s\');'.PHP_EOL;
 
 		// If ForeignKeys
-		if (sizeof($this->parentForeignKeysList)) {
-			foreach ($this->parentForeignKeysList as $currentPropertyName=>$currentPropertyReflection) {
-				$currentPropertyObject = new Property($currentPropertyName);
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'$this->belongsTo('.PHP_EOL;
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentPropertyObject->getName().'",'.PHP_EOL;
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.addslashes(self::POPO_NAMESPACE.'\\'.$currentPropertyObject->getForeignKeyClassName()).'",'.PHP_EOL;
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentPropertyObject->getForeignKeyFieldName().'"'.PHP_EOL;
+		if (sizeof($this->relationshipsList)) {
+			$phpContent .= PHP_EOL;
+			$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// Following lines contains relationships'.PHP_EOL;
+			foreach ($this->relationshipsList as $currentRelationship) {
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'$this->'.$currentRelationship->getPhalconMethodName().'('.PHP_EOL;
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentRelationship->getPropertyName().'",'.PHP_EOL;
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentRelationship->getExternalFQCN().'",'.PHP_EOL;
+				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentRelationship->getExternalPropertyName().'"'.PHP_EOL;
 				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.');'.PHP_EOL;
 			}
 		}

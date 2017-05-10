@@ -22,6 +22,7 @@
 namespace Phalconmerce;
 
 use Phalcon\Config;
+use Phalcon\Di;
 
 class Utils {
 	const DB_ADAPTER_POSTGRESQL = 'Postgresql';
@@ -135,6 +136,50 @@ class Utils {
 	 */
 	public static function getPrefixFromTableName($tableName) {
 		return strtolower(substr(str_replace('_', '', $tableName),0,3).'_');
+	}
+
+	/**
+	 * @param string $filename
+	 * @return string
+	 */
+	private static function getDataFullFilename($filename) {
+		if (substr($filename, -4) != '.php') {
+			$filename .= '.php';
+		}
+		return Di::getDefault()->getShared('configPhalconmerce')->cacheDir.DIRECTORY_SEPARATOR.$filename;
+	}
+
+	/**
+	 * @param string $data
+	 * @param string $filename
+	 * @return bool
+	 */
+	public static function saveData($data, $filename) {
+		$fp = fopen(self::getDataFullFilename($filename), 'w');
+		if ($fp) {
+			fputs($fp, '<?php $data='.var_export($data,1).';');
+			fclose($fp);
+
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $filename
+	 * @return bool
+	 */
+	public static function loadData($filename) {
+		$fullFilename = self::getDataFullFilename($filename);
+		if (file_exists($fullFilename) && is_readable($fullFilename)) {
+			// TODO find a way to check PHP file syntax
+			include $fullFilename;
+
+			if (isset($data)) {
+				return $data;
+			}
+		}
+		return false;
 	}
 
 	public static function debug($var) {

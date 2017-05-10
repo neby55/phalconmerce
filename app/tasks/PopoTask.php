@@ -4,18 +4,87 @@ use Phalconmerce\Cli\Task;
 use Phalconmerce\Popo\Popogenerator\PhpClass;
 use Phalconmerce\Popo\Popogenerator\PhpProductClass;
 use Phalconmerce\Popo\Popogenerator\Property;
+use Phalconmerce\Popo\Popogenerator\Relationship;
 
 class PopoTask extends Task {
 	public function mainAction() {
 		echo PHP_EOL;
-		echo "You have 2 CLI tools available for task \"popo\" :" . PHP_EOL;
+		echo "You have 3 CLI tools available for task \"popo\" :" . PHP_EOL;
+		echo "- \"POPO Relationships\" for getting all relationships between classes (mandatory and must be done before others CLI tools)" . PHP_EOL;
+		echo "      php app/cli.php popo relationships" . PHP_EOL;
 		echo "- \"POPO Generator\" for generating empty POPO Classes (mandatory)" . PHP_EOL;
 		echo "      php app/cli.php popo generator" . PHP_EOL;
 		echo "- \"POPO Product Generator\" for generating empty POPO Product Classes (also mandatory)" . PHP_EOL;
 		echo "      php app/cli.php popo productgenerator" . PHP_EOL;
 	}
 
+	public function relationshipsAction($params) {
+		// First, create cache directory
+		if (!file_exists($this->getDI()->getShared('configPhalconmerce')->cacheDir)) {
+			mkdir($this->getDI()->getShared('configPhalconmerce')->cacheDir);
+		}
+
+		// All abstract classes to override
+		$abstractClassesList = PhpClass::getAbstractClasses();
+
+		if (sizeof($abstractClassesList) > 0) {
+			$relationshipsList = array();
+			foreach ($abstractClassesList as $currentClassName=>$currentAbstractClassName) {
+				// Generate FCQN
+				$fqcn = \Phalconmerce\Popo\Popogenerator\PhpClass::POPO_ABSTRACT_NAMESPACE.'\\'.$currentAbstractClassName;
+
+				// Get properties
+				$propertiesList = \Phalconmerce\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
+
+				// Search for FK in abstract class properties
+				foreach ($propertiesList as $currentPropertyName=>$currentPropertyReflection) {
+					if (Property::isForeignKeyFromName($currentPropertyName)) {
+						$currentPropertyObject = new Property($currentPropertyName);
+						// First way
+						$relationshipsList[$currentClassName][$currentPropertyName] = new Relationship(
+							$currentPropertyObject->getName(),
+							$currentClassName,
+							$currentPropertyObject->getForeignKeyFieldName(),
+							addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentPropertyObject->getForeignKeyClassName()),
+							Relationship::TYPE_MANY_TO_1
+						);
+						// Second way
+						$relationshipsList[$currentPropertyObject->getForeignKeyClassName()][$currentPropertyObject->getForeignKeyFieldName()] = new Relationship(
+							$currentPropertyObject->getForeignKeyFieldName(),
+							$currentPropertyObject->getForeignKeyClassName(),
+							$currentPropertyName,
+							addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentClassName),
+							Relationship::TYPE_1_TO_MANY
+						);
+					}
+				}
+			}
+
+			// Store relationships in data
+			if (\Phalconmerce\Utils::saveData($relationshipsList, Relationship::DATA_FILENAME)) {
+				echo 'Relationships data generation ok'.PHP_EOL;
+				echo 'Now you can generate POPO Classes'.PHP_EOL;
+			}
+			else {
+				echo 'Relationships data generation failed'.PHP_EOL;
+			}
+		}
+		else {
+			echo 'No Phalconmerce abstract classes in your project'.PHP_EOL;
+		}
+	}
+
 	public function generatorAction($params) {
+		// First of all, Load relationshps
+		$relationshipsList = \Phalconmerce\Utils::loadData(Relationship::DATA_FILENAME);
+		if (!isset($relationshipsList) || $relationshipsList === false || !is_array($relationshipsList)) {
+			echo PHP_EOL;
+			echo 'No relationships generated yet. You must execute "POPO Relationships" CLI tool before any other.'.PHP_EOL;
+			$this->mainAction();
+			exit;
+		}
+
+		// Get options passed to CLI
 		$options = $this->console->getOptions();
 
 		// All abstract classes to override

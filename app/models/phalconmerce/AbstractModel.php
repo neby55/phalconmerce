@@ -39,6 +39,16 @@ class AbstractModel extends Model {
 	}
 
 	/**
+	 * @param array $propertiesList
+	 */
+	public static function __set_state($propertiesList) {
+		$object = new self();
+		foreach ($propertiesList as $currentProperty=>$currentValue) {
+			$object->$currentProperty = $currentValue;
+		}
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getPrefix() {
