@@ -31,7 +31,7 @@ class PhpClass {
 		$this->isThereForeignKey = false;
 
 		// Load properties of parent abstract class
-		$fqcn = self::POPO_NAMESPACE.'\\'.$className;
+		$fqcn = self::POPO_ABSTRACT_NAMESPACE.'\\'.$extendedClassName;
 		$this->parentPropertiesList = self::getClassProperties($fqcn);
 
 		// Load relationships for this Class
@@ -63,21 +63,17 @@ class PhpClass {
 		$phpContent .= self::TAB_CHARACTER.'// To understand Annotations you must provide to your class, see https://docs.phalconphp.com/en/3.0.0/reference/models-metadata.html#annotations-strategy'.PHP_EOL;
 		$phpContent .= PHP_EOL;
 		$phpContent .= self::TAB_CHARACTER.'public function initialize() {'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'parent::initialize();'.PHP_EOL.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// You can add here instructions that will be executed by the framework, after construction'.PHP_EOL.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// Uncomment the following line to specify the table name'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// $this->setSource(\'%s\');'.PHP_EOL;
+		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'parent::initialize();'.PHP_EOL.PHP_EOL;
+		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// You can add here instructions that will be executed by the framework, after construction'.PHP_EOL.PHP_EOL;
+		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// Uncomment the following line to specify the table name'.PHP_EOL;
+		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// $this->setSource(\'%s\');'.PHP_EOL;
 
 		// If ForeignKeys
 		if (sizeof($this->relationshipsList)) {
 			$phpContent .= PHP_EOL;
-			$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'// Following lines contains relationships'.PHP_EOL;
+			$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// Following lines contains relationships with other models'.PHP_EOL;
 			foreach ($this->relationshipsList as $currentRelationship) {
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.'$this->'.$currentRelationship->getPhalconMethodName().'('.PHP_EOL;
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentRelationship->getPropertyName().'",'.PHP_EOL;
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentRelationship->getExternalFQCN().'",'.PHP_EOL;
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.self::TAB_CHARACTER.'"'.$currentRelationship->getExternalPropertyName().'"'.PHP_EOL;
-				$phpContent .= self::TAB_CHARACTER.self::TAB_CHARACTER.');'.PHP_EOL;
+				$phpContent .= $currentRelationship->getPhpContent().PHP_EOL;
 			}
 		}
 

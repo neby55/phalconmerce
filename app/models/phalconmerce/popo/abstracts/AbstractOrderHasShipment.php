@@ -5,24 +5,18 @@ namespace Phalconmerce\Popo\Abstracts;
 use Phalconmerce\AbstractModel;
 
 
-class AbstractState extends AbstractModel {
+class AbstractOrderHasShipment extends AbstractModel {
 	/**
 	 * @Primary
-	 * @Identity
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $id;
+	public $fk_order_id;
 
 	/**
-	 * @Column(type="string", length=32, nullable=false)
-	 * @var string
-	 */
-	public $name;
-
-	/**
+	 * @Primary
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $fk_country_id;
+	public $fk_shipment_id;
 }

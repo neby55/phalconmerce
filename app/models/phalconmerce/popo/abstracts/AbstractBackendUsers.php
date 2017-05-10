@@ -11,31 +11,31 @@ class AbstractBackendUsers extends AbstractModel {
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	protected $id;
+	public $id;
 
 	/**
 	 * @Column(type="string", length=32, nullable=false)
 	 * @var string
 	 */
-	protected $username;
+	public $username;
 
 	/**
 	 * @Column(type="string", length=255, nullable=false)
 	 * @var string
 	 */
-	protected $email;
+	public $email;
 
 	/**
 	 * @Column(type="string", length=60, nullable=false)
 	 * @var string
 	 */
-	protected $password_hash;
+	public $password_hash;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", length=2, nullable=false)
 	 * @var int
 	 */
-	protected $status;
+	public $status;
 
 	/**
 	 * @return int

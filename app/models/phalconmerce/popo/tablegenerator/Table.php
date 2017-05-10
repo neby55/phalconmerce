@@ -106,7 +106,6 @@ class Table {
 
 			}
 			else {
-				$fkTableName = '';
 				$columnName = $prefix.$propertyName;
 			}
 
@@ -147,6 +146,7 @@ class Table {
 					// AutoIncrement
 					if ($columnOptions['type'] == Column::TYPE_INTEGER || $columnOptions['type'] == Column::TYPE_BIGINTEGER) {
 						if ($collection->has('Primary')) {
+							// If auto increment
 							if ($collection->has('Identity')) {
 								$columnOptions['autoIncrement'] = true;
 								// Force unsigned
@@ -251,6 +251,12 @@ class Table {
 		}
 		else if ($type == 'datetime') {
 			return Column::TYPE_DATETIME;
+		}
+		else if ($type == 'boolean') {
+			return Column::TYPE_BOOLEAN;
+		}
+		else if ($type == 'text') {
+			return Column::TYPE_TEXT;
 		}
 		return 0;
 	}

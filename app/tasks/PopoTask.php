@@ -5,6 +5,7 @@ use Phalconmerce\Popo\Popogenerator\PhpClass;
 use Phalconmerce\Popo\Popogenerator\PhpProductClass;
 use Phalconmerce\Popo\Popogenerator\Property;
 use Phalconmerce\Popo\Popogenerator\Relationship;
+use Phalconmerce\Popo\Popogenerator\RelationshipManyToMany;
 
 class PopoTask extends Task {
 	public function mainAction() {
@@ -36,26 +37,62 @@ class PopoTask extends Task {
 				// Get properties
 				$propertiesList = \Phalconmerce\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
 
+				// Initialize nmRelationships
+				$nmRelationshipsList = array();
+
 				// Search for FK in abstract class properties
 				foreach ($propertiesList as $currentPropertyName=>$currentPropertyReflection) {
+					// 1:n or n:1
 					if (Property::isForeignKeyFromName($currentPropertyName)) {
 						$currentPropertyObject = new Property($currentPropertyName);
 						// First way
 						$relationshipsList[$currentClassName][$currentPropertyName] = new Relationship(
 							$currentPropertyObject->getName(),
 							$currentClassName,
-							$currentPropertyObject->getForeignKeyFieldName(),
+							$currentPropertyObject->getForeignKeyPropertyName(),
 							addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentPropertyObject->getForeignKeyClassName()),
 							Relationship::TYPE_MANY_TO_1
 						);
-						// Second way
-						$relationshipsList[$currentPropertyObject->getForeignKeyClassName()][$currentPropertyObject->getForeignKeyFieldName()] = new Relationship(
-							$currentPropertyObject->getForeignKeyFieldName(),
-							$currentPropertyObject->getForeignKeyClassName(),
-							$currentPropertyName,
-							addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentClassName),
-							Relationship::TYPE_1_TO_MANY
-						);
+
+						// Check if it can be a nmTable (FK is also PK)
+						if ($currentPropertyReflection->has('Primary')) {
+							$nmRelationshipsList[$currentPropertyObject->getForeignKeyClassName()] = new RelationshipManyToMany(
+								$currentPropertyObject->getName(),
+								$currentPropertyObject->getForeignKeyClassName(),
+								'id', // TODO really get the property name
+								'id', // TODO really get the property name
+								addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentClassName)
+							);
+						}
+						else {
+							// Second way
+							$relationshipsList[$currentPropertyObject->getForeignKeyClassName()][$currentPropertyObject->getForeignKeyPropertyName()] = new Relationship(
+								$currentPropertyObject->getForeignKeyPropertyName(),
+								$currentPropertyObject->getForeignKeyClassName(),
+								$currentPropertyName,
+								addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentClassName),
+								Relationship::TYPE_1_TO_MANY
+							);
+						}
+					}
+				}
+
+				// If there is nmRelationships, then, add it to relationships array
+				if (sizeof($nmRelationshipsList) >= 2) {
+					foreach ($nmRelationshipsList as $key=>$currentNmRelationship) {
+						/** @var RelationshipManyToMany $currentNmRelationship */
+						foreach ($nmRelationshipsList as $key2=>$currentNmRelationship2) {
+							/** @var RelationshipManyToMany $currentNmRelationship2 */
+							if ($key != $key2) {
+								$currentNmRelationship->setExternalPropertyName($currentNmRelationship2->getPropertyName());
+								$currentNmRelationship->setExternalFQCN(addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentNmRelationship2->getClassName()));
+								$nmRelationshipsList[$key] = $currentNmRelationship;
+							}
+						}
+					}
+					// Now we add it to the $relationshipsList array
+					foreach ($nmRelationshipsList as $key=>$currentNmRelationship) {
+						$relationshipsList[$key][$currentNmRelationship->getExternalFQCN()] = $currentNmRelationship;
 					}
 				}
 			}

@@ -157,7 +157,7 @@ class Utils {
 	public static function saveData($data, $filename) {
 		$fp = fopen(self::getDataFullFilename($filename), 'w');
 		if ($fp) {
-			fputs($fp, '<?php $data='.var_export($data,1).';');
+			fputs($fp, serialize($data));
 			fclose($fp);
 
 			return true;
@@ -170,18 +170,16 @@ class Utils {
 	 * @return bool
 	 */
 	public static function loadData($filename) {
-		$fullFilename = self::getDataFullFilename($filename);
-		if (file_exists($fullFilename) && is_readable($fullFilename)) {
-			// TODO find a way to check PHP file syntax
-			include $fullFilename;
-
-			if (isset($data)) {
-				return $data;
-			}
+		$content = file_get_contents(self::getDataFullFilename($filename));
+		if (!empty($content)) {
+			return unserialize($content);
 		}
 		return false;
 	}
 
+	/**
+	 * @param mixed $var
+	 */
 	public static function debug($var) {
 		echo '<pre style="background: black;color:white;">'.print_r($var,1).'</pre>';
 	}

@@ -36,6 +36,9 @@ class Relationship {
 		$this->setRelationshipType($relationshipType);
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getPhalconMethodName() {
 		if ($this->relationshipType == self::TYPE_1_TO_MANY) {
 			return 'hasMany';
@@ -46,6 +49,20 @@ class Relationship {
 		else if ($this->relationshipType == self::TYPE_1_TO_1) {
 			return 'belongsTo';
 		}
+		return '';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPhpContent() {
+		$phpContent = str_repeat(PhpClass::TAB_CHARACTER, 2) . '$this->' . $this->getPhalconMethodName() . '(' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getPropertyName() . '",' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getExternalFQCN() . '",' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getExternalPropertyName() . '"' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 2) . ');' . PHP_EOL;
+
+		return $phpContent;
 	}
 
 	/**
@@ -112,7 +129,7 @@ class Relationship {
 			$this->relationshipType = $relationshipType;
 		}
 		else {
-			throw new \InvalidArgumentException('Relationship Type is incorrect ('.$relationshipType.')');
+			throw new \InvalidArgumentException('Relationship Type is incorrect (' . $relationshipType . ')');
 		}
 	}
 }

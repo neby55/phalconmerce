@@ -42,7 +42,7 @@ abstract class AbstractProduct extends AbstractModel {
 	 */
 	protected $stock;
 	/**
-	 * @Column(type="integer", length=1, nullable=true)
+	 * @Column(type="integer", length=2, nullable=true)
 	 * @var int
 	 */
 	protected $status;
