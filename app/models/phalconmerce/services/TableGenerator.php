@@ -329,4 +329,12 @@ class TableGenerator {
 			}
 		}
 	}
+
+	/**
+	 * @param string $tableName
+	 * @return bool
+	 */
+	public function dropTable($tableName) {
+		return self::$_connection->dropTable($tableName);
+	}
 }

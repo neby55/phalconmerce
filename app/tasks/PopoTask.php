@@ -283,7 +283,7 @@ class PopoTask extends Task {
 	private static function displayProductGeneratorHelp() {
 		echo 'Phalconmerce tool for generate empty POPO Product Classes'.PHP_EOL.PHP_EOL;
 		echo 'Usage :'.PHP_EOL;
-		echo '  php app/cli.php productgenerator ProductClassName'.PHP_EOL.PHP_EOL;
+		echo '  php app/cli.php popo productgenerator ProductClassName'.PHP_EOL.PHP_EOL;
 		exit;
 	}
 }

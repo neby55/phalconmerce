@@ -49,6 +49,7 @@ $shortOpts = '';
 $longOpts  = array(
 	"table-prefix:",
 	"all",
+	"delete",
 );
 
 /**

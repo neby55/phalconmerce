@@ -22,6 +22,8 @@ use Phalconmerce\Utils;
 class Table {
 	/** @var string */
 	protected $tableName;
+	/** @var string */
+	protected $fieldsPrefix;
 	/** @var Column[] */
 	protected $columnList;
 	/** @var Index[] */
@@ -33,6 +35,10 @@ class Table {
 	/** @var string */
 	protected $lastPropertyName;
 
+	public static $excludedPropertyNamesList = array(
+		'prefix'
+	);
+
 	const DECIMAL_SIZE = 16;
 	const DECIMAL_SCALE = 2;
 	const TABLES_TYPE = 'BASE TABLE';
@@ -40,8 +46,9 @@ class Table {
 	const TABLES_CHARSET = 'utf8_general_ci';
 	const FK_WORD_SEPARATOR = '_';
 
-	public function __construct($tableName) {
+	public function __construct($tableName, $fieldsPrefix) {
 		$this->tableName = $tableName;
+		$this->fieldsPrefix = $fieldsPrefix;
 		$this->columnList = array();
 		$this->referencesList = array();
 		$this->indexesList = array();
@@ -80,10 +87,9 @@ class Table {
 	/**
 	 * @param string $propertyName
 	 * @param Collection $collection
-	 * @param string $prefix
 	 * @return bool
 	 */
-	public function addByAnnotations($propertyName, Collection $collection, $prefix) {
+	public function addByAnnotations($propertyName, Collection $collection) {
 		if ($propertyName != '') {
 			// foreign key exception
 			if (substr($propertyName, 0, 3) == 'fk'.self::FK_WORD_SEPARATOR) {
@@ -106,7 +112,7 @@ class Table {
 
 			}
 			else {
-				$columnName = $prefix.$propertyName;
+				$columnName = $this->fieldsPrefix.$propertyName;
 			}
 
 			if ($collection->has('Column')) {
@@ -179,18 +185,18 @@ class Table {
 							[$columnName]
 						));
 					}
-					// index for foreign keys
-					if (!empty($fkData)) {
-						$this->addIndex(new Index(
-							$columnName,
-							[$columnName]
-						));
-					}
 					// primary
 					if ($collection->has('Primary')) {
 						//$columnOptions['primary'] = true;
 						$columnOptions['notNull'] = true;
 						$this->addPrimaryKey($columnName);
+					}
+					// index for foreign keys
+					else if (!empty($fkData)) {
+						$this->addIndex(new Index(
+							$columnName,
+							[$columnName]
+						));
 					}
 
 					// Add columun
@@ -261,6 +267,9 @@ class Table {
 		return 0;
 	}
 
+	/**
+	 * @throws \Phalcon\Db\Exception
+	 */
 	public function morph() {
 		$generator = new TableGenerator();
 		$generator->setup(DI::getDefault()->get('config')->database);
@@ -295,7 +304,7 @@ class Table {
 		// Adding inserted field
 		if (!array_key_exists('inserted', $this->columnList)) {
 			$this->addColumn(new Column(
-				'inserted',
+				$this->fieldsPrefix.'inserted',
 				array(
 					'type' => Column::TYPE_TIMESTAMP,
 					'notNull' => true,
@@ -317,7 +326,6 @@ class Table {
 		}*/
 
 		try {
-			//Utils::debug(
 			$generator->morphTable($this->tableName,
 				[
 					'columns' => $this->columnList,
@@ -334,5 +342,22 @@ class Table {
 		catch (\Phalcon\Db\Exception $e) {
 			echo $e->getMessage();
 		}
+	}
+
+	/**
+	 * @return bool
+	 * @throws \Phalcon\Db\Exception
+	 */
+	public function drop() {
+		$generator = new TableGenerator();
+		$generator->setup(DI::getDefault()->get('config')->database);
+		return $generator->dropTable($this->tableName);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTableName() {
+		return $this->tableName;
 	}
 }
