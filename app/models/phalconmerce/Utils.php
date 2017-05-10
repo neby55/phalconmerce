@@ -99,6 +99,11 @@ class Utils {
 		if (substr($tableName,-1) != 's' && substr($tableName,-1) != 'x') {
 			$tableName .= 's';
 		}
+		// If nmTable with '_has_'
+		if (strpos($tableName, '_has_') !== false) {
+			list($firstTable,$secondTable) = explode('_has_', $tableName);
+			$tableName = self::getTableNameFromClassName($firstTable).'_has_'.$secondTable;
+		}
 
 		return $tableName;
 	}
