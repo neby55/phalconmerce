@@ -1,5 +1,7 @@
 <?php
 
+namespace Phalconmerce\Popo\Abstracts;
+
 use Phalconmerce\AbstractModel;
 
 class AbstractBackendUsers extends AbstractModel {
