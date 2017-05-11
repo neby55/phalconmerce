@@ -1,11 +1,18 @@
 <?php
+/**
+ * Phalconmerce
+ * an e-commerce framework based on Phalcon PHP framework
+ * 
+ * Authors :
+ *    Benjamin CORDIER <ben@progweb.fr>
+ */
 
 namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-
-class AbstractLang extends AbstractModel {
+class AbstractExpeditionDelay extends AbstractModel {
+	// TODO check if table named "expedition_delaies"
 
 	/**
 	 * @Primary
@@ -22,22 +29,21 @@ class AbstractLang extends AbstractModel {
 	public $name;
 
 	/**
-	 * @Column(type="string", length=2, nullable=false)
-	 * @Index
-	 * @var string
-	 */
-	public $code;
-
-	/**
-	 * @Column(type="integer", length=2, nullable=false, default=99)
-	 * @Index
+	 * @Column(type="integer", length=2, nullable=false, default=0)
 	 * @var int
 	 */
-	public $position;
+	public $hours;
+
+	/**
+	 * @Column(type="integer", length=2, nullable=false, default=0)
+	 * @var int
+	 */
+	public $days;
 
 	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)
 	 * @var int
 	 */
 	public $status;
+
 }

@@ -1,11 +1,17 @@
 <?php
+/**
+ * Phalconmerce
+ * an e-commerce framework based on Phalcon PHP framework
+ *
+ * Authors :
+ *    Benjamin CORDIER <ben@progweb.fr>
+ */
 
 namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-
-class AbstractMenu extends AbstractModel {
+class AbstractCmsContentBanner extends AbstractModel {
 
 	/**
 	 * @Primary
@@ -19,19 +25,7 @@ class AbstractMenu extends AbstractModel {
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $fk_menugroup_id;
-
-	/**
-	 * @Column(type="integer", nullable=false)
-	 * @var int
-	 */
 	public $fk_url_id;
-
-	/**
-	 * @Column(type="integer", nullable=false)
-	 * @var int
-	 */
-	public $fk_menu_id;
 
 	/**
 	 * @Column(type="integer", nullable=false)
@@ -40,22 +34,16 @@ class AbstractMenu extends AbstractModel {
 	public $fk_lang_id;
 
 	/**
-	 * @Column(type="string", length=64, nullable=false)
-	 * @var string
+	 * @Column(type="integer", nullable=false)
+	 * @var int
 	 */
-	public $name;
+	public $fk_image_id;
 
 	/**
-	 * @Column(type="string", length=255, nullable=false)
+	 * @Column(type="string", length=255, nullable=true)
 	 * @var string
 	 */
 	public $externalUrl;
-
-	/**
-	 * @Column(type="integer", length=4, nullable=false, default=99)
-	 * @var int
-	 */
-	public $position;
 
 	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)

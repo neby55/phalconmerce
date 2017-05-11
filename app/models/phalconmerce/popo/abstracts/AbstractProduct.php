@@ -15,47 +15,47 @@ abstract class AbstractProduct extends AbstractModel {
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	protected $id;
+	public $id;
 	/**
 	 * @Column(type="integer", length=1, nullable=false)
 	 * @var int
 	 */
-	protected $coreType;
+	public $coreType;
 	/**
 	 * @Column(type="string", length=32, nullable=false)
 	 * @var string
 	 */
-	protected $sku;
+	public $sku;
 	/**
 	 * @Column(type="float", nullable=false)
 	 * @var float
 	 */
-	protected $priceVatExcluded;
+	public $priceVatExcluded;
 	/**
 	 * @Column(type="float", nullable=true)
 	 * @var float
 	 */
-	protected $weight;
+	public $weight;
 	/**
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
-	protected $stock;
+	public $stock;
 	/**
 	 * @Column(type="integer", length=2, nullable=true)
 	 * @var int
 	 */
-	protected $status;
+	public $status;
 	/**
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
-	protected $parentProductId;
+	public $parentProductId;
 
 	/**
 	 * @var AbstractProductFilter[]
 	 */
-	protected $filtersList;
+	public $filtersList;
 
 	const PRODUCT_CORE_TYPE_SIMPLE = 1;
 	const PRODUCT_CORE_TYPE_CONFIGURABLE = 2;

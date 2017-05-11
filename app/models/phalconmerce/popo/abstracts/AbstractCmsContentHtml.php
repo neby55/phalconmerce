@@ -1,11 +1,17 @@
 <?php
+/**
+ * Phalconmerce
+ * an e-commerce framework based on Phalcon PHP framework
+ *
+ * Authors :
+ *    Benjamin CORDIER <ben@progweb.fr>
+ */
 
 namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-
-class AbstractLang extends AbstractModel {
+class AbstractCmsContentHtml extends AbstractModel {
 
 	/**
 	 * @Primary
@@ -16,28 +22,21 @@ class AbstractLang extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="string", length=32, nullable=false)
-	 * @var string
-	 */
-	public $name;
-
-	/**
-	 * @Column(type="string", length=2, nullable=false)
-	 * @Index
-	 * @var string
-	 */
-	public $code;
-
-	/**
-	 * @Column(type="integer", length=2, nullable=false, default=99)
-	 * @Index
+	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $position;
+	public $fk_lang_id;
+
+	/**
+	 * @Column(type="text", nullable=true)
+	 * @var string
+	 */
+	public $html;
 
 	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)
 	 * @var int
 	 */
 	public $status;
+
 }

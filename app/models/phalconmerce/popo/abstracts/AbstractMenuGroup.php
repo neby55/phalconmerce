@@ -4,8 +4,7 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-
-class AbstractLang extends AbstractModel {
+class AbstractMenuGroup extends AbstractModel {
 
 	/**
 	 * @Primary
@@ -16,21 +15,13 @@ class AbstractLang extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="string", length=32, nullable=false)
+	 * @Column(type="string", length=64, nullable=false)
 	 * @var string
 	 */
 	public $name;
 
 	/**
-	 * @Column(type="string", length=2, nullable=false)
-	 * @Index
-	 * @var string
-	 */
-	public $code;
-
-	/**
-	 * @Column(type="integer", length=2, nullable=false, default=99)
-	 * @Index
+	 * @Column(type="integer", length=4, nullable=false, default=99)
 	 * @var int
 	 */
 	public $position;
@@ -40,4 +31,5 @@ class AbstractLang extends AbstractModel {
 	 * @var int
 	 */
 	public $status;
+
 }

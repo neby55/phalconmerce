@@ -38,3 +38,5 @@ Retours de commande
 Customers, si BtoB, tax à 0, et ajout de champs dans customers
 
 Traductions des produits/categories, permettre de générer des fichiers .po puis l'uploader pour les mises à jour de lang
+
+Que faire pour générer des index ? (table generator)

@@ -14,6 +14,8 @@ class AbstractOrder extends AbstractModel {
 	 */
 	public $id;
 
+	// TODO make fk for currency code
+
 	/**
 	 * @Column(type="integer", nullable=false)
 	 * @var int

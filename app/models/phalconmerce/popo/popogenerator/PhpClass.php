@@ -61,12 +61,13 @@ class PhpClass {
 		$phpContent .= self::TAB_CHARACTER.'// Add here your own properties'.PHP_EOL;
 		$phpContent .= self::TAB_CHARACTER.'// See the extended Class to know current herited properties'.PHP_EOL;
 		$phpContent .= self::TAB_CHARACTER.'// To understand Annotations you must provide to your class, see https://docs.phalconphp.com/en/3.0.0/reference/models-metadata.html#annotations-strategy'.PHP_EOL;
+		$phpContent .= self::TAB_CHARACTER.'// or take a look at abstract classes provided by Phalconmerce'.PHP_EOL;
 		$phpContent .= PHP_EOL;
 		$phpContent .= self::TAB_CHARACTER.'public function initialize() {'.PHP_EOL;
 		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'parent::initialize();'.PHP_EOL.PHP_EOL;
 		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// You can add here instructions that will be executed by the framework, after construction'.PHP_EOL.PHP_EOL;
-		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// Uncomment the following line to specify the table name'.PHP_EOL;
-		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// $this->setSource(\'%s\');'.PHP_EOL;
+		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// Set the DB table related to this class'.PHP_EOL;
+		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'$this->setSource(\'%s\');'.PHP_EOL;
 
 		// If ForeignKeys
 		if (sizeof($this->relationshipsList)) {

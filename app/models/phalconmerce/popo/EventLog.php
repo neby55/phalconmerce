@@ -17,29 +17,35 @@ class EventLog extends Model {
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	protected $id;
+	public $id;
+
+	/**
+	 * @Column(type="integer", nullable=false)
+	 * @var int
+	 */
+	public $fk_backendusers_id;
+
 	/**
 	 * @Column(type="integer", length=1, nullable=false)
 	 * @var int
 	 */
-	protected $type;
+	public $type;
+
 	/**
-	 * @Column(type="string", length=16, nullable=true)
+	 * @Column(type="string", length=32, nullable=true)
 	 * @var string
 	 */
-	protected $entity;
+	public $entity;
+
 	/**
-	 * @Column(type="string", length=32, nullable=false)
+	 * @Column(type="string", length=64, nullable=false)
 	 * @var string
 	 */
-	protected $message;
+	public $message;
+
 	/**
 	 * @Column(type="timestamp", nullable=false)
-	 * @var string
+	 * @var int
 	 */
-	protected $date;
-
-	public function initialze() {
-		parent::initialize();
-	}
+	public $date;
 }
