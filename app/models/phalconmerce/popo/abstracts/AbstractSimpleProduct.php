@@ -3,10 +3,10 @@
 namespace Phalconmerce\Popo\Abstracts;
 
 
-abstract class AbstractSimpleProduct extends AbstractProduct {
+abstract class AbstractSimpleProduct extends AbstractModel {
 
 	public function initialize() {
 		parent::initialize();
-		$this->coreType = self::PRODUCT_CORE_TYPE_SIMPLE;
+		$this->coreType = self::PRODUCT_TYPE_SIMPLE;
 	}
 }

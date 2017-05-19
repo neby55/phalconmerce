@@ -63,4 +63,18 @@ class AbstractMenu extends AbstractModel {
 	 */
 	public $status;
 
+	/**
+	 * @return AbstractMenu
+	 */
+	public function getParent() {
+		return \Phalconmerce\Popo\Menu::findFirst($this->getParentId());
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getParentId() {
+		return $this->fk_menu_id;
+	}
+
 }
