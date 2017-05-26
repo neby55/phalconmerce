@@ -56,8 +56,18 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 	 * @return bool
 	 */
 	public function save($data = null, $whiteList = null) {
+		// Force coreType to related product
+		$this->product->coreType = AbstractProduct::PRODUCT_TYPE_GROUPED;
+
 		// TODO check if $data passed to "product" save method will work or not
 		$this->product->save($data, $whiteList);
+
+		// If first save
+		if ($this->fk_product_id <= 0) {
+			$this->fk_product_id = $this->product->id;
+			$data['fk_product_id'] = $this->fk_product_id;
+		}
+
 		return parent::save($data, $whiteList);
 	}
 
@@ -86,8 +96,8 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 			$groupedProductHasSimpleProductTmp = new \Phalconmerce\Popo\GroupedProductHasSimpleProduct();
 			$groupedProductHasSimpleProduct = \Phalconmerce\Popo\GroupedProductHasSimpleProduct::findFirst(
 				array(
-					'conditions' => $groupedProductHasSimpleProductTmp->prefix.'fk_groupedproduct_id = :groupedProductId
-					        AND '.$groupedProductHasSimpleProductTmp->prefix.'fk_simpleproduct_id = :simpleProductId',
+					'conditions' => $groupedProductHasSimpleProductTmp->prefix.'fk_groupedproduct_id = :groupedProductId:
+					        AND '.$groupedProductHasSimpleProductTmp->prefix.'fk_simpleproduct_id = :simpleProductId:',
 					'bind' => array(
 						'groupedProductId' => $this->id,
 						'simpleProductId' => $product->id

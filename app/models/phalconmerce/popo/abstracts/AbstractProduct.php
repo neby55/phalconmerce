@@ -85,4 +85,18 @@ abstract class AbstractProduct extends AbstractModel {
 				return false;
 		}
 	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSearchable() {
+		switch ($this->coreType) {
+			case self::PRODUCT_TYPE_SIMPLE :
+			case self::PRODUCT_TYPE_CONFIGURABLE :
+			case self::PRODUCT_TYPE_GROUPED :
+				return true;
+			default :
+				return false;
+		}
+	}
 }
