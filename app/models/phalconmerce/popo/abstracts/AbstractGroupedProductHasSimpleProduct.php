@@ -7,12 +7,14 @@ use Phalconmerce\AbstractModel;
 abstract class AbstractGroupedProductHasSimpleProduct extends AbstractModel {
 
 	/**
+	 * @Primary
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
 	public $fk_groupedproduct_id;
 
 	/**
+	 * @Primary
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */

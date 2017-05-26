@@ -54,11 +54,6 @@ abstract class AbstractProduct extends AbstractModel {
 	public $status;
 
 	/**
-	 * @var AbstractProductFilter[]
-	 */
-	public $filtersList;
-
-	/**
 	 * @var array
 	 */
 	public static $typesList = array(
@@ -75,27 +70,6 @@ abstract class AbstractProduct extends AbstractModel {
 
 	public function initialize() {
 		$this->setSource("product");
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getParent() {
-		return \Phalconmerce\Popo\Product::findFirst($this->getParentId());
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getParentId() {
-		return $this->fk_product_id;
-	}
-
-	/**
-	 * @return AbstractProductFilter[]
-	 */
-	public function getFiltersList() {
-		return $this->filtersList;
 	}
 
 	/**
