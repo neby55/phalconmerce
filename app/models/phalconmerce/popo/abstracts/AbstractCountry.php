@@ -14,6 +14,12 @@ abstract class AbstractCountry extends AbstractModel {
 	public $id;
 
 	/**
+	 * @Column(type="integer", nullable=false)
+	 * @var int
+	 */
+	public $fk_currency_id;
+
+	/**
 	 * @Column(type="string", length=2, nullable=true)
 	 * @var string
 	 */
