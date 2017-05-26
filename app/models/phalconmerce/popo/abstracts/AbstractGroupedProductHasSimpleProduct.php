@@ -17,4 +17,14 @@ abstract class AbstractGroupedProductHasSimpleProduct extends AbstractModel {
 	 * @var int
 	 */
 	public $fk_simpleproduct_id;
+
+	/**
+	 * Overriding AbstractModel::initialize() to force the prefix
+	 */
+	public function initialize() {
+		// Set the prefix
+		$this->prefix = 'gphsp_';
+
+		parent::initialize();
+	}
 }

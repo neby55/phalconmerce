@@ -2,6 +2,7 @@
 
 namespace Phalconmerce\Popo\Abstracts;
 
+use Phalcon\Db\Column;
 use Phalconmerce\AbstractModel;
 
 abstract class AbstractGroupedProduct extends AbstractModel {
@@ -58,5 +59,55 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 		// TODO check if $data passed to "product" save method will work or not
 		$this->product->save($data, $whiteList);
 		return parent::save($data, $whiteList);
+	}
+
+	/**
+	 * @param \Phalconmerce\Popo\SimpleProduct $product
+	 * @return mixed
+	 */
+	public function addProduct($product) {
+		if (is_a($product, 'AbstractSimpleProduct')) {
+			$groupedProductHasSimpleProduct = new \Phalconmerce\Popo\GroupedProductHasSimpleProduct();
+			$groupedProductHasSimpleProduct->fk_groupedproduct_id = $this->id;
+			$groupedProductHasSimpleProduct->fk_simpleproduct_id = $product->id;
+			return $groupedProductHasSimpleProduct->save();
+		}
+		else {
+			throw new \InvalidArgumentException('product passed to method "addProduct" is not a child of AbstractSimpleProduct');
+		}
+	}
+
+	/**
+	 * @param \Phalconmerce\Popo\SimpleProduct $product
+	 * @return mixed
+	 */
+	public function deleteProduct($product) {
+		if (is_a($product, 'AbstractSimpleProduct')) {
+			$groupedProductHasSimpleProductTmp = new \Phalconmerce\Popo\GroupedProductHasSimpleProduct();
+			$groupedProductHasSimpleProduct = \Phalconmerce\Popo\GroupedProductHasSimpleProduct::findFirst(
+				array(
+					'conditions' => $groupedProductHasSimpleProductTmp->prefix.'fk_groupedproduct_id = :groupedProductId
+					        AND '.$groupedProductHasSimpleProductTmp->prefix.'fk_simpleproduct_id = :simpleProductId',
+					'bind' => array(
+						'groupedProductId' => $this->id,
+						'simpleProductId' => $product->id
+					),
+					'bindTypes' => array(
+						Column::BIND_PARAM_INT,
+						Column::BIND_PARAM_INT
+					)
+				)
+			);
+
+			// If results
+			if ($groupedProductHasSimpleProduct !== false) {
+				return $groupedProductHasSimpleProduct->delete();
+			}
+
+			return false;
+		}
+		else {
+			throw new \InvalidArgumentException('product passed to method "addProduct" is not a child of AbstractSimpleProduct');
+		}
 	}
 }

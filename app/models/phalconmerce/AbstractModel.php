@@ -13,7 +13,6 @@ use Phalcon\Mvc\Model;
 class AbstractModel extends Model {
 	/**
 	 * Prefix for fields in table
-	 * "usr_" for example
 	 * @var string
 	 */
 	public $prefix;
@@ -23,7 +22,11 @@ class AbstractModel extends Model {
 		$tableName = $classname;
 
 		$this->setSource($tableName);
-		$this->setPrefix(Utils::getPrefixFromTableName($tableName));
+
+		// Checking prefix value before setting new value automatically
+		if (empty($this->prefix)) {
+			$this->setPrefix(Utils::getPrefixFromTableName($tableName));
+		}
 	}
 
 	public function columnMap() {
