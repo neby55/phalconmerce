@@ -37,6 +37,13 @@ Retours de commande
 
 Customers, si BtoB, tax à 0, et ajout de champs dans customers
 
-Traductions des produits/categories, permettre de générer des fichiers .po puis l'uploader pour les mises à jour de lang
-
-Que faire pour générer des index ? (table generator)
+Traductions
+-----------
+=> des produits/categories, permettre de générer des fichiers .po puis l'uploader pour les mises à jour de lang
+=> ne pas faire de table _has_lang mais tout passer par des PO/MO :
+	- lors de la modif d'un texte, on vérifie si l'ancien texte est dans les PO, si oui alors on modifie l'index des PO, si non, on ajoute. Ensuite, on compile le MO si possible
+	- si un PO a été confié à un traducteur, il n'a pas ce nouvel index, alors il faudra le prendre en compte :
+		* on garde un historique de chaque modification d'index
+		* lorsqu'un index importé n'existe pas, on va le rechercher dans l'historique et le remplacer par la nouvelle version (récursif)
+		* on supprime régulièrement les anciens index expirés
+	- une page dans le BO fera une vérification des traductions dans chaque PO (si vide, si non existant partout, autres à trouver)
