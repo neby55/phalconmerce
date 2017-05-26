@@ -52,7 +52,7 @@ abstract class AbstractMenu extends AbstractModel {
 	public $externalUrl;
 
 	/**
-	 * @Column(type="integer", length=4, nullable=false, default=99)
+	 * @Column(type="integer", length=4, nullable=false, default=999)
 	 * @var int
 	 */
 	public $position;

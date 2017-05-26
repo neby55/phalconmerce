@@ -32,4 +32,14 @@ abstract class AbstractCategoryHasLang extends AbstractModel {
 	 * @var int
 	 */
 	public $status;
+
+	/**
+	 * Overriding AbstractModel::initialize() to force the prefix
+	 */
+	public function initialize() {
+		// Set the prefix
+		$this->prefix = 'chl_';
+
+		parent::initialize();
+	}
 }

@@ -19,4 +19,14 @@ abstract class AbstractOrderHasShipment extends AbstractModel {
 	 * @var int
 	 */
 	public $fk_shipment_id;
+
+	/**
+	 * Overriding AbstractModel::initialize() to force the prefix
+	 */
+	public function initialize() {
+		// Set the prefix
+		$this->prefix = 'ohs_';
+
+		parent::initialize();
+	}
 }

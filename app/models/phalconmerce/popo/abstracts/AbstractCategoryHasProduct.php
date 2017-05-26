@@ -1,44 +1,38 @@
 <?php
-/**
- * Phalconmerce
- * an e-commerce framework based on Phalcon PHP framework
- *
- * Authors :
- *    Benjamin CORDIER <ben@progweb.fr>
- */
 
 namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-abstract class AbstractExpeditionDelayHasLang extends AbstractModel {
+abstract class AbstractCategoryHasProduct extends AbstractModel {
 
 	/**
 	 * @Primary
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $fk_expeditiondelay_id;
+	public $fk_category_id;
 
 	/**
 	 * @Primary
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $fk_lang_id;
+	public $fk_product_id;
 
 	/**
-	 * @Column(type="string", length=32, nullable=false)
-	 * @var string
+	 * @Column(type="integer", length=4, nullable=false, default=999)
+	 * @Index
+	 * @var int
 	 */
-	public $name;
+	public $position;
 
 	/**
 	 * Overriding AbstractModel::initialize() to force the prefix
 	 */
 	public function initialize() {
 		// Set the prefix
-		$this->prefix = 'edhl_';
+		$this->prefix = 'chl_';
 
 		parent::initialize();
 	}
