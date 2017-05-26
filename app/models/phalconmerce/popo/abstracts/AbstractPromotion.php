@@ -5,6 +5,6 @@ namespace Phalconmerce\Popo\Abstracts;
 use Phalconmerce\AbstractModel;
 
 
-class AbstractPromotion extends AbstractModel {
+abstract class AbstractPromotion extends AbstractModel {
 
 }
