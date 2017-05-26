@@ -11,7 +11,7 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-class AbstractExpeditionDelay extends AbstractModel {
+abstract class AbstractExpeditionDelay extends AbstractModel {
 	// TODO check if table named "expedition_delaies"
 
 	/**

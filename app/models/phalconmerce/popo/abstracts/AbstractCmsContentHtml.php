@@ -11,7 +11,7 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-class AbstractCmsContentHtml extends AbstractModel {
+abstract class AbstractCmsContentHtml extends AbstractModel {
 
 	/**
 	 * @Primary

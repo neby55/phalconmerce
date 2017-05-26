@@ -4,7 +4,7 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-class AbstractCountry extends AbstractModel {
+abstract class AbstractCountry extends AbstractModel {
 	/**
 	 * @Primary
 	 * @Identity

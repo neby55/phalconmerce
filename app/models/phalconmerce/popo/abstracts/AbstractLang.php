@@ -5,7 +5,7 @@ namespace Phalconmerce\Popo\Abstracts;
 use Phalconmerce\AbstractModel;
 
 
-class AbstractLang extends AbstractModel {
+abstract class AbstractLang extends AbstractModel {
 
 	/**
 	 * @Primary

@@ -4,7 +4,7 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-class AbstractCurrency extends AbstractModel {
+abstract class AbstractCurrency extends AbstractModel {
 
 	/**
 	 * @Primary

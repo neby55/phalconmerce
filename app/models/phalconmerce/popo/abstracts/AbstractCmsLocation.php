@@ -4,7 +4,7 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-class AbstractCmsLocation extends AbstractModel {
+abstract class AbstractCmsLocation extends AbstractModel {
 
 	/**
 	 * @Primary

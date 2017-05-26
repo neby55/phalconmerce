@@ -11,7 +11,7 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-class AbstractExpeditionDelayHasLang extends AbstractModel {
+abstract class AbstractExpeditionDelayHasLang extends AbstractModel {
 
 	/**
 	 * @Primary

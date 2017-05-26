@@ -4,7 +4,7 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-class AbstractMenuGroup extends AbstractModel {
+abstract class AbstractMenuGroup extends AbstractModel {
 
 	/**
 	 * @Primary

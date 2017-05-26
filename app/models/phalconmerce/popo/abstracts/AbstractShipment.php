@@ -5,7 +5,7 @@ namespace Phalconmerce\Popo\Abstracts;
 use Phalconmerce\AbstractModel;
 
 
-class AbstractShipment extends AbstractModel {
+abstract class AbstractShipment extends AbstractModel {
 	/**
 	 * @Primary
 	 * @Identity
