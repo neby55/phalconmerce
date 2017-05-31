@@ -28,6 +28,7 @@ abstract class AbstractCategory extends AbstractModel {
 
 	/**
 	 * @Column(type="string", length=32, nullable=false)
+	 * @Translate
 	 * @var string
 	 */
 	public $name;

@@ -47,3 +47,4 @@ Traductions
 		* lorsqu'un index importé n'existe pas, on va le rechercher dans l'historique et le remplacer par la nouvelle version (récursif)
 		* on supprime régulièrement les anciens index expirés
 	- une page dans le BO fera une vérification des traductions dans chaque PO (si vide, si non existant partout, autres à trouver)
+	- les champs qui seront "traduits" ont l'annotations "@Translate"

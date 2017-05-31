@@ -48,6 +48,27 @@ abstract class AbstractProduct extends AbstractModel {
 	public $stock;
 
 	/**
+	 * @Column(type="string", length=64, nullable=false)
+	 * @Translate
+	 * @var string
+	 */
+	public $name;
+
+	/**
+	 * @Column(type="string", length=255, nullable=true)
+	 * @Translate
+	 * @var string
+	 */
+	public $shortDescription;
+
+	/**
+	 * @Column(type="text", nullable=true)
+	 * @Translate
+	 * @var string
+	 */
+	public $description;
+
+	/**
 	 * @Column(type="integer", length=2, nullable=true)
 	 * @var int
 	 */
