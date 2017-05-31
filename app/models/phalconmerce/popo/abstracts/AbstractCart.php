@@ -29,9 +29,8 @@ abstract class AbstractCart extends AbstractModel {
 	public $fk_order_id;
 
 	/**
-	 * @Primary
-	 * @Column(type="integer", nullable=false)
-	 * @var int
+	 * @Column(type="string", length=3, nullable=false)
+	 * @var string
 	 */
 	public $fk_currency_id;
 

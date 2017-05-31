@@ -4,8 +4,8 @@ namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-
 abstract class AbstractOrder extends AbstractModel {
+
 	/**
 	 * @Primary
 	 * @Identity
@@ -14,7 +14,11 @@ abstract class AbstractOrder extends AbstractModel {
 	 */
 	public $id;
 
-	// TODO make fk for currency code
+	/**
+	 * @Column(type="string", length=3, nullable=false)
+	 * @var string
+	 */
+	public $fk_currency_id;
 
 	/**
 	 * @Column(type="integer", nullable=false)
@@ -44,19 +48,19 @@ abstract class AbstractOrder extends AbstractModel {
 	 * @Column(type="float", nullable=false)
 	 * @var float
 	 */
-	public $discount;
+	public $amountDiscount;
 
 	/**
 	 * @Column(type="float", nullable=false)
 	 * @var float
 	 */
-	public $amountVatExcl;
+	public $amountVatExcluded;
 
 	/**
 	 * @Column(type="float", nullable=false)
 	 * @var float
 	 */
-	public $amountVatIncl;
+	public $amountVatIncluded;
 
 	/**
 	 * @Column(type="timestamp", nullable=false)

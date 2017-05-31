@@ -48,3 +48,4 @@ Traductions
 		* on supprime régulièrement les anciens index expirés
 	- une page dans le BO fera une vérification des traductions dans chaque PO (si vide, si non existant partout, autres à trouver)
 	- les champs qui seront "traduits" ont l'annotations "@Translate"
+	- stocker dans une table en DB les différents champs "traduits", ainsi, on pourra savoir si le même texte existe plusieurs fois, et dupliquer l'index, sinon le modifier
