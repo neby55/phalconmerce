@@ -1,11 +1,18 @@
 <?php
+/**
+ * Phalconmerce
+ * an e-commerce framework based on Phalcon PHP framework
+ *
+ * Authors :
+ *    Benjamin CORDIER <ben@progweb.fr>
+ */
 
 namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
+abstract class AbstractMessage extends AbstractModel {
 
-abstract class AbstractShipment extends AbstractModel {
 	/**
 	 * @Primary
 	 * @Identity
@@ -18,19 +25,13 @@ abstract class AbstractShipment extends AbstractModel {
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $fk_expeditor_id;
+	public $fk_messagesubject_id;
 
 	/**
-	 * @Column(type="timestamp", nullable=false)
-	 * @var int
-	 */
-	public $date;
-
-	/**
-	 * @Column(type="string", length=64, nullable=true)
+	 * @Column(type="text", nullable=false)
 	 * @var string
 	 */
-	public $number;
+	public $text;
 
 	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)

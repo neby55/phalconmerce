@@ -1,10 +1,17 @@
 <?php
+/**
+ * Phalconmerce
+ * an e-commerce framework based on Phalcon PHP framework
+ *
+ * Authors :
+ *    Benjamin CORDIER <ben@progweb.fr>
+ */
 
 namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-abstract class AbstractTax extends AbstractModel {
+abstract class AbstractMessageCategory extends AbstractModel {
 
 	/**
 	 * @Primary
@@ -15,16 +22,10 @@ abstract class AbstractTax extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="integer", nullable=true)
-	 * @var int
+	 * @Column(type="string", length=32, nullable=false)
+	 * @var string
 	 */
-	public $fk_country_id;
-
-	/**
-	 * @Column(type="float", nullable=false)
-	 * @var float
-	 */
-	public $percent;
+	public $category;
 
 	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)

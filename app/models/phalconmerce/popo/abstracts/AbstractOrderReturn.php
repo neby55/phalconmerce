@@ -1,10 +1,17 @@
 <?php
+/**
+ * Phalconmerce
+ * an e-commerce framework based on Phalcon PHP framework
+ *
+ * Authors :
+ *    Benjamin CORDIER <ben@progweb.fr>
+ */
 
 namespace Phalconmerce\Popo\Abstracts;
 
 use Phalconmerce\AbstractModel;
 
-abstract class AbstractVouncher extends AbstractModel {
+abstract class AbstractOrderReturn extends AbstractModel {
 
 	/**
 	 * @Primary
@@ -15,51 +22,39 @@ abstract class AbstractVouncher extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="string", length=64, nullable=false)
-	 * @var string
-	 * @Index
-	 */
-	public $code;
-
-	/**
-	 * @Column(type="integer", length=2, nullable=false, default=0)
+	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $type;
+	public $fk_order_id;
 
 	/**
 	 * @Column(type="timestamp", nullable=true)
 	 * @var string
 	 */
-	public $startDate;
+	public $demandDate;
 
 	/**
 	 * @Column(type="timestamp", nullable=true)
 	 * @var string
 	 */
-	public $endDate;
+	public $acceptedDate;
 
 	/**
 	 * @Column(type="timestamp", nullable=true)
 	 * @var string
 	 */
-	public $useDate;
+	public $receiptDate;
 
 	/**
-	 * @Column(type="float", nullable=false)
-	 * @var float
+	 * @Column(type="text", nullable=false)
+	 * @var string
 	 */
-	public $amountVatExcluded;
-
-	/**
-	 * @Column(type="float", nullable=false, default=1)
-	 * @var float
-	 */
-	public $minimumAmountVatExcluded;
+	public $customerMessage;
 
 	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)
 	 * @var int
 	 */
 	public $status;
+
 }
