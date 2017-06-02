@@ -2,6 +2,7 @@
 
 namespace Phalconmerce\Popo\Abstracts;
 
+use Phalcon\Db\Column;
 use Phalconmerce\AbstractModel;
 
 /**
@@ -22,6 +23,12 @@ abstract class AbstractProduct extends AbstractModel {
 	 * @var int
 	 */
 	public $coreType;
+
+	/**
+	 * @Column(type="string", length=128, nullable=false)
+	 * @var string
+	 */
+	public $className;
 
 	/**
 	 * @Column(type="string", length=32, nullable=false)
@@ -119,5 +126,28 @@ abstract class AbstractProduct extends AbstractModel {
 			default :
 				return false;
 		}
+	}
+
+	/**
+	 * Use this method to get the wanted product object (CarPart, TeeShirt, etc.)
+	 * @return mixed|bool
+	 */
+	public function getSubObject() {
+		if ($this->className != '' && $this->id > 0) {
+			$fqcn = '\\Phalconmerce\\Popo\\'.$this->className;
+			$tmpObject = new $fqcn();
+			return $fqcn::findFirst(
+				array(
+					'conditions' => $tmpObject->prefix.'fk_product_id = :productId:',
+					'bind' => array(
+						'productId' => $this->id
+					),
+					'bindTypes' => array(
+						Column::BIND_PARAM_INT
+					)
+				)
+			);
+		}
+		return false;
 	}
 }

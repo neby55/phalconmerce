@@ -31,8 +31,10 @@ class PhpClass {
 		$this->isThereForeignKey = false;
 
 		// Load properties of parent abstract class
-		$fqcn = self::POPO_ABSTRACT_NAMESPACE.'\\'.$extendedClassName;
-		$this->parentPropertiesList = self::getClassProperties($fqcn);
+		if (!empty($this->extendedClassName)) {
+			$fqcn = self::POPO_ABSTRACT_NAMESPACE . '\\' . $this->extendedClassName;
+			$this->parentPropertiesList = self::getClassProperties($fqcn);
+		}
 
 		// Load relationships for this Class
 		$relationshipsList = Utils::loadData(Relationship::DATA_FILENAME);

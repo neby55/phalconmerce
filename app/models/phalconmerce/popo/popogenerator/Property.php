@@ -20,6 +20,8 @@ class Property {
 	protected $unique;
 	/** @var string */
 	protected $default;
+	/** @var boolean */
+	protected $translate;
 
 	public static $phpTypesList = array(
 		1 => 'int',
@@ -138,9 +140,12 @@ class Property {
 		}
 		$content .= ', nullable='.($this->nullable ? 'true' : 'false').')'.PHP_EOL;
 
+		if ($this->isTranslate()) {
+			$content .= $startLineCharacter . ' * @Translate' . PHP_EOL;
+		}
 		$content .= $startLineCharacter.' * @var '.$this->getPhpType().PHP_EOL;
 		$content .= $startLineCharacter.' */'.PHP_EOL;
-		$content .= $startLineCharacter.'protected $'.$this->name.';'.PHP_EOL;
+		$content .= $startLineCharacter.'public $'.$this->name.';'.PHP_EOL;
 
 		return $content;
 	}
@@ -234,5 +239,19 @@ class Property {
 	 */
 	public function setDefault($default) {
 		$this->default = $default;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isTranslate() {
+		return $this->translate;
+	}
+
+	/**
+	 * @param boolean $translate
+	 */
+	public function setTranslate($translate) {
+		$this->translate = $translate;
 	}
 }

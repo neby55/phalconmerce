@@ -191,20 +191,22 @@ class PopoTask extends Task {
 			}
 			else {
 				$className = current($askedClassNameList);
-				$phpClass = new PhpClass($className);
+				$phpClass = new PhpProductClass($className);
 				$phpClass->initTableName();
 
-				$coreType = self::askQuestion('Choose your Product Type ['.PhpProductClass::CORE_TYPE_SIMPLE_PRODUCT.'=>Simple Product, '.PhpProductClass::CORE_TYPE_CONFIGURABLE_PRODUCT.'=Configurable Product, '.PhpClass::CORE_TYPE_GROUPED_PRODUCT.'=Grouped Product] :', array(1,2,3));
+				$coreType = self::askQuestion('Choose your Product Type ['.PhpProductClass::CORE_TYPE_SIMPLE_PRODUCT.'=>Simple Product, '.PhpProductClass::CORE_TYPE_CONFIGURABLE_PRODUCT.'=Configurable Product, '.PhpProductClass::CORE_TYPE_GROUPED_PRODUCT.'=Grouped Product] :', array(1,2,3));
 				$phpClass->setExtendedClassNameFromCoreTypeResponse($coreType);
 
 				$abstractColumnsList = array(
 					'id',
 					'sku',
-					'price_vat_excluded',
+					'price vat excluded',
 					'weight',
 					'stock',
-					'status',
-					'parent_product_id'
+					'name',
+					'short description',
+					'description',
+					'status'
 				);
 
 				print 'Those properties are inherited from AbstractProduct :'.PHP_EOL;
@@ -227,26 +229,43 @@ class PopoTask extends Task {
 						if ($propertyObject->isNumeric()) {
 							$propertyObject->setLength(self::askQuestion('Its size [empty for automatic sizing] ?', array(), 0));
 						}
-						else if ($propertyObject->getType() == 'string') {
+						else if ($propertyObject->getType() == 3) { // string
 							$propertyObject->setLength(self::askQuestion('Its size (maximum characters) ?'));
 						}
 
-						// Unsigned
-						if ($propertyObject->isNumeric()) {
-							$response = self::askQuestion('Unsigned or not [1=unsigned, 2=signed] ?', array(1,2));
-							$propertyObject->setUnsigned($response == 1);
+						// Translate
+						if ($propertyObject->getType() == 3) { // string
+							$response = self::askQuestion('Does this property needs to be translated [yes/no] ?');
+							$propertyObject->setTranslate($response == 'yes' || $response == 'y');
 						}
 
-						// Default
-						$propertyObject->setDefault(self::askQuestion('Its default value (value or SQL expression) ?'));
+						// Ask for extra parameters
+						$response = self::askQuestion('Do you want to setup extra parameters for this property (signed/unsigned, default value, unique, nullable) [yes/no] ?');
+						if ($response == 'yes' || $response == 'y') {
+							// Unsigned
+							if ($propertyObject->isNumeric()) {
+								$response = self::askQuestion('Unsigned or not [1=unsigned, 2=signed] ?', array(1, 2));
+								$propertyObject->setUnsigned($response == 1);
+							}
 
-						// Unique
-						$response = self::askQuestion('In database, does this property should be UNIQUE [yes/no] ?');
-						$propertyObject->setUnique($response == 'yes' || $response == 'y');
+							// Default
+							$propertyObject->setDefault(self::askQuestion('Its default value (value or SQL expression) ?'));
 
-						// Nullable
-						$response = self::askQuestion('In database, can this property have NULL values [yes/no] ?');
-						$propertyObject->setNullable($response == 'yes' || $response == 'y');
+							// Unique
+							$response = self::askQuestion('In database, does this property should be UNIQUE [yes/no] ?');
+							$propertyObject->setUnique($response == 'yes' || $response == 'y');
+
+							// Nullable
+							$response = self::askQuestion('In database, can this property have NULL values [yes/no] ?');
+							$propertyObject->setNullable($response == 'yes' || $response == 'y');
+						}
+						else {
+							// default values for parameters
+							$propertyObject->setUnsigned(false);
+							$propertyObject->setDefault('');
+							$propertyObject->setUnique(false);
+							$propertyObject->setNullable(true);
+						}
 
 						$phpClass->addProperty($propertyObject);
 
