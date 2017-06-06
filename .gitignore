@@ -13,3 +13,6 @@ composer.phar
 # PhpStorm
 .idea
 local
+
+## abstract pattern (internal)
+app/models/phalconmerce/popo/abstracts/Abstract____pattern.php
