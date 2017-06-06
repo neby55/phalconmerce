@@ -1,9 +1,11 @@
 <?php
 
+namespace Cli\Tasks;
+
+use Cli\Models\Task;
 use Phalconmerce\AbstractModel;
-use Phalconmerce\Cli\Task;
 use Phalconmerce\Popo\TableGenerator\Table;
-use Phalconmerce\Utils;
+use Phalconmerce\Models\Utils;
 
 class TableTask extends Task {
 	public function mainAction() {

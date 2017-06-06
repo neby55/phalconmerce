@@ -1,5 +1,7 @@
 <?php
 
+use Phalcon\Mvc\Router;
+
 /** @var $di Phalcon\Di */
 if (isset($di)) {
 	/**
@@ -16,6 +18,12 @@ if (isset($di)) {
 	$di->set('configPhalconmerce', function () use ($configPhalconmerce) {
 		return $configPhalconmerce;
 	}, true);
+
+	/**
+	 * Define the phalconmerce Admin Router
+	 */
+	$router = new Router();
+	//$router->mount(new );
 }
 else {
 	die('DI should be instancied before phalconmerce services');

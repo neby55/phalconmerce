@@ -1,6 +1,8 @@
 <?php
 
-use Phalconmerce\Cli\Task;
+namespace Cli\Tasks;
+
+use Cli\Models\Task;
 
 class MainTask extends Task {
 	public function mainAction() {

@@ -17,6 +17,11 @@ if (defined('APP_PATH')) {
 		 */
 		include APP_PATH . "/app/config/phalconmerce.services.php";
 
+		/**
+		 * Setup modules
+		 */
+		include APP_PATH . "/app/config/phalconmerce.modules.php";
+
 	}
 	catch (\Exception $e) {
 		echo $e->getMessage() . '<br>';

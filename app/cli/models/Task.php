@@ -6,7 +6,7 @@
  * Time: 14:33
  */
 
-namespace Phalconmerce\Cli;
+namespace Cli\Models;
 
 class Task extends \Phalcon\Cli\Task {
 
