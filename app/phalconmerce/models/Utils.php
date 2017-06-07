@@ -167,6 +167,6 @@ class Utils {
 	 * @param mixed $var
 	 */
 	public static function debug($var) {
-		echo '<pre style="background: black;color:white;">'.print_r($var,1).'</pre>';
+		echo '<pre style="background: black;color:white;padding:8px 10px;">'.print_r($var,1).'</pre>';
 	}
 }

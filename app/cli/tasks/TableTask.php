@@ -52,7 +52,7 @@ class TableTask extends Task {
 			foreach ($classNamesList as $currentClassName) {
 				$fullPathToFile = $this->getDI()->get('configPhalconmerce')->modelsDir . DIRECTORY_SEPARATOR . $currentClassName.'.php';
 				if (file_exists($fullPathToFile)) {
-					$fqcn = \Phalconmerce\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\' . $currentClassName;
+					$fqcn = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\' . $currentClassName;
 
 					include_once $fullPathToFile;
 
@@ -61,7 +61,7 @@ class TableTask extends Task {
 					$currentObject = new $fqcn;
 
 					// Get properties
-					$properties = \Phalconmerce\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
+					$properties = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
 
 					// Get table name from class name
 					$tableObject = new Table(Utils::getTableNameFromClassName($currentClassName), $currentObject->getPrefix());

@@ -1,13 +1,11 @@
 <?php
 
+use Phalcon\Cli\Router;
 use Phalcon\Di\FactoryDefault\Cli as CliDI;
 use Phalcon\Loader;
 
 // Define to specify directory call with CLI
 define('CLI_PATH', dirname(__FILE__));
-
-$debug = new \Phalcon\Debug();
-$debug->listen();
 
 // TODO maybe improve CLI with docopt
 
@@ -31,10 +29,6 @@ class Console extends \Phalcon\CLI\Console {
 
 		// register the installed modules
 		$this->registerModules(array(
-			'cli' => [
-				'className' => 'Cli\Module',
-				'path' => __DIR__ . DIRECTORY_SEPARATOR . 'cli' . DIRECTORY_SEPARATOR . 'Module.php'
-			],
 			'phalconmerce' => [
 				'className' => 'Phalconmerce\Module',
 				'path' => __DIR__ . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'Module.php'
@@ -73,6 +67,23 @@ class Console extends \Phalcon\CLI\Console {
 
 			return $dispatcher;
 		});
+
+		// register URL to avoid fatal error
+		$di->set("url", function() {
+			$url = new \Phalcon\Mvc\Url();
+			$url->setBaseUri("/");
+			return $url;
+		});
+
+		// registering router (mandatory for namespaces and modules)
+		$di->set("router", function () {
+			$router = new Router(true);
+			$router->setDefaultModule('phalconmerce');
+			return $router;
+		});
+
+		// registering router (mandatory for namespaces and modules)
+		$di->set("console", $this);
 
 		$this->setDI($di);
 	}

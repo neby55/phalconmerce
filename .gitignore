@@ -14,5 +14,5 @@ composer.phar
 .idea
 local
 
-## abstract pattern (internal)
-app/models/phalconmerce/popo/abstracts/Abstract____pattern.php
+## cache directory
+app/cache

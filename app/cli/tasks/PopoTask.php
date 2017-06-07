@@ -3,11 +3,12 @@
 namespace Cli\Tasks;
 
 use Cli\Models\Task;
-use Phalconmerce\Popo\Popogenerator\PhpClass;
-use Phalconmerce\Popo\Popogenerator\PhpProductClass;
-use Phalconmerce\Popo\Popogenerator\Property;
-use Phalconmerce\Popo\Popogenerator\Relationship;
-use Phalconmerce\Popo\Popogenerator\RelationshipManyToMany;
+use Phalconmerce\Models\Popo\Popogenerator\PhpClass;
+use Phalconmerce\Models\Popo\Popogenerator\PhpProductClass;
+use Phalconmerce\Models\Popo\Popogenerator\Property;
+use Phalconmerce\Models\Popo\Popogenerator\Relationship;
+use Phalconmerce\Models\Popo\Popogenerator\RelationshipManyToMany;
+use Phalconmerce\Models\Utils;
 
 class PopoTask extends Task {
 	public function mainAction() {
@@ -34,10 +35,10 @@ class PopoTask extends Task {
 			$relationshipsList = array();
 			foreach ($abstractClassesList as $currentClassName=>$currentAbstractClassName) {
 				// Generate FCQN
-				$fqcn = \Phalconmerce\Popo\Popogenerator\PhpClass::POPO_ABSTRACT_NAMESPACE.'\\'.$currentAbstractClassName;
+				$fqcn = PhpClass::POPO_ABSTRACT_NAMESPACE.'\\'.$currentAbstractClassName;
 
 				// Get properties
-				$propertiesList = \Phalconmerce\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
+				$propertiesList = PhpClass::getClassProperties($fqcn);
 
 				// Initialize nmRelationships
 				$nmRelationshipsList = array();
@@ -100,7 +101,7 @@ class PopoTask extends Task {
 			}
 
 			// Store relationships in data
-			if (\Phalconmerce\Models\Utils::saveData($relationshipsList, Relationship::DATA_FILENAME)) {
+			if (Utils::saveData($relationshipsList, Relationship::DATA_FILENAME)) {
 				echo 'Relationships data generation ok'.PHP_EOL;
 				echo 'Now you can generate POPO Classes'.PHP_EOL;
 			}
@@ -115,7 +116,7 @@ class PopoTask extends Task {
 
 	public function generatorAction($params) {
 		// First of all, Load relationshps
-		$relationshipsList = \Phalconmerce\Models\Utils::loadData(Relationship::DATA_FILENAME);
+		$relationshipsList = Utils::loadData(Relationship::DATA_FILENAME);
 		if (!isset($relationshipsList) || $relationshipsList === false || !is_array($relationshipsList)) {
 			echo PHP_EOL;
 			echo 'No relationships generated yet. You must execute "POPO Relationships" CLI tool before any other.'.PHP_EOL;

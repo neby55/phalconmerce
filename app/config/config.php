@@ -4,13 +4,14 @@ defined('APP_PATH') || define('APP_PATH', realpath('.'));
 
 return new \Phalcon\Config(array(
 	'database' => array(
-		'adapter' => 'Mysql',
-		'host' => 'localhost',
-		'username' => 'pgw-plugin-store',
-		'password' => 'pgw-plugin-store',
-		'dbname' => 'pgw-plugin-store',
+		'adapter' => '',
+		'host' => '',
+		'username' => '',
+		'password' => '',
+		'dbname' => '',
 		'charset' => 'utf8',
 	),
 	'cacheDir' => APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
-	'baseUri' => '/pgw/phalconmerce/',
+	'baseUri' => isset($_SERVER['BASE_URI']) ? $_SERVER['BASE_URI'] : '', // BASE_URI index generated thanks to public/.htaccess
+	'adminDir' => 'admin',
 ));
