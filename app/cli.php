@@ -26,20 +26,21 @@ class Console extends \Phalcon\CLI\Console {
 				'Cli\Tasks' => __DIR__ . DIRECTORY_SEPARATOR . 'cli' . DIRECTORY_SEPARATOR . 'tasks'
 			)
 		);
-
-		// register the installed modules
-		$this->registerModules(array(
-			'phalconmerce' => [
-				'className' => 'Phalconmerce\Module',
-				'path' => __DIR__ . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'Module.php'
-			]
-		));
-
 		$loader->register();
 	}
 
 	public function main() {
 		$di = new CliDI();
+
+		// registering config
+		$di->set('config', function () {
+			return include __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+		});
+
+		// registering phalconmerce config
+		$di->set('configPhalconmerce', function () {
+			return include __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'phalconmerce.config.php';
+		});
 
 		// registering a router
 		$di->set('router', function () {
@@ -78,9 +79,16 @@ class Console extends \Phalcon\CLI\Console {
 		// registering router (mandatory for namespaces and modules)
 		$di->set("router", function () {
 			$router = new Router(true);
-			$router->setDefaultModule('phalconmerce');
 			return $router;
 		});
+
+		// Ading phalconmerce namespaces
+		$loader = new \Phalcon\Loader();
+		$loader->registerNamespaces(
+			$di->get('configPhalconmerce')->get('namespaces')->toArray(),
+			true
+		);
+		$loader->register();
 
 		// registering router (mandatory for namespaces and modules)
 		$di->set("console", $this);

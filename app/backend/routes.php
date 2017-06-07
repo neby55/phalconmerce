@@ -18,3 +18,12 @@ $backendRouter->add('/',
 		"action"     => "index",
 	]
 );
+
+$backendRouter->add(
+	'/:controller/:action/:params',
+	[
+		"controller" => 1,
+		"action"     => 2,
+		"params"     => 3,
+	]
+);

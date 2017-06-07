@@ -7,12 +7,9 @@ use Phalconmerce\Models\AbstractModel;
 use Phalconmerce\Models\Popo\TableGenerator\Table;
 use Phalconmerce\Models\Utils;
 
-class TableTask extends Task {
+class BackendTask extends Task {
 	public function mainAction() {
-		echo PHP_EOL;
-		echo "You have 1 CLI tool available for task \"table\" :" . PHP_EOL;
-		echo "- \"Table setup\" for creating or altering tables on configured database" . PHP_EOL;
-		echo self::TAB_CHARACTER."php app/cli.php table setup" . PHP_EOL;
+		$this->displayHelp();
 	}
 
 	public function setupAction($params) {
@@ -90,25 +87,26 @@ class TableTask extends Task {
 				}
 				else {
 					echo 'Class file ' . $currentClassName . '.php does not exists'.PHP_EOL;
-					$this->displaySetupHelp();
+					$this->displayHelp();
 				}
 			}
 		}
 		else {
-			$this->displaySetupHelp();
+			$this->displayHelp();
 		}
 		echo PHP_EOL;
 	}
 
-	private function displaySetupHelp() {
+	private function displayHelp() {
 		echo PHP_EOL;
-		echo 'Phalconmerce tool for create or alter tables on configured database, and based on POPO classes existing in folder :' . PHP_EOL;
+		echo 'Phalconmerce tool for generating standard backend based on POPO classes existing in folder.' . PHP_EOL;
+		echo 'Controlles, Forms and Views will be generated. But ' . PHP_EOL;
 		echo self::TAB_CHARACTER.$this->getDI()->get('configPhalconmerce')->popoModelsDir . PHP_EOL;
 		echo PHP_EOL;
 		echo 'Usage :' . PHP_EOL;
-		echo self::TAB_CHARACTER.'php app/cli.php [options] table <ClassName>' . PHP_EOL . PHP_EOL;
+		echo self::TAB_CHARACTER.'php app/cli.php backend [ClassName]' . PHP_EOL . PHP_EOL;
 		echo 'Options :' . PHP_EOL;
-		echo self::TAB_CHARACTER.'--all' . self::TAB_CHARACTER . 'to create or alter table for every classes' . PHP_EOL;
+		echo self::TAB_CHARACTER.'--all' . self::TAB_CHARACTER . 'to generate backend for every classes' . PHP_EOL;
 		echo self::TAB_CHARACTER.'--delete' . self::TAB_CHARACTER . 'to delete table before creating it (table datas will also be deleted, be careful)' . PHP_EOL;
 		echo self::TAB_CHARACTER.'--table-prefix=prefix' . self::TAB_CHARACTER . 'to prefix every related tables' . PHP_EOL;
 		echo PHP_EOL;

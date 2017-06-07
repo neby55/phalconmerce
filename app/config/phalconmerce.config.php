@@ -14,5 +14,6 @@ return new \Phalcon\Config(array(
 		'Phalconmerce\Models\Popo\Abstracts' => PHALCONMERCE_PATH . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'popo' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
 		'Phalconmerce\Models\Popo\Popogenerator' => PHALCONMERCE_PATH . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'popo' . DIRECTORY_SEPARATOR . 'popogenerator' . DIRECTORY_SEPARATOR,
 		'Phalconmerce\Models\Popo\Tablegenerator' => PHALCONMERCE_PATH . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'popo' . DIRECTORY_SEPARATOR . 'tablegenerator' . DIRECTORY_SEPARATOR,
+		'Phalconmerce\Services' => PHALCONMERCE_PATH . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
 	)
 ));

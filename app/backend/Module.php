@@ -14,6 +14,7 @@ use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 use Phalcon\DiInterface;
 use Phalcon\Mvc\View;
+use Phalcon\Events\Manager as EventsManager;
 
 class Module implements ModuleDefinitionInterface {
 	/**
@@ -39,6 +40,7 @@ class Module implements ModuleDefinitionInterface {
 	 * @param mixed $dependencyInjector
 	 */
 	public function registerServices(DiInterface $dependencyInjector) {
+		// TODO handle ACL in for backend, like invo/plugins/SecurityPlugin
 		/**
 		 * Dispatcher
 		 */

@@ -295,7 +295,7 @@ class PopoTask extends Task {
 		echo 'Phalconmerce tool for generate empty POPO Classes (excepting Product)'.PHP_EOL;
 		echo 'for Phalconmerce Abstract Classes'.PHP_EOL.PHP_EOL;
 		echo 'Usage :'.PHP_EOL;
-		echo '  php app/cli.php [options] popo generator [classe_name[ classe_name2[...]]]'.PHP_EOL.PHP_EOL;
+		echo '  php app/cli.php [options] popo generator [<ClassName> [<ClassName>...]]'.PHP_EOL.PHP_EOL;
 		echo 'Options :'.PHP_EOL;
 		echo '  --all'.self::TAB_CHARACTER.'to generate every Classes'.PHP_EOL;
 		echo '  --table-prefix=prefix'.self::TAB_CHARACTER.'to prefix every related tables'.PHP_EOL;
@@ -305,7 +305,7 @@ class PopoTask extends Task {
 	private static function displayProductGeneratorHelp() {
 		echo 'Phalconmerce tool for generate empty POPO Product Classes'.PHP_EOL.PHP_EOL;
 		echo 'Usage :'.PHP_EOL;
-		echo '  php app/cli.php popo productgenerator ProductClassName'.PHP_EOL.PHP_EOL;
+		echo '  php app/cli.php popo productgenerator <ProductClassName>'.PHP_EOL.PHP_EOL;
 		exit;
 	}
 }
