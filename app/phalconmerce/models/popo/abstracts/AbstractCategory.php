@@ -43,7 +43,7 @@ abstract class AbstractCategory extends AbstractModel {
 	 * @return mixed
 	 */
 	public function getParent() {
-		return \Phalconmerce\Popo\Category::findFirst($this->getParentId());
+		return \Phalconmerce\Models\Popo\Category::findFirst($this->getParentId());
 	}
 
 	/**

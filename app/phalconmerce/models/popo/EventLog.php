@@ -6,9 +6,9 @@
  * Time: 20:05
  */
 
-namespace Phalconmerce\Popo;
+namespace Phalconmerce\Models\Popo;
 
-use Phalconmerce\Model;
+use Phalconmerce\Models\Model;
 
 class EventLog extends Model {
 	/**

@@ -15,14 +15,12 @@ abstract class AbstractCart extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Primary
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
 	public $fk_cart_id;
 
 	/**
-	 * @Primary
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
@@ -35,14 +33,12 @@ abstract class AbstractCart extends AbstractModel {
 	public $fk_currency_id;
 
 	/**
-	 * @Primary
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
 	public $fk_product_id;
 
 	/**
-	 * @Primary
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
@@ -71,7 +67,7 @@ abstract class AbstractCart extends AbstractModel {
 	 * @return AbstractMenu
 	 */
 	public function getParent() {
-		return \Phalconmerce\Popo\Cart::findFirst($this->getParentId());
+		return \Phalconmerce\Models\Popo\Cart::findFirst($this->getParentId());
 	}
 
 	/**

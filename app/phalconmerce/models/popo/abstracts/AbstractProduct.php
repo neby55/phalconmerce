@@ -7,7 +7,7 @@ use Phalconmerce\Models\AbstractModel;
 
 /**
  * Class AbstractProduct
- * @package Phalconmerce\Popo\Abstracts
+ * @package Phalconmerce\Models\Popo\Abstracts
  */
 abstract class AbstractProduct extends AbstractModel {
 	/**
@@ -95,10 +95,6 @@ abstract class AbstractProduct extends AbstractModel {
 	const PRODUCT_TYPE_CONFIGURABLE = 2;
 	const PRODUCT_TYPE_CONFIGURED = 3;
 	const PRODUCT_TYPE_GROUPED = 4;
-
-	public function initialize() {
-		$this->setSource("product");
-	}
 
 	/**
 	 * @return bool

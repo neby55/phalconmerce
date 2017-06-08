@@ -35,7 +35,7 @@ class TableTask extends Task {
 
 		// If --all option
 		if (array_key_exists('all', $options)) {
-			if ($handle = opendir($this->getDI()->get('configPhalconmerce')->modelsDir)) {
+			if ($handle = opendir($this->getDI()->get('configPhalconmerce')->popoModelsDir)) {
 				while (false !== ($entry = readdir($handle))) {
 					if ($entry != '.' && $entry != '..' && substr($entry, -4) == '.php') {
 						$classNamesList[] = substr($entry, 0, -4);
@@ -50,21 +50,28 @@ class TableTask extends Task {
 
 		if (sizeof($classNamesList) > 0) {
 			foreach ($classNamesList as $currentClassName) {
-				$fullPathToFile = $this->getDI()->get('configPhalconmerce')->modelsDir . DIRECTORY_SEPARATOR . $currentClassName.'.php';
+				$fullPathToFile = $this->getDI()->get('configPhalconmerce')->popoModelsDir . DIRECTORY_SEPARATOR . $currentClassName.'.php';
 				if (file_exists($fullPathToFile)) {
+					echo '0';
 					$fqcn = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\' . $currentClassName;
+					echo '1';
 
 					include_once $fullPathToFile;
+
+					echo '2';
 
 					// Get the object
 					/** @var AbstractModel $currentObject */
 					$currentObject = new $fqcn;
+					echo 'a';
 
 					// Get properties
 					$properties = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
+					echo 'b';
 
 					// Get table name from class name
 					$tableObject = new Table(Utils::getTableNameFromClassName($currentClassName), $currentObject->getPrefix());
+					echo 'c';
 
 					if (sizeof($properties) > 0) {
 						foreach ($properties as $currentPropertyName => $currentPropertyReflect) {
@@ -75,6 +82,7 @@ class TableTask extends Task {
 							}
 						}
 					}
+					echo 'd';
 
 					// If deletion confirmed
 					if ($deletion) {

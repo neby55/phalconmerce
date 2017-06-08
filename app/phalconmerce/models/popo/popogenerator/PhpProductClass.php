@@ -10,8 +10,9 @@ class PhpProductClass extends PhpClass {
 	protected static $abstractProductClassesList = array(
 		'AbstractConfigurableProduct',
 		'AbstractConfiguredProduct',
-		'AbstractProduct',
-		'AbstractSimpleProduct'
+		'AbstractSimpleProduct',
+		'AbstractGroupedProduct',
+		'AbstractGroupedProductHasSimpleProduct'
 	);
 
 	const CORE_TYPE_SIMPLE_PRODUCT = 1;

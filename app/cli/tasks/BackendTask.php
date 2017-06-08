@@ -32,7 +32,7 @@ class BackendTask extends Task {
 
 		// If --all option
 		if (array_key_exists('all', $options)) {
-			if ($handle = opendir($this->getDI()->get('configPhalconmerce')->modelsDir)) {
+			if ($handle = opendir($this->getDI()->get('configPhalconmerce')->popoModelsDir)) {
 				while (false !== ($entry = readdir($handle))) {
 					if ($entry != '.' && $entry != '..' && substr($entry, -4) == '.php') {
 						$classNamesList[] = substr($entry, 0, -4);
@@ -47,7 +47,7 @@ class BackendTask extends Task {
 
 		if (sizeof($classNamesList) > 0) {
 			foreach ($classNamesList as $currentClassName) {
-				$fullPathToFile = $this->getDI()->get('configPhalconmerce')->modelsDir . DIRECTORY_SEPARATOR . $currentClassName.'.php';
+				$fullPathToFile = $this->getDI()->get('configPhalconmerce')->popoModelsDir . DIRECTORY_SEPARATOR . $currentClassName.'.php';
 				if (file_exists($fullPathToFile)) {
 					$fqcn = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\' . $currentClassName;
 

@@ -22,12 +22,12 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 	public $fk_product_id;
 
 	/**
-	 * @var \Phalconmerce\Popo\Product
+	 * @var \Phalconmerce\Models\Popo\Product
 	 */
 	public $product;
 
 	private function loadProduct() {
-		$this->product = \Phalconmerce\Popo\Product::findFirst($this->getProductId());
+		$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
 	}
 
 	public function initialize() {
@@ -44,7 +44,7 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 	}
 
 	/**
-	 * @return \Phalconmerce\Popo\Product
+	 * @return \Phalconmerce\Models\Popo\Product
 	 */
 	public function getProduct() {
 		return $this->product;
@@ -72,12 +72,12 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 	}
 
 	/**
-	 * @param \Phalconmerce\Popo\SimpleProduct $product
+	 * @param \Phalconmerce\Models\Popo\SimpleProduct $product
 	 * @return mixed
 	 */
 	public function addProduct($product) {
 		if (is_a($product, 'AbstractSimpleProduct')) {
-			$groupedProductHasSimpleProduct = new \Phalconmerce\Popo\GroupedProductHasSimpleProduct();
+			$groupedProductHasSimpleProduct = new \Phalconmerce\Models\Popo\GroupedProductHasSimpleProduct();
 			$groupedProductHasSimpleProduct->fk_groupedproduct_id = $this->id;
 			$groupedProductHasSimpleProduct->fk_simpleproduct_id = $product->id;
 			return $groupedProductHasSimpleProduct->save();
@@ -88,13 +88,13 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 	}
 
 	/**
-	 * @param \Phalconmerce\Popo\SimpleProduct $product
+	 * @param \Phalconmerce\Models\Popo\SimpleProduct $product
 	 * @return mixed
 	 */
 	public function deleteProduct($product) {
 		if (is_a($product, 'AbstractSimpleProduct')) {
-			$groupedProductHasSimpleProductTmp = new \Phalconmerce\Popo\GroupedProductHasSimpleProduct();
-			$groupedProductHasSimpleProduct = \Phalconmerce\Popo\GroupedProductHasSimpleProduct::findFirst(
+			$groupedProductHasSimpleProductTmp = new \Phalconmerce\Models\Popo\GroupedProductHasSimpleProduct();
+			$groupedProductHasSimpleProduct = \Phalconmerce\Models\Popo\GroupedProductHasSimpleProduct::findFirst(
 				array(
 					'conditions' => $groupedProductHasSimpleProductTmp->prefix.'fk_groupedproduct_id = :groupedProductId:
 					        AND '.$groupedProductHasSimpleProductTmp->prefix.'fk_simpleproduct_id = :simpleProductId:',

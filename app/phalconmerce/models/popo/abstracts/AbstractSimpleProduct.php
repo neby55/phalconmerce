@@ -21,12 +21,12 @@ abstract class AbstractSimpleProduct extends AbstractModel {
 	public $fk_product_id;
 
 	/**
-	 * @var \Phalconmerce\Popo\Product
+	 * @var \Phalconmerce\Models\Popo\Product
 	 */
 	public $product;
 
 	private function loadProduct() {
-		$this->product = \Phalconmerce\Popo\Product::findFirst($this->getProductId());
+		$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
 	}
 
 	public function initialize() {
@@ -43,7 +43,7 @@ abstract class AbstractSimpleProduct extends AbstractModel {
 	}
 
 	/**
-	 * @return \Phalconmerce\Popo\Product
+	 * @return \Phalconmerce\Models\Popo\Product
 	 */
 	public function getProduct() {
 		return $this->product;

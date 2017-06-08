@@ -42,6 +42,19 @@ class Console extends \Phalcon\CLI\Console {
 			return include __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'phalconmerce.config.php';
 		});
 
+		/**
+		 * Database connection is created based in the parameters defined in the configuration file
+		 */
+		$di->setShared('db', function () use ($di) {
+			$dbConfig = $this->get('config')->get('database')->toArray();
+			$adapter = $dbConfig['adapter'];
+			unset($dbConfig['adapter']);
+
+			$class = 'Phalcon\Db\Adapter\Pdo\\' . $adapter;
+
+			return new $class($dbConfig);
+		});
+
 		// registering a router
 		$di->set('router', function () {
 			$router = new \Phalcon\CLI\Router();

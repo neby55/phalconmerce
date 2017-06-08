@@ -22,22 +22,23 @@ abstract class AbstractConfigurableProduct extends AbstractModel {
 	public $fk_product_id;
 
 	/**
-	 * @var \Phalconmerce\Popo\Product
+	 * @var \Phalconmerce\Models\Popo\Product
 	 */
 	public $product;
 
 	/**
-	 * @var \Phalconmerce\Popo\ConfiguredProduct[]
+	 * @var \Phalconmerce\Models\Popo\Abstracts\AbstractConfiguredProduct[]
 	 */
 	public $configuredProductList;
 
 	private function loadProduct() {
-		$this->product = \Phalconmerce\Popo\Product::findFirst($this->getProductId());
+		$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
 	}
 
 	private function loadConfiguredProducts() {
-		$tmpObject = new \Phalconmerce\Popo\ConfiguredProduct();
-		$this->configuredProductList = \Phalconmerce\Popo\ConfiguredProduct::find(
+		// TODO find a way to name the correct classname (won't be ConfiguredProduct but Shoe or Glasses)
+		$tmpObject = new \Phalconmerce\Models\Popo\ConfiguredProduct();
+		$this->configuredProductList = \Phalconmerce\Models\Popo\ConfiguredProduct::find(
 			array(
 				'conditions' => $tmpObject->prefix.'fk_configurableproduct_id = :configurableProductId:',
 				'bind' => array(
@@ -65,7 +66,7 @@ abstract class AbstractConfigurableProduct extends AbstractModel {
 	}
 
 	/**
-	 * @return \Phalconmerce\Popo\Product
+	 * @return \Phalconmerce\Models\Popo\Product
 	 */
 	public function getProduct() {
 		return $this->product;

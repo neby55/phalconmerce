@@ -21,7 +21,7 @@ abstract class AbstractConfiguredProduct extends AbstractModel {
 	public $fk_configurableproduct_id;
 
 	/**
-	 * @var \Phalconmerce\Popo\ConfigurableProduct
+	 * @var \Phalconmerce\Models\Popo\ConfigurableProduct
 	 */
 	public $configurableProduct;
 
@@ -32,16 +32,16 @@ abstract class AbstractConfiguredProduct extends AbstractModel {
 	public $fk_product_id;
 
 	/**
-	 * @var \Phalconmerce\Popo\Product
+	 * @var \Phalconmerce\Models\Popo\Product
 	 */
 	public $product;
 
 	private function loadProduct() {
-		$this->product = \Phalconmerce\Popo\Product::findFirst($this->getProductId());
+		$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
 	}
 
 	private function loadConfigurableProduct() {
-		$this->configurableProduct = \Phalconmerce\Popo\ConfigurableProduct::findFirst($this->getConfigurableProductId());
+		$this->configurableProduct = \Phalconmerce\Models\Popo\ConfigurableProduct::findFirst($this->getConfigurableProductId());
 	}
 
 	public function initialize() {
@@ -58,7 +58,7 @@ abstract class AbstractConfiguredProduct extends AbstractModel {
 	}
 
 	/**
-	 * @return \Phalconmerce\Popo\Product
+	 * @return \Phalconmerce\Models\Popo\Product
 	 */
 	public function getProduct() {
 		return $this->product;
@@ -72,7 +72,7 @@ abstract class AbstractConfiguredProduct extends AbstractModel {
 	}
 
 	/**
-	 * @return \Phalconmerce\Popo\ConfigurableProduct
+	 * @return \Phalconmerce\Models\Popo\ConfigurableProduct
 	 */
 	public function getConfigurableProduct() {
 		return $this->configurableProduct;

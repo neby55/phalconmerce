@@ -56,7 +56,7 @@ class Module implements ModuleDefinitionInterface {
 		 */
 		$dependencyInjector->set('view', function () {
 			$view = new View();
-			$view->setViewsDir(__DIR__ . '/views/');
+			$view->setViewsDir(__DIR__ . '/views/sb-admin2/');
 			return $view;
 		});
 	}
