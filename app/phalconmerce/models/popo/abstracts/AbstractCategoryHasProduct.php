@@ -2,9 +2,9 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\AbstractModelManyToMany;
 
-abstract class AbstractCategoryHasProduct extends AbstractModel {
+abstract class AbstractCategoryHasProduct extends AbstractModelManyToMany {
 
 	/**
 	 * @Primary
@@ -26,14 +26,4 @@ abstract class AbstractCategoryHasProduct extends AbstractModel {
 	 * @var int
 	 */
 	public $position;
-
-	/**
-	 * Overriding AbstractModel::initialize() to force the prefix
-	 */
-	public function initialize() {
-		// Set the prefix
-		$this->prefix = 'chl_';
-
-		parent::initialize();
-	}
 }

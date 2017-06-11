@@ -26,12 +26,15 @@ abstract class AbstractSimpleProduct extends AbstractModel {
 	public $product;
 
 	private function loadProduct() {
-		$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		if ($this->getProductId() > 0) {
+			$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		}
 	}
 
 	public function initialize() {
 		parent::initialize();
 
+		// TODO check if related product is automatically loaded when "find"
 		$this->loadProduct();
 	}
 

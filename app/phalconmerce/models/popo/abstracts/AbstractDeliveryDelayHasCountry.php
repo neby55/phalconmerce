@@ -9,9 +9,9 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\AbstractModelManyToMany;
 
-abstract class AbstractDeliveryDelayHasCountry extends AbstractModel {
+abstract class AbstractDeliveryDelayHasCountry extends AbstractModelManyToMany {
 
 	/**
 	 * @Primary
@@ -26,14 +26,4 @@ abstract class AbstractDeliveryDelayHasCountry extends AbstractModel {
 	 * @var int
 	 */
 	public $fk_country_id;
-
-	/**
-	 * Overriding AbstractModel::initialize() to force the prefix
-	 */
-	public function initialize() {
-		// Set the prefix
-		$this->prefix = 'ddhc_';
-
-		parent::initialize();
-	}
 }

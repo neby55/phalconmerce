@@ -37,11 +37,21 @@ abstract class AbstractConfiguredProduct extends AbstractModel {
 	public $product;
 
 	private function loadProduct() {
-		$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		if ($this->getProductId() > 0) {
+			$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		}
+	}
+
+	/**
+	 * @return mixed
+	 */
+	protected static function getConfigurableClassName() {
+		return str_replace('Configured', 'Configurable', __CLASS__);
 	}
 
 	private function loadConfigurableProduct() {
-		$this->configurableProduct = \Phalconmerce\Models\Popo\ConfigurableProduct::findFirst($this->getConfigurableProductId());
+		$fqcn = self::getConfigurableClassName();
+		$this->configurableProduct = $fqcn::findFirst($this->getConfigurableProductId());
 	}
 
 	public function initialize() {

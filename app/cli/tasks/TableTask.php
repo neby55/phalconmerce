@@ -52,37 +52,29 @@ class TableTask extends Task {
 			foreach ($classNamesList as $currentClassName) {
 				$fullPathToFile = $this->getDI()->get('configPhalconmerce')->popoModelsDir . DIRECTORY_SEPARATOR . $currentClassName.'.php';
 				if (file_exists($fullPathToFile)) {
-					echo '0';
 					$fqcn = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\' . $currentClassName;
-					echo '1';
 
 					include_once $fullPathToFile;
-
-					echo '2';
 
 					// Get the object
 					/** @var AbstractModel $currentObject */
 					$currentObject = new $fqcn;
-					echo 'a';
 
 					// Get properties
 					$properties = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
-					echo 'b';
 
 					// Get table name from class name
 					$tableObject = new Table(Utils::getTableNameFromClassName($currentClassName), $currentObject->getPrefix());
-					echo 'c';
 
 					if (sizeof($properties) > 0) {
 						foreach ($properties as $currentPropertyName => $currentPropertyReflect) {
 							if (!in_array($currentPropertyName, Table::$excludedPropertyNamesList)) {
 								if (!$tableObject->addByAnnotations($currentPropertyName, $currentPropertyReflect)) {
-									echo 'property ' . $currentPropertyName . ' not in DB'.PHP_EOL;
+									//echo 'property ' . $currentPropertyName . ' not in DB'.PHP_EOL;
 								}
 							}
 						}
 					}
-					echo 'd';
 
 					// If deletion confirmed
 					if ($deletion) {

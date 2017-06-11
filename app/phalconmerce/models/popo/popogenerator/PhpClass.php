@@ -70,6 +70,7 @@ class PhpClass {
 		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// You can add here instructions that will be executed by the framework, after construction'.PHP_EOL.PHP_EOL;
 		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// Set the DB table related to this class'.PHP_EOL;
 		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'$this->setSource(\'%s\');'.PHP_EOL;
+		$phpContent .= $this->getPhpInitializeFunctionExtra();
 
 		// If ForeignKeys
 		if (sizeof($this->relationshipsList)) {
@@ -90,6 +91,13 @@ class PhpClass {
 			$this->extendedClassName,
 			$this->tableName
 		);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getPhpInitializeFunctionExtra() {
+		return '';
 	}
 
 	public function setExtendedClassNameFromCoreTypeResponse($coreProductType) { }

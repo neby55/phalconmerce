@@ -9,9 +9,9 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\AbstractModelManyToMany;
 
-abstract class AbstractOrderReturnHasCart extends AbstractModel {
+abstract class AbstractOrderReturnHasCart extends AbstractModelManyToMany {
 
 	/**
 	 * @Primary
@@ -32,15 +32,4 @@ abstract class AbstractOrderReturnHasCart extends AbstractModel {
 	 * @var int
 	 */
 	public $quantity;
-
-	/**
-	 * Overriding AbstractModel::initialize() to force the prefix
-	 */
-	public function initialize() {
-		// Set the prefix
-		$this->prefix = 'orhc_';
-
-		parent::initialize();
-	}
-
 }

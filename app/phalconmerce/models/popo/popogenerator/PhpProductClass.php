@@ -19,6 +19,7 @@ class PhpProductClass extends PhpClass {
 	const CORE_TYPE_CONFIGURABLE_PRODUCT = 2;
 	const CORE_TYPE_GROUPED_PRODUCT = 3;
 
+
 	public function setExtendedClassNameFromCoreTypeResponse($coreProductType) {
 		if ($coreProductType == self::CORE_TYPE_SIMPLE_PRODUCT) {
 			$this->extendedClassName = 'AbstractSimpleProduct';

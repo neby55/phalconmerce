@@ -32,23 +32,34 @@ abstract class AbstractConfigurableProduct extends AbstractModel {
 	public $configuredProductList;
 
 	private function loadProduct() {
-		$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		if ($this->getProductId() > 0) {
+			$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		}
+	}
+
+	/**
+	 * @return mixed
+	 */
+	protected static function getConfiguredClassName() {
+		return str_replace('Configurable', 'Configured', __CLASS__);
 	}
 
 	private function loadConfiguredProducts() {
-		// TODO find a way to name the correct classname (won't be ConfiguredProduct but Shoe or Glasses)
-		$tmpObject = new \Phalconmerce\Models\Popo\ConfiguredProduct();
-		$this->configuredProductList = \Phalconmerce\Models\Popo\ConfiguredProduct::find(
-			array(
-				'conditions' => $tmpObject->prefix.'fk_configurableproduct_id = :configurableProductId:',
-				'bind' => array(
-					'configurableProductId' => $this->id
-				),
-				'bindTypes' => array(
-					Column::BIND_PARAM_INT
+		if ($this->id > 0) {
+			$fqcn = self::getConfiguredClassName();
+			$tmpObject = new $fqcn();
+			$this->configuredProductList = $fqcn::find(
+				array(
+					'conditions' => $tmpObject->prefix . 'fk_configurableproduct_id = :configurableProductId:',
+					'bind' => array(
+						'configurableProductId' => $this->id
+					),
+					'bindTypes' => array(
+						Column::BIND_PARAM_INT
+					)
 				)
-			)
-		);
+			);
+		}
 	}
 
 	public function initialize() {

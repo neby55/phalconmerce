@@ -26,8 +26,32 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 	 */
 	public $product;
 
+	/**
+	 * @var \Phalconmerce\Models\Popo\Product[]
+	 */
+	public $childrenProductList;
+
 	private function loadProduct() {
-		$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		if ($this->getProductId() > 0) {
+			$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		}
+	}
+
+	private function loadChildrenProducts() {
+		if ($this->id > 0) {
+			$tmpObject = new \Phalconmerce\Models\Popo\Product();
+			$this->childrenProductList = \Phalconmerce\Models\Popo\Product::find(
+				array(
+					'conditions' => $tmpObject->prefix . 'fk_groupedproduct_id = :groupedProductId:',
+					'bind' => array(
+						'groupedProductId' => $this->id
+					),
+					'bindTypes' => array(
+						Column::BIND_PARAM_INT
+					)
+				)
+			);
+		}
 	}
 
 	public function initialize() {
@@ -72,52 +96,64 @@ abstract class AbstractGroupedProduct extends AbstractModel {
 	}
 
 	/**
-	 * @param \Phalconmerce\Models\Popo\SimpleProduct $product
+	 * @param \Phalconmerce\Models\Popo\Product $product
 	 * @return mixed
 	 */
 	public function addProduct($product) {
-		if (is_a($product, 'AbstractSimpleProduct')) {
-			$groupedProductHasSimpleProduct = new \Phalconmerce\Models\Popo\GroupedProductHasSimpleProduct();
-			$groupedProductHasSimpleProduct->fk_groupedproduct_id = $this->id;
-			$groupedProductHasSimpleProduct->fk_simpleproduct_id = $product->id;
-			return $groupedProductHasSimpleProduct->save();
+		if ($this->id > 0) {
+			if (is_a($product, 'AbstractProduct')) {
+				$fqcn = __CLASS__ . 'HasProduct';
+				$groupedProductHasProduct = new $fqcn();
+				$groupedProductHasProduct->fk_groupedproduct_id = $this->id;
+				$groupedProductHasProduct->fk_product_id = $product->id;
+				return $groupedProductHasProduct->save();
+			}
+			else {
+				throw new \InvalidArgumentException('product passed to method "addProduct" is not a child of AbstractProduct');
+			}
 		}
 		else {
-			throw new \InvalidArgumentException('product passed to method "addProduct" is not a child of AbstractSimpleProduct');
+			throw new \InvalidArgumentException('groupedProduct has a null ID');
 		}
 	}
 
 	/**
-	 * @param \Phalconmerce\Models\Popo\SimpleProduct $product
+	 * @param \Phalconmerce\Models\Popo\Product $product
 	 * @return mixed
 	 */
 	public function deleteProduct($product) {
-		if (is_a($product, 'AbstractSimpleProduct')) {
-			$groupedProductHasSimpleProductTmp = new \Phalconmerce\Models\Popo\GroupedProductHasSimpleProduct();
-			$groupedProductHasSimpleProduct = \Phalconmerce\Models\Popo\GroupedProductHasSimpleProduct::findFirst(
-				array(
-					'conditions' => $groupedProductHasSimpleProductTmp->prefix.'fk_groupedproduct_id = :groupedProductId:
-					        AND '.$groupedProductHasSimpleProductTmp->prefix.'fk_simpleproduct_id = :simpleProductId:',
-					'bind' => array(
-						'groupedProductId' => $this->id,
-						'simpleProductId' => $product->id
-					),
-					'bindTypes' => array(
-						Column::BIND_PARAM_INT,
-						Column::BIND_PARAM_INT
+		if ($this->id > 0) {
+			if (is_a($product, 'AbstractProduct')) {
+				$fqcn = __CLASS__ . 'HasProduct';
+				$groupedProductHasProductTmp = new $fqcn();
+				$groupedProductHasProduct = $fqcn::findFirst(
+					array(
+						'conditions' => $groupedProductHasProductTmp->prefix . 'fk_groupedproduct_id = :groupedProductId:
+					        AND ' . $groupedProductHasProductTmp->prefix . 'fk_product_id = :productId:',
+						'bind' => array(
+							'groupedProductId' => $this->id,
+							'productId' => $product->id
+						),
+						'bindTypes' => array(
+							Column::BIND_PARAM_INT,
+							Column::BIND_PARAM_INT
+						)
 					)
-				)
-			);
+				);
 
-			// If results
-			if ($groupedProductHasSimpleProduct !== false) {
-				return $groupedProductHasSimpleProduct->delete();
+				// If results
+				if ($groupedProductHasProduct !== false) {
+					return $groupedProductHasProduct->delete();
+				}
+
+				return false;
 			}
-
-			return false;
+			else {
+				throw new \InvalidArgumentException('product passed to method "addProduct" is not a child of AbstractProduct');
+			}
 		}
 		else {
-			throw new \InvalidArgumentException('product passed to method "addProduct" is not a child of AbstractSimpleProduct');
+			throw new \InvalidArgumentException('groupedProduct has a null ID');
 		}
 	}
 }
