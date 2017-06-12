@@ -57,9 +57,9 @@ class Relationship {
 	 */
 	public function getPhpContent() {
 		$phpContent = str_repeat(PhpClass::TAB_CHARACTER, 2) . '$this->' . $this->getPhalconMethodName() . '(' . PHP_EOL;
-		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getPropertyName() . '",' . PHP_EOL;
-		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getExternalFQCN() . '",' . PHP_EOL;
-		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getExternalPropertyName() . '"' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getPropertyName() . '\',' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalFQCN() . '\',' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalPropertyName() . '\'' . PHP_EOL;
 		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 2) . ');' . PHP_EOL;
 
 		return $phpContent;

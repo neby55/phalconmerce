@@ -39,8 +39,8 @@ class PhpClass {
 		// Load relationships for this Class
 		$relationshipsList = Utils::loadData(Relationship::DATA_FILENAME);
 		if (is_array($relationshipsList) && sizeof($relationshipsList) > 0) {
-			if (array_key_exists($this->className, $relationshipsList)) {
-				$this->relationshipsList = $relationshipsList[$this->className];
+			if (array_key_exists(strtolower($this->className), $relationshipsList)) {
+				$this->relationshipsList = $relationshipsList[strtolower($this->className)];
 			}
 		}
 	}

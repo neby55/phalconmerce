@@ -28,12 +28,12 @@ class RelationshipManyToMany extends Relationship {
 		$phpContent = '';
 		if (!empty($this->externalPropertyName) && !empty($this->externalFQCN)) {
 			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 2) . '$this->' . $this->getPhalconMethodName() . '(' . PHP_EOL;
-			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getIdPropertyName() . '",' . PHP_EOL;
-			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getManyToManyFQCN() . '",' . PHP_EOL;
-			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getPropertyName() . '",' . PHP_EOL;
-			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getExternalPropertyName() . '",' . PHP_EOL;
-			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getExternalFQCN() . '",' . PHP_EOL;
-			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '"' . $this->getExternalIdPropertyName() . '"' . PHP_EOL;
+			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getIdPropertyName() . '\',' . PHP_EOL;
+			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getManyToManyFQCN() . '\',' . PHP_EOL;
+			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getPropertyName() . '\',' . PHP_EOL;
+			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalPropertyName() . '\',' . PHP_EOL;
+			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalFQCN() . '\',' . PHP_EOL;
+			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalIdPropertyName() . '\'' . PHP_EOL;
 			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 2) . ');' . PHP_EOL;
 		}
 

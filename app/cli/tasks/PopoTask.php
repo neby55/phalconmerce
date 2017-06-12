@@ -49,7 +49,7 @@ class PopoTask extends Task {
 					if (Property::isForeignKeyFromName($currentPropertyName)) {
 						$currentPropertyObject = new Property($currentPropertyName);
 						// First way
-						$relationshipsList[$currentClassName][$currentPropertyName] = new Relationship(
+						$relationshipsList[strtolower($currentClassName)][$currentPropertyName] = new Relationship(
 							$currentPropertyObject->getName(),
 							$currentClassName,
 							$currentPropertyObject->getForeignKeyPropertyName(),
@@ -59,7 +59,7 @@ class PopoTask extends Task {
 
 						// Check if it can be a nmTable (FK is also PK)
 						if ($currentPropertyReflection->has('Primary')) {
-							$nmRelationshipsList[$currentPropertyObject->getForeignKeyClassName()] = new RelationshipManyToMany(
+							$nmRelationshipsList[strtolower($currentPropertyObject->getForeignKeyClassName())] = new RelationshipManyToMany(
 								$currentPropertyObject->getName(),
 								$currentPropertyObject->getForeignKeyClassName(),
 								'id', // TODO really get the property name
@@ -69,7 +69,7 @@ class PopoTask extends Task {
 						}
 						else {
 							// Second way
-							$relationshipsList[$currentPropertyObject->getForeignKeyClassName()][$currentPropertyObject->getForeignKeyPropertyName()] = new Relationship(
+							$relationshipsList[strtolower($currentPropertyObject->getForeignKeyClassName())][$currentPropertyObject->getForeignKeyPropertyName()] = new Relationship(
 								$currentPropertyObject->getForeignKeyPropertyName(),
 								$currentPropertyObject->getForeignKeyClassName(),
 								$currentPropertyName,
@@ -95,7 +95,7 @@ class PopoTask extends Task {
 					}
 					// Now we add it to the $relationshipsList array
 					foreach ($nmRelationshipsList as $key=>$currentNmRelationship) {
-						$relationshipsList[$key][$currentNmRelationship->getExternalFQCN()] = $currentNmRelationship;
+						$relationshipsList[strtolower($key)][$currentNmRelationship->getExternalFQCN()] = $currentNmRelationship;
 					}
 				}
 			}
@@ -197,9 +197,6 @@ class PopoTask extends Task {
 
 				$coreType = self::askQuestion('Choose your Product Type ['.PhpProductClass::CORE_TYPE_SIMPLE_PRODUCT.'=>Simple Product, '.PhpProductClass::CORE_TYPE_CONFIGURABLE_PRODUCT.'=Configurable Product, '.PhpProductClass::CORE_TYPE_GROUPED_PRODUCT.'=Grouped Product] :', array(1,2,3));
 
-				// TODO prefix object with its type : Glasses => ProductSimpleGlasses
-				// TODO if configurable, create 2 objects : Glasses => ProductConfigurableGlasses & ProductConfiguredGlasses
-				// TODO if grouped, create 2 objects : Glasses => ProductGroupedGlasses & ProductGroupedGlassesHasProduct
 				// TODO check relationships for fk_configurableproduct_id & fk_groupedproduct_id
 
 				$abstractColumnsList = array(
@@ -295,6 +292,28 @@ class PopoTask extends Task {
 				}
 				else {
 					echo 'ERROR : Can\'t create class "'.$phpClass->getClassName().'"'.PHP_EOL;
+				}
+
+				// If a second PHP Class file is needed (Configurable/Grouped)
+				$secondCoreType = $phpClass->getSecondClassNameCoreType();
+				if ($secondCoreType !== false) {
+					// Create PHP Class file
+					$phpSecondClass = new PhpProductClass($className, $secondCoreType);
+					$phpSecondClass->initTableName();
+					if ($phpClass->isSecondClassNeedsProperties() && sizeof($propertiesList) > 0) {
+						foreach ($propertiesList as $currentPropertyObject) {
+							$phpSecondClass->addProperty($currentPropertyObject);
+						}
+					}
+
+					$currentPhpContent = $phpSecondClass->getPhpContent();
+
+					if ($phpSecondClass->save($currentPhpContent)) {
+						echo $phpSecondClass->getClassName().' class file generated'.PHP_EOL;
+					}
+					else {
+						echo 'ERROR : Can\'t create class "'.$phpSecondClass->getClassName().'"'.PHP_EOL;
+					}
 				}
 			}
 		}
