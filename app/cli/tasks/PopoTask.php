@@ -194,11 +194,13 @@ class PopoTask extends Task {
 			}
 			else {
 				$className = current($askedClassNameList);
-				$phpClass = new PhpProductClass($className);
-				$phpClass->initTableName();
 
 				$coreType = self::askQuestion('Choose your Product Type ['.PhpProductClass::CORE_TYPE_SIMPLE_PRODUCT.'=>Simple Product, '.PhpProductClass::CORE_TYPE_CONFIGURABLE_PRODUCT.'=Configurable Product, '.PhpProductClass::CORE_TYPE_GROUPED_PRODUCT.'=Grouped Product] :', array(1,2,3));
-				$phpClass->setExtendedClassNameFromCoreTypeResponse($coreType);
+
+				// TODO prefix object with its type : Glasses => ProductSimpleGlasses
+				// TODO if configurable, create 2 objects : Glasses => ProductConfigurableGlasses & ProductConfiguredGlasses
+				// TODO if grouped, create 2 objects : Glasses => ProductGroupedGlasses & ProductGroupedGlassesHasProduct
+				// TODO check relationships for fk_configurableproduct_id & fk_groupedproduct_id
 
 				$abstractColumnsList = array(
 					'id',
@@ -215,6 +217,7 @@ class PopoTask extends Task {
 				print 'Those properties are inherited from AbstractProduct :'.PHP_EOL;
 				print self::TAB_CHARACTER.join(PHP_EOL.self::TAB_CHARACTER, $abstractColumnsList).PHP_EOL;
 				$propertyName = '';
+				$propertiesList = array();
 				while ($propertyName != 'quit') {
 					$propertyName = self::askQuestion('What property do you want to add to your object [quit to stop adding properties] ?');
 					if ($propertyName != 'quit') {
@@ -270,9 +273,18 @@ class PopoTask extends Task {
 							$propertyObject->setNullable(true);
 						}
 
-						$phpClass->addProperty($propertyObject);
+						$propertiesList[] = $propertyObject;
 
 						print 'Property "'.$propertyName.'"" added.'.PHP_EOL.PHP_EOL;
+					}
+				}
+
+				// Create PHP Class file
+				$phpClass = new PhpProductClass($className, $coreType);
+				$phpClass->initTableName();
+				if (sizeof($propertiesList) > 0) {
+					foreach ($propertiesList as $currentPropertyObject) {
+						$phpClass->addProperty($currentPropertyObject);
 					}
 				}
 

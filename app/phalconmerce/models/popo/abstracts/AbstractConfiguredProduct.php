@@ -45,7 +45,7 @@ abstract class AbstractConfiguredProduct extends AbstractModel {
 	/**
 	 * @return mixed
 	 */
-	protected static function getConfigurableClassName() {
+	public static function getConfigurableClassName() {
 		return str_replace('Configured', 'Configurable', __CLASS__);
 	}
 

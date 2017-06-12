@@ -19,4 +19,11 @@ abstract class AbstractGroupedProductHasProduct extends AbstractModelManyToMany 
 	 * @var int
 	 */
 	public $fk_product_id;
+
+	/**
+	 * @return mixed
+	 */
+	public static function getGroupedClassName() {
+		return str_replace('HasProduct', '', __CLASS__);
+	}
 }
