@@ -118,7 +118,7 @@ class TableTask extends Task {
 		echo self::TAB_CHARACTER.'# Create or alter only "orders" table (class "Order")' . PHP_EOL;
 		echo self::TAB_CHARACTER.'php app/cli.php table setup Order' . PHP_EOL . PHP_EOL;
 		echo self::TAB_CHARACTER.'# Delete table (if exists) and then create only "orders" table (class "Order")' . PHP_EOL;
-		echo self::TAB_CHARACTER.'php app/cli.php table setup Order' . PHP_EOL . PHP_EOL;
+		echo self::TAB_CHARACTER.'php app/cli.php --delete table setup Order' . PHP_EOL . PHP_EOL;
 		echo PHP_EOL;
 		exit;
 	}
