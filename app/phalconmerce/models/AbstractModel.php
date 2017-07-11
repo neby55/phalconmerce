@@ -13,9 +13,18 @@ use Phalcon\Mvc\Model;
 class AbstractModel extends Model {
 	/**
 	 * Prefix for fields in table
+	 *
 	 * @var string
 	 */
 	public $prefix;
+
+	/**
+	 * Timestamp representing row creation datetime
+	 *
+	 * @Column(type="timestamp", nullable=false)
+	 * @var string
+	 */
+	public $inserted;
 
 	public function initialize() {
 		$classname = (new \ReflectionClass($this))->getShortName();
@@ -35,7 +44,7 @@ class AbstractModel extends Model {
 		foreach($propertiesList as $currentPropertyName=>$currentProprety) {
 			// Avoid FactoryDefault property
 			if ($currentPropertyName != 'prefix' && substr($currentPropertyName,0,1) != '_') {
-				$prefixedList[$this->getPrefix() . $currentProprety] = $currentProprety;
+				$prefixedList[$this->getPrefix() . $currentPropertyName] = $currentPropertyName;
 			}
 		}
 		return $prefixedList;
