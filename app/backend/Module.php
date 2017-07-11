@@ -28,6 +28,7 @@ class Module implements ModuleDefinitionInterface {
 			[
 				'Backend\Models' => __DIR__ . DIRECTORY_SEPARATOR. 'models' . DIRECTORY_SEPARATOR,
 				'Backend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR .'controllers' . DIRECTORY_SEPARATOR,
+				'Backend\Forms' => __DIR__ . DIRECTORY_SEPARATOR .'forms' . DIRECTORY_SEPARATOR,
 			],
 			true
 		);
@@ -41,6 +42,12 @@ class Module implements ModuleDefinitionInterface {
 	 */
 	public function registerServices(DiInterface $dependencyInjector) {
 		// TODO handle ACL in for backend, like invo/plugins/SecurityPlugin
+
+		/**
+		 * URL
+		 */
+		$dependencyInjector->get('url')->setBaseUri($dependencyInjector->get('config')->baseUri.'/'.$dependencyInjector->get('config')->adminDir.'/');
+
 		/**
 		 * Dispatcher
 		 */
