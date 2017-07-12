@@ -1,0 +1,44 @@
+<!-- /.row -->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a href="./new/" class="btn btn-xs btn-info">add</a>&nbsp;&nbsp;&nbsp;List
+			</div>
+			<!-- /.panel-heading -->
+			<div class="panel-body">
+				<?php if (!empty($list) && is_a($list, 'Phalcon\Mvc\Model\Resultset\Simple') && sizeof($list->toArray()) > 0) : ?>
+				<table width="100%" class="table table-hover" id="dataTables-example">
+					<thead>
+					<tr>
+						<?php foreach ($listActionProperties as $currentProperty => $currentLabel) : ?>
+						<th><?= $currentLabel ?></th>
+						<?php endforeach; ?>
+					</tr>
+					</thead>
+					<tbody>
+					<?php foreach ($list as $currentObject) : ?>
+					<tr class="odd gradeX">
+						<?php foreach ($listActionProperties as $currentProperty => $currentLabel) : ?>
+						<td><?= $currentObject->$currentProperty ?></td>
+						<?php endforeach; ?>
+						<td class="text-right">
+							<?= $this->tag->linkTo([$controllerURL.'/edit/'.$currentObject->id, '<i class="glyphicon glyphicon-edit"></i> Edit', "class" => 'btn btn-sm btn-warning']) ?>
+							<?= $this->tag->linkTo([$controllerURL.'/delete/'.$currentObject->id, '<i class="glyphicon glyphicon-trash"></i> Delete', "class" => 'btn btn-sm btn-danger']) ?>
+						</td>
+					</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+				<?php else : ?>
+					<div class="alert alert-warning">No record</div>
+				<?php endif; ?>
+				<!-- /.table-responsive -->
+			</div>
+			<!-- /.panel-body -->
+		</div>
+		<!-- /.panel -->
+	</div>
+	<!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->

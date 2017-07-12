@@ -2,7 +2,7 @@
 /**
  * Phalconmerce
  * an e-commerce framework based on Phalcon PHP framework
- * 
+ *
  * Authors :
  *    Benjamin CORDIER <ben@progweb.fr>
  */
@@ -23,6 +23,11 @@ class FormBase extends Form {
 	 * @var string
 	 */
 	protected $popoClassName;
+
+	/**
+	 * @var \Phalcon\Forms\Element[]
+	 */
+	protected $elementsList;
 
 	protected static $excludedProperties = array(
 		'id',
@@ -52,11 +57,12 @@ class FormBase extends Form {
 			$this->view->setVar('formTitle', 'Edit');
 		}
 
-		$fqcn = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\'.$this->popoClassName;
+		$fqcn = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\' . $this->popoClassName;
 		$propertiesList = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
+		$labelsObject = new Labels($this->popoClassName);
 		//Utils::debug($propertiesList);exit;
 
-		foreach ($propertiesList as $currentPropertyName=>$currentPropertyReflect) {
+		foreach ($propertiesList as $currentPropertyName => $currentPropertyReflect) {
 			$item = null;
 			// If property to be edited in form
 			if (!empty($currentPropertyName) && !in_array($currentPropertyName, self::$excludedProperties)) {
@@ -71,50 +77,60 @@ class FormBase extends Form {
 							$length = $columnCollection->getArgument('length');
 						}
 
+						// TODO add maxlength attribute
+
 						// If long string
 						if ($type == 'string' && $length > 255 || $type == 'text') {
 							$item = new TextArea($currentPropertyName);
-							$item->setLabel($currentPropertyName); // TODO set label with translation or csv file
 							$item->setAttribute('class', 'form-control');
 							$item->setFilters(array('string'));
 						}
 						// If short string
 						else if ($type == 'string') {
 							$item = new Text($currentPropertyName);
-							$item->setLabel($currentPropertyName); // TODO set label with translation or csv file
 							$item->setAttribute('class', 'form-control');
 							$item->setFilters(array('string'));
 						}
 						// If float
 						else if ($type == 'float') {
 							$item = new Text($currentPropertyName);
-							$item->setLabel($currentPropertyName); // TODO set label with translation or csv file
 							$item->setAttribute('class', 'form-control');
 							$item->setFilters(array('float'));
 						}
 						// If int
 						else if ($type == 'integer') {
-							$item = new Text($currentPropertyName);
-							$item->setLabel($currentPropertyName); // TODO set label with translation or csv file
-							$item->setAttribute('class', 'form-control');
-							$item->setFilters(array('int'));
+							// Status case
+							if ($currentPropertyName == 'status') {
+								$item = new Select(
+									$currentPropertyName,
+									[
+										2 => 'Disabled',
+										1 => 'Enabled'
+									]
+								);
+								$item->setAttribute('class', 'form-control');
+								$item->setFilters(array('int'));
+							}
+							else {
+								$item = new Text($currentPropertyName);
+								$item->setAttribute('class', 'form-control');
+								$item->setFilters(array('int'));
+							}
 						}
 						// If boolean
 						else if ($type == 'boolean') {
-							$item = new Radio(
+							$item = new Select(
 								$currentPropertyName,
 								[
-									1 => 'Yes',
-									2 => 'No'
+									2 => 'No',
+									1 => 'Yes'
 								]
 							);
-							// Todo handle a new class named RadioGroup
-							$item->setLabel($currentPropertyName); // TODO set label with translation or csv file
 							$item->setAttribute('class', 'form-control');
 							$item->setFilters(array('int'));
 						}
 						else {
-							die ($type.'('.$length.')');
+							die ($type . '(' . $length . ')');
 						}
 
 						// Mandatory / Required
@@ -128,11 +144,37 @@ class FormBase extends Form {
 
 						// Adding item to this form, if created
 						if (isset($item)) {
-							$this->add($item);
+							$item->setLabel($labelsObject->getLongLabelForProperty($currentPropertyName));
+							$this->elementsList[$currentPropertyName] = $item;
 						}
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Add an element/item to elements' list
+	 *
+	 * @param $currentPropertyName
+	 * @param $element
+	 */
+	protected function addElement($currentPropertyName, $element) {
+		$this->elementsList[$currentPropertyName] = $element;
+	}
+
+	/**
+	 * Add all elements/items to the Phalcon Form
+	 *
+	 * @return bool
+	 */
+	protected function addElementsToForm() {
+		if (sizeof($this->elementsList) > 0) {
+			foreach ($this->elementsList as $currentElement) {
+				$this->add($currentElement);
+			}
+			return true;
+		}
+		return false;
 	}
 }

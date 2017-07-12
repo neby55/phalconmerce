@@ -20,6 +20,14 @@ $backendRouter->add('/',
 );
 
 $backendRouter->add(
+	'/:controller',
+	[
+		'controller' => 1,
+		'action' => 'index'
+	]
+);
+
+$backendRouter->add(
 	'/:controller/:action/:params',
 	[
 		"controller" => 1,

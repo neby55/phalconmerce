@@ -63,8 +63,13 @@ if (file_exists(dirname(__DIR__).DIRECTORY_SEPARATOR.'frontend'.DIRECTORY_SEPARA
 	require dirname(__DIR__).DIRECTORY_SEPARATOR.'frontend'.DIRECTORY_SEPARATOR.'routes.php';
 }
 
+$router->removeExtraSlashes(true);
+
 // define default module
 $router->setDefaultModule('frontend');
+
+// default action
+$router->setDefaultAction('index');
 
 $di->set('router', $router);
 

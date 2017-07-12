@@ -19,7 +19,7 @@ class BackendTask extends Task {
 		// If table deletion asked, ask for confirmation
 		$deletion = false;
 		if (array_key_exists('delete', $options)) {
-			$response = self::askQuestion('Are you sure to delete table(s) [yes/no] ?');
+			$response = self::askQuestion('Are you sure to delete existing file(s) [yes/no] ?');
 			$deletion = $response == 'yes' || $response == 'y';
 		}
 
@@ -99,24 +99,25 @@ class BackendTask extends Task {
 
 	private function displayHelp() {
 		echo PHP_EOL;
-		echo 'Phalconmerce tool for generating standard backend based on POPO classes existing in folder.' . PHP_EOL;
-		echo 'Controlles, Forms and Views will be generated. But ' . PHP_EOL;
+		echo 'Phalconmerce tool for generating standard backend interface based on POPO classes existing in the following folder.' . PHP_EOL;
 		echo self::TAB_CHARACTER.$this->getDI()->get('configPhalconmerce')->popoModelsDir . PHP_EOL;
+		echo PHP_EOL;
+		echo 'Controlles and Forms will be generated and then can be modified' . PHP_EOL;
+		echo 'Phalconmerce provide a basic bootstrap backend view, but you can choose or write another one.' . PHP_EOL;
 		echo PHP_EOL;
 		echo 'Usage :' . PHP_EOL;
 		echo self::TAB_CHARACTER.'php app/cli.php backend [ClassName]' . PHP_EOL . PHP_EOL;
 		echo 'Options :' . PHP_EOL;
 		echo self::TAB_CHARACTER.'--all' . self::TAB_CHARACTER . 'to generate backend for every classes' . PHP_EOL;
-		echo self::TAB_CHARACTER.'--delete' . self::TAB_CHARACTER . 'to delete table before creating it (table datas will also be deleted, be careful)' . PHP_EOL;
-		echo self::TAB_CHARACTER.'--table-prefix=prefix' . self::TAB_CHARACTER . 'to prefix every related tables' . PHP_EOL;
+		echo self::TAB_CHARACTER.'--delete' . self::TAB_CHARACTER . 'to delete existing files (be careful)' . PHP_EOL;
 		echo PHP_EOL;
 		echo 'Examples :' . PHP_EOL;
-		echo self::TAB_CHARACTER.'# Create or alter all tables' . PHP_EOL;
-		echo self::TAB_CHARACTER.'php app/cli.php --all table setup' . PHP_EOL . PHP_EOL;
-		echo self::TAB_CHARACTER.'# Create or alter only "orders" table (class "Order")' . PHP_EOL;
-		echo self::TAB_CHARACTER.'php app/cli.php table setup Order' . PHP_EOL . PHP_EOL;
-		echo self::TAB_CHARACTER.'# Delete table (if exists) and then create only "orders" table (class "Order")' . PHP_EOL;
-		echo self::TAB_CHARACTER.'php app/cli.php table setup Order' . PHP_EOL . PHP_EOL;
+		echo self::TAB_CHARACTER.'# Create all files for the bacnkend interface' . PHP_EOL;
+		echo self::TAB_CHARACTER.'php app/cli.php --all backend' . PHP_EOL . PHP_EOL;
+		echo self::TAB_CHARACTER.'# Create file for backend interface related to the "Order" class' . PHP_EOL;
+		echo self::TAB_CHARACTER.'php app/cli.php backend Order' . PHP_EOL . PHP_EOL;
+		echo self::TAB_CHARACTER.'# Create (or replace, if needed) file for backend interface related to the "Order" class' . PHP_EOL;
+		echo self::TAB_CHARACTER.'php app/cli.php --delete backend Order' . PHP_EOL . PHP_EOL;
 		echo PHP_EOL;
 		exit;
 	}
