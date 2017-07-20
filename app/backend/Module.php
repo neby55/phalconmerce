@@ -10,6 +10,7 @@
 namespace Backend;
 
 use Phalcon\Mvc\Dispatcher;
+use Phalcon\Di;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 use Phalcon\DiInterface;
@@ -26,9 +27,9 @@ class Module implements ModuleDefinitionInterface {
 		$loader = new Loader();
 		$loader->registerNamespaces(
 			[
-				'Backend\Models' => __DIR__ . DIRECTORY_SEPARATOR. 'models' . DIRECTORY_SEPARATOR,
-				'Backend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR .'controllers' . DIRECTORY_SEPARATOR,
-				'Backend\Forms' => __DIR__ . DIRECTORY_SEPARATOR .'forms' . DIRECTORY_SEPARATOR,
+				'Backend\Models' => __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR,
+				'Backend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
+				'Backend\Forms' => __DIR__ . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR,
 			],
 			true
 		);
@@ -46,13 +47,12 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * URL
 		 */
-		$dependencyInjector->get('url')->setBaseUri($dependencyInjector->get('config')->baseUri.'/'.$dependencyInjector->get('config')->adminDir.'/');
+		$dependencyInjector->get('url')->setBaseUri($dependencyInjector->get('config')->baseUri . '/' . $dependencyInjector->get('config')->adminDir . '/');
 
 		/**
 		 * Dispatcher
 		 */
-		$dependencyInjector->set('dispatcher', function ()
-		{
+		$dependencyInjector->set('dispatcher', function () {
 			$dispatcher = new Dispatcher();
 			$dispatcher->setDefaultNamespace("\\Backend\\Controllers\\");
 			return $dispatcher;
@@ -63,7 +63,7 @@ class Module implements ModuleDefinitionInterface {
 		 */
 		$dependencyInjector->set('view', function () {
 			$view = new View();
-			$view->setViewsDir(__DIR__ . '/views/sb-admin2/');
+			$view->setViewsDir(__DIR__ . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . DI::getDefault()->get('config')->adminTheme . DIRECTORY_SEPARATOR);
 			return $view;
 		});
 	}

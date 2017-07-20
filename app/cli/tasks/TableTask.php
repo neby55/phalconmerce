@@ -4,7 +4,9 @@ namespace Cli\Tasks;
 
 use Cli\Models\Task;
 use Phalconmerce\Models\AbstractModel;
-use Phalconmerce\Models\Popo\TableGenerator\Table;
+use Phalconmerce\Models\Popo\Generators\Db\Table;
+use Phalconmerce\Models\Popo\Generators\Helper;
+use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Utils;
 
 class TableTask extends Task {
@@ -35,14 +37,7 @@ class TableTask extends Task {
 
 		// If --all option
 		if (array_key_exists('all', $options)) {
-			if ($handle = opendir($this->getDI()->get('configPhalconmerce')->popoModelsDir)) {
-				while (false !== ($entry = readdir($handle))) {
-					if ($entry != '.' && $entry != '..' && substr($entry, -4) == '.php') {
-						$classNamesList[] = substr($entry, 0, -4);
-					}
-				}
-				closedir($handle);
-			}
+			$classNamesList = Helper::getPopoClassesName();
 		}
 		else if (sizeof($params) > 0) {
 			$classNamesList = $params;
@@ -52,7 +47,7 @@ class TableTask extends Task {
 			foreach ($classNamesList as $currentClassName) {
 				$fullPathToFile = $this->getDI()->get('configPhalconmerce')->popoModelsDir . DIRECTORY_SEPARATOR . $currentClassName.'.php';
 				if (file_exists($fullPathToFile)) {
-					$fqcn = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\' . $currentClassName;
+					$fqcn = PhpClass::POPO_NAMESPACE . '\\' . $currentClassName;
 
 					include_once $fullPathToFile;
 
@@ -61,7 +56,7 @@ class TableTask extends Task {
 					$currentObject = new $fqcn;
 
 					// Get properties
-					$properties = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
+					$properties = PhpClass::getClassProperties($fqcn);
 
 					// Get table name from class name
 					$tableObject = new Table(Utils::getTableNameFromClassName($currentClassName), $currentObject->getPrefix());

@@ -6,6 +6,7 @@ use Phalcon\Loader;
 
 // Define to specify directory call with CLI
 define('CLI_PATH', dirname(__FILE__));
+define('APP_PATH', dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'app');
 
 // TODO maybe improve CLI with docopt
 
@@ -90,10 +91,10 @@ class Console extends \Phalcon\CLI\Console {
 		});
 
 		// registering router (mandatory for namespaces and modules)
-		$di->set("router", function () {
+		/*$di->set("router", function () {
 			$router = new Router(true);
 			return $router;
-		});
+		});*/
 
 		// Ading phalconmerce namespaces
 		$loader = new \Phalcon\Loader();

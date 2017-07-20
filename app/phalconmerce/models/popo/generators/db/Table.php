@@ -6,7 +6,7 @@
  * Time: 09:46
  */
 
-namespace Phalconmerce\Models\Popo\TableGenerator;
+namespace Phalconmerce\Models\Popo\Generators\Db;
 
 use Phalcon\Annotations\Collection;
 use Phalcon\Db\Column;

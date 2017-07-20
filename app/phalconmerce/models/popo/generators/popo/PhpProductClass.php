@@ -1,6 +1,6 @@
 <?php
 
-namespace Phalconmerce\Models\Popo\Popogenerator;
+namespace Phalconmerce\Models\Popo\Generators\Popo;
 
 use Phalcon\Di;
 
@@ -183,10 +183,10 @@ class PhpProductClass extends PhpClass {
 
 	/**
 	 * @param string $propertyName
-	 * @param \Phalconmerce\Models\Popo\Popogenerator\Relationship $relationship
+	 * @param \Phalconmerce\Models\Popo\Generators\Popo\Relationship $relationship
 	 */
 	public function addRelationship($propertyName, $relationship) {
-		if (is_a($relationship, 'Phalconmerce\Models\Popo\Popogenerator\Relationship')) {
+		if (is_a($relationship, 'Phalconmerce\Models\Popo\Generators\Popo\Relationship')) {
 			$this->relationshipsList[$propertyName] = $relationship;
 		}
 	}

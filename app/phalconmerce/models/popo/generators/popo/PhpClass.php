@@ -1,6 +1,6 @@
 <?php
 
-namespace Phalconmerce\Models\Popo\Popogenerator;
+namespace Phalconmerce\Models\Popo\Generators\Popo;
 
 use Phalcon\Di;
 use Phalconmerce\Models\Utils;

@@ -3,11 +3,11 @@
 namespace Cli\Tasks;
 
 use Cli\Models\Task;
-use Phalconmerce\Models\Popo\Popogenerator\PhpClass;
-use Phalconmerce\Models\Popo\Popogenerator\PhpProductClass;
-use Phalconmerce\Models\Popo\Popogenerator\Property;
-use Phalconmerce\Models\Popo\Popogenerator\Relationship;
-use Phalconmerce\Models\Popo\Popogenerator\RelationshipManyToMany;
+use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
+use Phalconmerce\Models\Popo\Generators\Popo\PhpProductClass;
+use Phalconmerce\Models\Popo\Generators\Popo\Property;
+use Phalconmerce\Models\Popo\Generators\Popo\Relationship;
+use Phalconmerce\Models\Popo\Generators\Popo\RelationshipManyToMany;
 use Phalconmerce\Models\Utils;
 
 class PopoTask extends Task {

@@ -15,4 +15,5 @@ return new \Phalcon\Config(array(
 	'baseUri' => isset($_SERVER['BASE_URI']) ? $_SERVER['BASE_URI'] : '', // BASE_URI index generated thanks to public/.htaccess
 	'adminDir' => 'admin',
 	'adminTitle' => 'Phalconmerce',
+	'adminTheme' => 'sb-admin2',
 ));

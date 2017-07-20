@@ -57,8 +57,8 @@ class FormBase extends Form {
 			$this->view->setVar('formTitle', 'Edit');
 		}
 
-		$fqcn = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::POPO_NAMESPACE . '\\' . $this->popoClassName;
-		$propertiesList = \Phalconmerce\Models\Popo\Popogenerator\PhpClass::getClassProperties($fqcn);
+		$fqcn = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::POPO_NAMESPACE . '\\' . $this->popoClassName;
+		$propertiesList = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::getClassProperties($fqcn);
 		$labelsObject = new Labels($this->popoClassName);
 		//Utils::debug($propertiesList);exit;
 
@@ -77,7 +77,7 @@ class FormBase extends Form {
 							$length = $columnCollection->getArgument('length');
 						}
 
-						// TODO add maxlength attribute
+						// TODO placeholders
 
 						// If long string
 						if ($type == 'string' && $length > 255 || $type == 'text') {
@@ -90,15 +90,17 @@ class FormBase extends Form {
 							$item = new Text($currentPropertyName);
 							$item->setAttribute('class', 'form-control');
 							$item->setFilters(array('string'));
+							$item->setAttribute('maxlength', $length);
 						}
 						// If float
 						else if ($type == 'float') {
 							$item = new Text($currentPropertyName);
 							$item->setAttribute('class', 'form-control');
 							$item->setFilters(array('float'));
+							$item->setAttribute('maxlength', \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SIZE+\Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SCALE+1);
 						}
 						// If int
-						else if ($type == 'integer') {
+						else if ($type == 'integer' ||$type == 'int') {
 							// Status case
 							if ($currentPropertyName == 'status') {
 								$item = new Select(
@@ -111,10 +113,19 @@ class FormBase extends Form {
 								$item->setAttribute('class', 'form-control');
 								$item->setFilters(array('int'));
 							}
+							else if (method_exists($this->popoClassName, $currentPropertyName.'SelectOptions')) {
+								$item = new Select(
+									$currentPropertyName,
+									call_user_func(array($this->popoClassName, $currentPropertyName.'SelectOptions'))
+								);
+								$item->setAttribute('class', 'form-control');
+								$item->setFilters(array('int'));
+							}
 							else {
 								$item = new Text($currentPropertyName);
 								$item->setAttribute('class', 'form-control');
 								$item->setFilters(array('int'));
+								$item->setAttribute('maxlength', $length);
 							}
 						}
 						// If boolean
@@ -128,6 +139,13 @@ class FormBase extends Form {
 							);
 							$item->setAttribute('class', 'form-control');
 							$item->setFilters(array('int'));
+						}
+						// If timestamp
+						else if ($type == 'timestamp') {
+							$item = new Text($currentPropertyName);
+							$item->setAttribute('class', 'form-control');
+							$item->setAttribute('type', 'date');
+							$item->setAttribute('maxlength', 19);
 						}
 						else {
 							die ($type . '(' . $length . ')');
