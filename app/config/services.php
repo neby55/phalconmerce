@@ -94,10 +94,18 @@ $di->setShared('modelsMetadata', function () {
 });
 
 /**
- * Register the session flash service with the Twitter Bootstrap classes
+ * Register the direct flash and session flash services with the Twitter Bootstrap classes
  */
 $di->set('flash', function () {
-    return new Flash(array(
+    return new Phalcon\Flash\Direct(array(
+        'error'   => 'alert alert-danger',
+        'success' => 'alert alert-success',
+        'notice'  => 'alert alert-info',
+        'warning' => 'alert alert-warning'
+    ));
+});
+$di->set('flashSession', function () {
+    return new Phalcon\Flash\Session(array(
         'error'   => 'alert alert-danger',
         'success' => 'alert alert-success',
         'notice'  => 'alert alert-info',

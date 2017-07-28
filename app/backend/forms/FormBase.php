@@ -70,100 +70,106 @@ class FormBase extends Form {
 				if ($currentPropertyReflect->has('Column')) {
 					// Get column annotations infos
 					$columnCollection = $currentPropertyReflect->get('Column');
-					if ($columnCollection->hasArgument('type')) {
-						$type = $columnCollection->getArgument('type');
-						$length = 0;
-						if ($columnCollection->hasArgument('length')) {
-							$length = $columnCollection->getArgument('length');
-						}
+					// If field is editable in backend
+					if (!$columnCollection->hasArgument('editable') || $columnCollection->getArgument('editable') == 'false') {
+						if ($columnCollection->hasArgument('type')) {
+							$type = $columnCollection->getArgument('type');
+							$length = 0;
+							if ($columnCollection->hasArgument('length')) {
+								$length = $columnCollection->getArgument('length');
+							}
 
-						// TODO placeholders
+							// TODO placeholders
 
-						// If long string
-						if ($type == 'string' && $length > 255 || $type == 'text') {
-							$item = new TextArea($currentPropertyName);
-							$item->setAttribute('class', 'form-control');
-							$item->setFilters(array('string'));
-						}
-						// If short string
-						else if ($type == 'string') {
-							$item = new Text($currentPropertyName);
-							$item->setAttribute('class', 'form-control');
-							$item->setFilters(array('string'));
-							$item->setAttribute('maxlength', $length);
-						}
-						// If float
-						else if ($type == 'float') {
-							$item = new Text($currentPropertyName);
-							$item->setAttribute('class', 'form-control');
-							$item->setFilters(array('float'));
-							$item->setAttribute('maxlength', \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SIZE+\Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SCALE+1);
-						}
-						// If int
-						else if ($type == 'integer' ||$type == 'int') {
-							// Status case
-							if ($currentPropertyName == 'status') {
+							// If long string
+							if ($type == 'string' && $length > 255 || $type == 'text') {
+								$item = new TextArea($currentPropertyName);
+								$item->setAttribute('class', 'form-control');
+								$item->setFilters(array('string'));
+							}
+							// If short string
+							else if ($type == 'string') {
+								$item = new Text($currentPropertyName);
+								$item->setAttribute('class', 'form-control');
+								$item->setFilters(array('string'));
+								$item->setAttribute('maxlength', $length);
+							}
+							// If float
+							else if ($type == 'float') {
+								$item = new Text($currentPropertyName);
+								$item->setAttribute('class', 'form-control');
+								$item->setFilters(array('float'));
+								$item->setAttribute('maxlength', \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SIZE + \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SCALE + 1);
+							}
+							// If int
+							else if ($type == 'integer' || $type == 'int') {
+								// Status case
+								if ($currentPropertyName == 'status') {
+									$item = new Select(
+										$currentPropertyName,
+										[
+											2 => 'Disabled',
+											1 => 'Enabled'
+										]
+									);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('int'));
+								}
+								else {
+									$currentReflectionClass = new \ReflectionClass($fqcn);
+									if ($currentReflectionClass->hasMethod($currentPropertyName . 'SelectOptions')) {
+										$item = new Select(
+											$currentPropertyName,
+											call_user_func(array($fqcn, $currentPropertyName . 'SelectOptions'))
+										);
+										$item->setAttribute('class', 'form-control');
+										$item->setFilters(array('int'));
+									}
+									else {
+										$item = new Text($currentPropertyName);
+										$item->setAttribute('class', 'form-control');
+										$item->setFilters(array('int'));
+										$item->setAttribute('maxlength', $length);
+									}
+								}
+							}
+							// If boolean
+							else if ($type == 'boolean') {
 								$item = new Select(
 									$currentPropertyName,
 									[
-										2 => 'Disabled',
-										1 => 'Enabled'
+										2 => 'No',
+										1 => 'Yes'
 									]
 								);
 								$item->setAttribute('class', 'form-control');
 								$item->setFilters(array('int'));
 							}
-							else if (method_exists($this->popoClassName, $currentPropertyName.'SelectOptions')) {
-								$item = new Select(
-									$currentPropertyName,
-									call_user_func(array($this->popoClassName, $currentPropertyName.'SelectOptions'))
-								);
-								$item->setAttribute('class', 'form-control');
-								$item->setFilters(array('int'));
-							}
-							else {
+							// If timestamp
+							else if ($type == 'timestamp') {
 								$item = new Text($currentPropertyName);
 								$item->setAttribute('class', 'form-control');
-								$item->setFilters(array('int'));
-								$item->setAttribute('maxlength', $length);
+								$item->setAttribute('type', 'date');
+								$item->setAttribute('maxlength', 19);
 							}
-						}
-						// If boolean
-						else if ($type == 'boolean') {
-							$item = new Select(
-								$currentPropertyName,
-								[
-									2 => 'No',
-									1 => 'Yes'
-								]
-							);
-							$item->setAttribute('class', 'form-control');
-							$item->setFilters(array('int'));
-						}
-						// If timestamp
-						else if ($type == 'timestamp') {
-							$item = new Text($currentPropertyName);
-							$item->setAttribute('class', 'form-control');
-							$item->setAttribute('type', 'date');
-							$item->setAttribute('maxlength', 19);
-						}
-						else {
-							die ($type . '(' . $length . ')');
-						}
+							else {
+								die ($type . '(' . $length . ')');
+							}
 
-						// Mandatory / Required
-						if (!$columnCollection->hasArgument('nullable') || $columnCollection->getArgument('nullable') != 'false') {
-							$item->addValidators(array(
-								new PresenceOf(array(
-									'message' => 'This field is required'
-								))
-							));
-						}
+							// Mandatory / Required
+							if (!$columnCollection->hasArgument('nullable') || $columnCollection->getArgument('nullable') != 'false') {
+								$item->addValidators(array(
+									new PresenceOf(array(
+										'message' => 'This field is required'
+									))
+								));
+							}
 
-						// Adding item to this form, if created
-						if (isset($item)) {
-							$item->setLabel($labelsObject->getLongLabelForProperty($currentPropertyName));
-							$this->elementsList[$currentPropertyName] = $item;
+							// Adding item to this form, if created
+							if (isset($item)) {
+								$item->setLabel($labelsObject->getLongLabelForProperty($currentPropertyName));
+								$this->elementsList[$currentPropertyName] = $item;
+							}
 						}
 					}
 				}

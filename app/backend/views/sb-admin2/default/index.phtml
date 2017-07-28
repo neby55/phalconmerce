@@ -12,15 +12,24 @@
 					<thead>
 					<tr>
 						<?php foreach ($listActionProperties as $currentProperty => $currentLabel) : ?>
-						<th><?= $currentLabel ?></th>
+							<?php if (is_array($currentLabel) && array_key_exists('label', $currentLabel)) : ?>
+								<th><?= $currentLabel['label'] ?></th>
+							<?php else : ?>
+								<th><?= $currentLabel ?></th>
+							<?php endif; ?>
 						<?php endforeach; ?>
+						<th>&nbsp;</th>
 					</tr>
 					</thead>
 					<tbody>
 					<?php foreach ($list as $currentObject) : ?>
 					<tr class="odd gradeX">
 						<?php foreach ($listActionProperties as $currentProperty => $currentLabel) : ?>
-						<td><?= $currentObject->$currentProperty ?></td>
+							<?php if (is_array($currentLabel) && array_key_exists('values', $currentLabel)) : ?>
+								<td><?= isset($currentLabel['values'][$currentObject->$currentProperty]) ? $currentLabel['values'][$currentObject->$currentProperty] : '-' ?></td>
+							<?php else : ?>
+								<td><?= $currentObject->$currentProperty ?></td>
+							<?php endif; ?>
 						<?php endforeach; ?>
 						<td class="text-right">
 							<?= $this->tag->linkTo([$controllerURL.'/edit/'.$currentObject->id, '<i class="glyphicon glyphicon-edit"></i> Edit', "class" => 'btn btn-sm btn-warning']) ?>

@@ -54,7 +54,16 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 		// Set columns displayed (key=propertyName, value=label)
 		$this->view->setVar('listActionProperties', array(
-			// 'myProperty' => 'Label',
+			// TODO set properties to display in list
+			// 'myProperty' => 'Label', // simple property
+			// 'mySecondProperty' => array( // property with no human readable value
+				'label' => 'Label displayed',
+				'values' => array(
+					1 => 'First possible value',
+					2 => 'Second possible value',
+					3 => 'Third possible value',
+				)
+			//)
 		));
 	}
 
@@ -133,6 +142,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 		$data = $this->request->getPost();
 		if (!$form->isValid($data, $object)) {
+			$this->view->form = $form;
 			foreach ($form->getMessages() as $message) {
 				$this->flash->error($message);
 			}
@@ -147,6 +157,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 		}
 
 		if ($object->save() == false) {
+			$this->view->form = $form;
 			foreach ($object->getMessages() as $message) {
 				$this->flash->error($message);
 			}
@@ -161,6 +172,8 @@ class ##CLASSNAME##Controller extends ControllerBase {
 		}
 
 		$form->clear();
+
+		$this->view->form = $form;
 
 		$this->flash->success("##CLASSNAME## was updated successfully");
 

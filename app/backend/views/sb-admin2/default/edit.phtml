@@ -9,9 +9,9 @@
 					<div class="col-lg-12">
 						<?= $this->tag->form($controllerURL."/save") ?>
 							<?php foreach ($this->view->form as $element) : ?>
-							<div class="form-group">
-								<label for="<?=  $element->getName() ?>"><?=  $element->getLabel() ?></label>
-								<?= $element ?>
+							<div class="form-group<?php if ($element->hasMessages()) : ?> has-error<?php endif ?>">
+								<label for="<?=  $element->getName() ?>" class="control-label"><?=  $element->getLabel() ?></label>
+								<?= $element->render(array('class' => 'form-control')) ?>
 
 								<?php if ($element->hasMessages()) : ?>
 								<p class="help-block">
