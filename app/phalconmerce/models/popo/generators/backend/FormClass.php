@@ -51,11 +51,25 @@ EOT;
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getFilename() {
+		return self::getDirectory().DIRECTORY_SEPARATOR.$this->getClassName().'.php';
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function fileExists() {
+		return file_exists($this->getFilename());
+	}
+
+	/**
 	 * @param string $content
 	 * @return int
 	 */
 	public function save($content) {
-		$currentNewClassFilename = self::getDirectory().DIRECTORY_SEPARATOR.$this->getClassName().'.php';
+		$currentNewClassFilename = $this->getFilename();
 		return file_put_contents($currentNewClassFilename, $content) !== false;
 	}
 }

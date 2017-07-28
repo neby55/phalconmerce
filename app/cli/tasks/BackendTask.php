@@ -49,30 +49,45 @@ class BackendTask extends Task {
 					// Controller
 					$controller = new ControllerClass($currentClassName);
 
-					if ($controller->save($controller->getPhpContent())) {
-						echo 'Controller generated for ' . $currentClassName . PHP_EOL;
+					if (!$deletion && $controller->fileExists()) {
+						echo 'Controller "' . $currentClassName . '" already exists' . PHP_EOL;
 					}
 					else {
-						echo 'Error in ' . $currentClassName . ' controller generation' . PHP_EOL;
+						if ($controller->save($controller->getPhpContent())) {
+							echo 'Controller generated for ' . $currentClassName . PHP_EOL;
+						}
+						else {
+							echo 'Error in ' . $currentClassName . ' controller generation' . PHP_EOL;
+						}
 					}
 
 					// Form
 					$form = new FormClass($currentClassName);
 
-					if ($form->save($form->getPhpContent())) {
-						echo 'Form class generated for ' . $currentClassName . PHP_EOL;
+					if (!$deletion && $form->fileExists()) {
+						echo 'Form class "' . $currentClassName . '" already exists' . PHP_EOL;
 					}
 					else {
-						echo 'Error in ' . $currentClassName . ' form class generation' . PHP_EOL;
+						if ($form->save($form->getPhpContent())) {
+							echo 'Form class generated for ' . $currentClassName . PHP_EOL;
+						}
+						else {
+							echo 'Error in ' . $currentClassName . ' form class generation' . PHP_EOL;
+						}
 					}
 
 					// View
 					$views = new ViewsPhtml($currentClassName);
-					if ($views->save()) {
-						echo 'View files for '.$currentClassName.' generated'.PHP_EOL;
+					if (!$deletion && $views->filesExists()) {
+						echo 'View files "' . $currentClassName . '" already exist' . PHP_EOL;
 					}
 					else {
-						echo 'Error in ' . $currentClassName . ' view files generation' . PHP_EOL;
+						if ($views->save()) {
+							echo 'View files for ' . $currentClassName . ' generated' . PHP_EOL;
+						}
+						else {
+							echo 'Error in ' . $currentClassName . ' view files generation' . PHP_EOL;
+						}
 					}
 				}
 				else {

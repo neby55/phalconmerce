@@ -87,6 +87,13 @@ EOT;
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function filesExists() {
+		return file_exists($this->getIndexFileName()) || file_exists($this->getEditFileName()) || file_exists($this->getNewFileName());
+	}
+
+	/**
 	 * @return int
 	 */
 	public function save() {
