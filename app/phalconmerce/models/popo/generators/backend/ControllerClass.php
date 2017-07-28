@@ -57,12 +57,12 @@ class ##CLASSNAME##Controller extends ControllerBase {
 			// TODO set properties to display in list
 			// 'myProperty' => 'Label', // simple property
 			// 'mySecondProperty' => array( // property with no human readable value
-				'label' => 'Label displayed',
-				'values' => array(
-					1 => 'First possible value',
-					2 => 'Second possible value',
-					3 => 'Third possible value',
-				)
+			//	'label' => 'Label displayed',
+			//	'values' => array(
+			//		1 => 'First possible value',
+			//		2 => 'Second possible value',
+			//		3 => 'Third possible value',
+			//	)
 			//)
 		));
 	}

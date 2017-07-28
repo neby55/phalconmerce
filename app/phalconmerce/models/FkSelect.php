@@ -57,6 +57,13 @@ class FkSelect {
 	/**
 	 * @return string
 	 */
+	public function getValueField() {
+		return $this->valueField;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getPattern() {
 		return $this->pattern;
 	}
@@ -71,8 +78,8 @@ class FkSelect {
 	/**
 	 * @return \string[]
 	 */
-	public function getFields() {
-		return $this->fields;
+	public function getLabelFields() {
+		return $this->labelFields;
 	}
 
 	/**
@@ -80,7 +87,7 @@ class FkSelect {
 	 * @return array
 	 */
 	public function getValues($filters=array()) {
-		$values = array();
+		$values = array('' => 'choose');
 		$fqcn = $this->fqcn;
 
 		$data = $fqcn::find($filters);
