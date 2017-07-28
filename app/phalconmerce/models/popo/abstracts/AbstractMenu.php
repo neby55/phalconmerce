@@ -16,25 +16,25 @@ abstract class AbstractMenu extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
 	public $fk_menugroup_id;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
 	public $fk_url_id;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
 	public $fk_menu_id;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
 	public $fk_lang_id;
@@ -46,7 +46,7 @@ abstract class AbstractMenu extends AbstractModel {
 	public $name;
 
 	/**
-	 * @Column(type="string", length=255, nullable=false)
+	 * @Column(type="string", length=255, nullable=true)
 	 * @var string
 	 */
 	public $externalUrl;

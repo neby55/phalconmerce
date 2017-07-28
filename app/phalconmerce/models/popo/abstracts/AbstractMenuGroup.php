@@ -3,6 +3,7 @@
 namespace Phalconmerce\Models\Popo\Abstracts;
 
 use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\FkSelect;
 
 abstract class AbstractMenuGroup extends AbstractModel {
 
@@ -31,5 +32,4 @@ abstract class AbstractMenuGroup extends AbstractModel {
 	 * @var int
 	 */
 	public $status;
-
 }

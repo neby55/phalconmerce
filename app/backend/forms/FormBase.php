@@ -15,7 +15,10 @@ use Phalcon\Forms\Form;
 use Phalcon\Forms\Element\Select;
 use \Phalcon\Forms\Element\Text;
 use \Phalcon\Forms\Element\Hidden;
+use Phalcon\Validation\Message;
+use Phalcon\Validation\Message\Group;
 use \Phalcon\Validation\Validator\PresenceOf;
+use Phalconmerce\Models\FkSelect;
 use Phalconmerce\Models\Utils;
 
 class FormBase extends Form {
@@ -79,81 +82,108 @@ class FormBase extends Form {
 								$length = $columnCollection->getArgument('length');
 							}
 
-							// TODO placeholders
 
-							// If long string
-							if ($type == 'string' && $length > 255 || $type == 'text') {
-								$item = new TextArea($currentPropertyName);
-								$item->setAttribute('class', 'form-control');
-								$item->setFilters(array('string'));
-							}
-							// If short string
-							else if ($type == 'string') {
-								$item = new Text($currentPropertyName);
-								$item->setAttribute('class', 'form-control');
-								$item->setFilters(array('string'));
-								$item->setAttribute('maxlength', $length);
-							}
-							// If float
-							else if ($type == 'float') {
-								$item = new Text($currentPropertyName);
-								$item->setAttribute('class', 'form-control');
-								$item->setFilters(array('float'));
-								$item->setAttribute('maxlength', \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SIZE + \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SCALE + 1);
-							}
-							// If int
-							else if ($type == 'integer' || $type == 'int') {
-								// Status case
-								if ($currentPropertyName == 'status') {
+							// If this property means foreign key
+							if (preg_match('/^fk_([a-zA-Z][a-zA-Z0-9_]*)_id$/', $currentPropertyName, $matches)) {
+								$currentForeignClassName = $matches[1];
+								$filterType = $type == 'string' ? 'string' : 'int';
+								$fkFcqn = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::POPO_NAMESPACE . '\\' . $currentForeignClassName;
+								$fkSelect = FkSelect::getFromClasseName($fkFcqn);
+
+								if ($fkSelect !== false) {
 									$item = new Select(
 										$currentPropertyName,
-										[
-											2 => 'Disabled',
-											1 => 'Enabled'
-										]
+										$fkSelect->getValues()
 									);
 									$item->setAttribute('class', 'form-control');
-									$item->setFilters(array('int'));
+									$item->setFilters(array($filterType));
 								}
 								else {
-									$currentReflectionClass = new \ReflectionClass($fqcn);
-									if ($currentReflectionClass->hasMethod($currentPropertyName . 'SelectOptions')) {
+									$item = new Text($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('string'));
+									$item->setAttribute('maxlength', $length);
+									$item->setMessages(new Group([new Message('Foreign Key select can\'t be generated. Please configure the static method "fkSelect" for this class')]));
+								}
+							}
+							else {
+
+								// TODO placeholders
+
+								// If long string
+								if ($type == 'string' && $length > 255 || $type == 'text') {
+									$item = new TextArea($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('string'));
+								}
+								// If short string
+								else if ($type == 'string') {
+									$item = new Text($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('string'));
+									$item->setAttribute('maxlength', $length);
+								}
+								// If float
+								else if ($type == 'float') {
+									$item = new Text($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('float'));
+									$item->setAttribute('maxlength', \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SIZE + \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SCALE + 1);
+								}
+								// If int
+								else if ($type == 'integer' || $type == 'int') {
+									// Status case
+									if ($currentPropertyName == 'status') {
 										$item = new Select(
 											$currentPropertyName,
-											call_user_func(array($fqcn, $currentPropertyName . 'SelectOptions'))
+											[
+												2 => 'Disabled',
+												1 => 'Enabled'
+											]
 										);
 										$item->setAttribute('class', 'form-control');
 										$item->setFilters(array('int'));
 									}
 									else {
-										$item = new Text($currentPropertyName);
-										$item->setAttribute('class', 'form-control');
-										$item->setFilters(array('int'));
-										$item->setAttribute('maxlength', $length);
+										$currentReflectionClass = new \ReflectionClass($fqcn);
+										if ($currentReflectionClass->hasMethod($currentPropertyName . 'SelectOptions')) {
+											$item = new Select(
+												$currentPropertyName,
+												call_user_func(array($fqcn, $currentPropertyName . 'SelectOptions'))
+											);
+											$item->setAttribute('class', 'form-control');
+											$item->setFilters(array('int'));
+										}
+										else {
+											$item = new Text($currentPropertyName);
+											$item->setAttribute('class', 'form-control');
+											$item->setFilters(array('int'));
+											$item->setAttribute('maxlength', $length);
+										}
 									}
 								}
-							}
-							// If boolean
-							else if ($type == 'boolean') {
-								$item = new Select(
-									$currentPropertyName,
-									[
-										2 => 'No',
-										1 => 'Yes'
-									]
-								);
-								$item->setAttribute('class', 'form-control');
-								$item->setFilters(array('int'));
-							}
-							// If timestamp
-							else if ($type == 'timestamp') {
-								$item = new Text($currentPropertyName);
-								$item->setAttribute('class', 'form-control');
-								$item->setAttribute('type', 'date');
-								$item->setAttribute('maxlength', 19);
-							}
-							else {
-								die ($type . '(' . $length . ')');
+								// If boolean
+								else if ($type == 'boolean') {
+									$item = new Select(
+										$currentPropertyName,
+										[
+											2 => 'No',
+											1 => 'Yes'
+										]
+									);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('int'));
+								}
+								// If timestamp
+								else if ($type == 'timestamp') {
+									$item = new Text($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setAttribute('type', 'date');
+									$item->setAttribute('maxlength', 19);
+								}
+								else {
+									die ($type . '(' . $length . ')');
+								}
 							}
 
 							// Mandatory / Required
