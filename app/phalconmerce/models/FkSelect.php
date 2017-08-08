@@ -45,7 +45,7 @@ class FkSelect {
 						$properties[0]->getName(),
 						'%s',
 						$fullyQualifiedClassName,
-						$properties[1]->getName()
+						array($properties[1]->getName())
 					);
 				}
 			}
@@ -94,6 +94,9 @@ class FkSelect {
 
 		foreach ($data as $currentObject) {
 			$labelList = array();
+			if (!is_array($this->labelFields)) {
+				$this->labelFields = array($this->labelFields);
+			}
 			foreach ($this->labelFields as $currentLabelField) {
 				$labelList[] = $currentObject->$currentLabelField;
 			}
