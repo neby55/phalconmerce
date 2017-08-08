@@ -3,9 +3,8 @@
 namespace Phalconmerce\Models\Popo\Abstracts;
 
 use Phalconmerce\Models\AbstractModel;
-use Phalconmerce\Models\FkSelect;
 
-abstract class AbstractBackendUsers extends AbstractModel {
+abstract class AbstractBackendUser extends AbstractModel {
 
 	/**
 	 * @Primary

@@ -16,13 +16,9 @@ use Phalcon\DI;
 use Phalconmerce\Models\Utils;
 use Phalconmerce\Services\TableGenerator;
 
-// TODO handle prefixes
-
 class Table {
 	/** @var string */
 	protected $tableName;
-	/** @var string */
-	protected $fieldsPrefix;
 	/** @var Column[] */
 	protected $columnList;
 	/** @var Index[] */
@@ -45,9 +41,8 @@ class Table {
 	const TABLES_CHARSET = 'utf8_general_ci';
 	const FK_WORD_SEPARATOR = '_';
 
-	public function __construct($tableName, $fieldsPrefix) {
+	public function __construct($tableName) {
 		$this->tableName = $tableName;
-		$this->fieldsPrefix = $fieldsPrefix;
 		$this->columnList = array();
 		$this->referencesList = array();
 		$this->indexesList = array();
@@ -111,7 +106,7 @@ class Table {
 
 			}
 			else {
-				$columnName = $this->fieldsPrefix.$propertyName;
+				$columnName = $propertyName;
 			}
 
 			if ($collection->has('Column')) {
@@ -303,7 +298,7 @@ class Table {
 		// Adding inserted field
 		if (!array_key_exists('inserted', $this->columnList)) {
 			$this->addColumn(new Column(
-				$this->fieldsPrefix.'inserted',
+				'inserted',
 				array(
 					'type' => Column::TYPE_TIMESTAMP,
 					'notNull' => true,

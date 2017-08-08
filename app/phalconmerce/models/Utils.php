@@ -71,15 +71,9 @@ class Utils {
 		if (substr($tableName, 0, 8) == 'Abstract') {
 			$tableName = substr($tableName, 8);
 		}
-		// Category => categories
-		if (substr($tableName, -1) == 'y' && !in_array(substr($tableName, -2, 1), array('a','e','i','o','u'))) {
-			$tableName = substr($tableName, 0, -1).'ie';
-		}
+
 		$tableName = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $tableName)), '_');
-		// Adress & Tax excluded
-		if (substr($tableName,-1) != 's' && substr($tableName,-1) != 'x') {
-			$tableName .= 's';
-		}
+
 		// If nmTable with '_has_'
 		if (strpos($tableName, '_has_') !== false) {
 			list($firstTable,$secondTable) = explode('_has_', $tableName);
@@ -114,14 +108,6 @@ class Utils {
 		}
 
 		return $className;
-	}
-
-	/**
-	 * @param string $tableName
-	 * @return string
-	 */
-	public static function getPrefixFromTableName($tableName) {
-		return strtolower(substr(str_replace('_', '', $tableName),0,3).'_');
 	}
 
 	/**

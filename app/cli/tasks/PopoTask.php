@@ -183,6 +183,9 @@ class PopoTask extends Task {
 	}
 
 	public function productGeneratorAction($params) {
+		// Get options passed to CLI
+		$options = $this->console->getOptions();
+
 		// All abstract classes to override
 		$abstractClassesList = PhpClass::getAbstractClasses();
 		if (sizeof($params) > 0) {
@@ -278,6 +281,15 @@ class PopoTask extends Task {
 
 				// Create PHP Class file
 				$phpClass = new PhpProductClass($className, $coreType);
+
+				// If a prefix is given for tables' name
+				if (array_key_exists('table-prefix', $options)) {
+					$phpClass->initTableName($options['table-prefix']);
+				}
+				else {
+					$phpClass->initTableName();
+				}
+
 				$phpClass->initTableName();
 				if (sizeof($propertiesList) > 0) {
 					foreach ($propertiesList as $currentPropertyObject) {
@@ -337,6 +349,8 @@ class PopoTask extends Task {
 		echo 'Phalconmerce tool for generate empty POPO Product Classes'.PHP_EOL.PHP_EOL;
 		echo 'Usage :'.PHP_EOL;
 		echo '  php app/cli.php popo productgenerator <ProductClassName>'.PHP_EOL.PHP_EOL;
+		echo 'Options :'.PHP_EOL;
+		echo '  --table-prefix=prefix'.self::TAB_CHARACTER.'to prefix every related tables'.PHP_EOL;
 		exit;
 	}
 }

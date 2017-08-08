@@ -12,13 +12,6 @@ use Phalcon\Mvc\Model;
 
 class AbstractModel extends Model {
 	/**
-	 * Prefix for fields in table
-	 *
-	 * @var string
-	 */
-	public $prefix;
-
-	/**
 	 * Timestamp representing row creation datetime
 	 *
 	 * @Column(type="timestamp", nullable=false)
@@ -27,27 +20,9 @@ class AbstractModel extends Model {
 	public $inserted;
 
 	public function initialize() {
+		// Setting up the table name from current Class Name
 		$classname = (new \ReflectionClass($this))->getShortName();
-		$tableName = $classname;
-
-		$this->setSource($tableName);
-
-		// Checking prefix value before setting new value automatically
-		if (empty($this->prefix)) {
-			$this->setPrefix(Utils::getPrefixFromTableName($tableName));
-		}
-	}
-
-	public function columnMap() {
-		$propertiesList = get_object_vars($this);
-		$prefixedList = array();
-		foreach($propertiesList as $currentPropertyName=>$currentProprety) {
-			// Avoid FactoryDefault property
-			if ($currentPropertyName != 'prefix' && substr($currentPropertyName,0,1) != '_') {
-				$prefixedList[$this->getPrefix() . $currentPropertyName] = $currentPropertyName;
-			}
-		}
-		return $prefixedList;
+		$this->setSource(strtolower($classname));
 	}
 
 	/**
@@ -58,19 +33,5 @@ class AbstractModel extends Model {
 		foreach ($propertiesList as $currentProperty=>$currentValue) {
 			$object->$currentProperty = $currentValue;
 		}
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getPrefix() {
-		return $this->prefix;
-	}
-
-	/**
-	 * @param string $prefix
-	 */
-	public function setPrefix($prefix) {
-		$this->prefix = $prefix;
 	}
 }

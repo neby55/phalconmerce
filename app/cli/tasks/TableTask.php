@@ -59,7 +59,7 @@ class TableTask extends Task {
 					$properties = PhpClass::getClassProperties($fqcn);
 
 					// Get table name from class name
-					$tableObject = new Table(Utils::getTableNameFromClassName($currentClassName), $currentObject->getPrefix());
+					$tableObject = new Table(Utils::getTableNameFromClassName($currentClassName));
 
 					if (sizeof($properties) > 0) {
 						foreach ($properties as $currentPropertyName => $currentPropertyReflect) {
