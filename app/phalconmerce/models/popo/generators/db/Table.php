@@ -137,7 +137,7 @@ class Table {
 						$columnOptions['scale'] = self::DECIMAL_SCALE;
 					}
 					// Nullable
-					if ($columnCollection->hasArgument('nullable') && $columnCollection->getArgument('nullable') == 'false') {
+					if ($columnCollection->hasArgument('nullable') && $columnCollection->getArgument('nullable') === false) {
 						$columnOptions['notNull'] = true;
 					}
 					else {
