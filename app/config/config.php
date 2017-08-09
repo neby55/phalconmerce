@@ -18,4 +18,5 @@ return new \Phalcon\Config(array(
 	'adminTheme' => 'sb-admin2',
 	'apiEnabled' => true,
 	'apiDir' => 'api',
+	'apiCorsAllowOrigin' => array('localhost'), // set an array of allowed domains, or just the string *
 ));
