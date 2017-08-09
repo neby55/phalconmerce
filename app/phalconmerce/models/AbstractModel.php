@@ -19,6 +19,8 @@ class AbstractModel extends Model {
 	 */
 	public $inserted;
 
+	const POPO_FQCN = 'Phalconmerce\Models\Popo\\';
+
 	public function initialize() {
 		// Setting up the table name from current Class Name
 		$classname = (new \ReflectionClass($this))->getShortName();

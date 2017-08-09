@@ -37,7 +37,7 @@ Retours de commande
 
 Customers, si BtoB, tax à 0, et ajout de champs dans customers
 
-Mettre en place une API automatiquement pour des projets avec en frontend Angular ou React. Utiliser Phalcon "micro" (https://olddocs.phalconphp.com/en/3.0.1/reference/tutorial-rest.html)
+Mettre en place une API automatiquement pour des projets avec en frontend Angular ou React. Utiliser Phalcon "micro" (https://olddocs.phalconphp.com/en/3.0.1/reference/tutorial-rest.html) ou bien phalcon-rest
 
 Traductions
 -----------

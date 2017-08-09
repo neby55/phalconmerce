@@ -58,6 +58,23 @@ if (file_exists(dirname(__DIR__).DIRECTORY_SEPARATOR.'backend'.DIRECTORY_SEPARAT
 // Mount RouterGroup on global router
 $router->mount($backendRouter);
 
+// Include API routes, if exists
+if (file_exists(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'routes.php')) {
+	// Create a group with a common module and controller
+	$apiRouter = new RouterGroup(
+		[
+			"module" => "api",
+		]
+	);
+	// Add admin directory to all backend URL
+	$apiRouter->setPrefix(str_replace('//', '/', '/' . $config->apiDir));
+
+	require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . 'routes.php';
+
+	// Mount RouterGroup on global router
+	$router->mount($apiRouter);
+}
+
 // Include frontend personnal routes
 if (file_exists(dirname(__DIR__).DIRECTORY_SEPARATOR.'frontend'.DIRECTORY_SEPARATOR.'routes.php')) {
 	require dirname(__DIR__).DIRECTORY_SEPARATOR.'frontend'.DIRECTORY_SEPARATOR.'routes.php';
