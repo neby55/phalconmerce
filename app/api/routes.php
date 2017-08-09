@@ -20,17 +20,15 @@ $apiRouter->addGet(
 	'/{entity}',
 	[
 		'controller' => 'default',
-		'action' => 'list',
-		"params"     => 1,
+		'action' => 'list'
 	]
 );
 // Create
 $apiRouter->addPost(
-	'/{:entity}',
+	'/{entity}',
 	[
 		'controller' => 'default',
-		'action' => 'create',
-		"params"     => 1,
+		'action' => 'create'
 	]
 );
 
@@ -42,5 +40,26 @@ $apiRouter->addGet(
 	[
 		"controller" => 'default',
 		"action"     => 'read'
+	]
+);
+$apiRouter->addPut(
+	'/{entity}/{id:[0-9]+}',
+	[
+		"controller" => 'default',
+		"action"     => 'replace'
+	]
+);
+$apiRouter->addPatch(
+	'/{entity}/{id:[0-9]+}',
+	[
+		"controller" => 'default',
+		"action"     => 'modify'
+	]
+);
+$apiRouter->addDelete(
+	'/{entity}/{id:[0-9]+}',
+	[
+		"controller" => 'default',
+		"action"     => 'delete'
 	]
 );

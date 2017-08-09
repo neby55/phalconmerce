@@ -16,5 +16,6 @@ return new \Phalcon\Config(array(
 	'adminDir' => 'admin',
 	'adminTitle' => 'Phalconmerce',
 	'adminTheme' => 'sb-admin2',
+	'apiEnabled' => true,
 	'apiDir' => 'api',
 ));
