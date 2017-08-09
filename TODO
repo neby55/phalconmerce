@@ -37,8 +37,6 @@ Retours de commande
 
 Customers, si BtoB, tax à 0, et ajout de champs dans customers
 
-Mettre en place une API automatiquement pour des projets avec en frontend Angular ou React. Utiliser Phalcon "micro" (https://olddocs.phalconphp.com/en/3.0.1/reference/tutorial-rest.html) ou bien phalcon-rest
-
 Traductions
 -----------
 => des produits/categories, permettre de générer des fichiers .po puis l'uploader pour les mises à jour de lang
@@ -51,3 +49,5 @@ Traductions
 	- une page dans le BO fera une vérification des traductions dans chaque PO (si vide, si non existant partout, autres à trouver)
 	- les champs qui seront "traduits" ont l'annotations "@Translate"
 	- stocker dans une table en DB les différents champs "traduits", ainsi, on pourra savoir si le même texte existe plusieurs fois, et dupliquer l'index, sinon le modifier
+
+--OK--Mettre en place une API automatiquement pour des projets avec en frontend Angular ou React. Utiliser Phalcon "micro" (https://olddocs.phalconphp.com/en/3.0.1/reference/tutorial-rest.html) ou bien phalcon-rest

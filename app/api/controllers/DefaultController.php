@@ -9,6 +9,7 @@
 
 namespace Api\Controllers;
 
+use Phalcon\Di;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\Model\MetaData\Memory;
@@ -203,7 +204,7 @@ class DefaultController extends Controller {
 
 	private function sendJson($httpResponseCode, $jsonData = null) {
 		// Using HTTP Response object
-		$response = new Response();
+		$response = $this->getResponse();
 		// Change the HTTP status
 		switch ($httpResponseCode) {
 			case 200 :
@@ -229,6 +230,7 @@ class DefaultController extends Controller {
 		}
 
 		if ($jsonData) {
+			$response->setHeader('Content-Type', 'application/json');
 			$response->setJsonContent($jsonData);
 		}
 		$response->send();
@@ -246,7 +248,7 @@ class DefaultController extends Controller {
 	private function sendCreated($url) {
 		if ($url != '') {
 			// Using HTTP Response object
-			$response = new Response();
+			$response = $this->getResponse();
 			$response->setStatusCode(201, "Created");
 			$response->setHeader('Location', $url);
 			$response->send();
@@ -255,9 +257,16 @@ class DefaultController extends Controller {
 	}
 
 	private function send404() {
-		$response = new Response();
+		$response = $this->getResponse();
 		$response->setStatusCode(404, "Not Found");
 		$response->setContent('Not Found');
 		$response->send();
+	}
+
+	private function getResponse() {
+		$response = new Response();
+		// TODO really handle cors
+		$response->setHeader('Access-Control-Allow-Origin', '*');
+		return $response;
 	}
 }
