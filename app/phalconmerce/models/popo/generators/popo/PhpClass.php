@@ -52,6 +52,10 @@ class PhpClass {
 		$phpContent = '<?php'.PHP_EOL.PHP_EOL;
 		$phpContent .= 'namespace '.self::POPO_NAMESPACE.';'.PHP_EOL.PHP_EOL;
 		$phpContent .= 'use '.self::POPO_ABSTRACT_NAMESPACE.'\\%s;'.PHP_EOL.PHP_EOL;
+		$phpContent .= '// Remove @Api annotations to disable acces to this class from API service'.PHP_EOL;
+		$phpContent .= '/**'.PHP_EOL;
+		$phpContent .= ' * @Api'.PHP_EOL;
+		$phpContent .= ' */'.PHP_EOL.PHP_EOL;
 		$phpContent .= 'class %s extends %s {'.PHP_EOL;
 		if (is_array($this->propertiesList) && sizeof($this->propertiesList) > 0) {
 			$phpContent .= self::TAB_CHARACTER.'/** Properties generated with Popo Cli Generator */'.PHP_EOL;
@@ -151,6 +155,18 @@ class PhpClass {
 		$reflector = $reader->get($fullyQualifiedClassName);
 
 		return $reflector->getPropertiesAnnotations();
+	}
+
+	/**
+	 * @param string $fullyQualifiedClassName
+	 * @return bool|\Phalcon\Annotations\Collection
+	 */
+	public static function getClassAnnotations($fullyQualifiedClassName) {
+		$reader = new \Phalcon\Annotations\Adapter\Memory();
+		// Reflect the annotations in the class Example
+		$reflector = $reader->get($fullyQualifiedClassName);
+
+		return $reflector->getClassAnnotations();
 	}
 
 	public function addProperty(Property $propertyObject) {

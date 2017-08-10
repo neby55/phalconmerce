@@ -12,8 +12,7 @@ namespace Api\Controllers;
 use Phalcon\Di;
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Controller;
-use Phalcon\Mvc\Model\MetaData\Memory;
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Utils;
 
 class DefaultController extends Controller {
@@ -21,13 +20,22 @@ class DefaultController extends Controller {
 	const POPO_FQCN = '\Phalconmerce\Models\Popo\\';
 	const FORM_FQCN = '\Backend\Forms\\';
 
+	/**
+	 * @param array $params
+	 */
 	public function indexAction($params = array()) {
 		echo '<h1>index</h1>';
 		Utils::debug($params);
 	}
 
+	/**
+	 * @param string $entity
+	 */
 	public function listAction($entity) {
 		if (is_string($entity) && strlen($entity) > 1) {
+			// Checks if entity exists and is available
+			$this->checkEntity($entity);
+
 			$fqcn = $this->getFQCN($entity);
 
 			$objectsList = $fqcn::find();
@@ -37,8 +45,15 @@ class DefaultController extends Controller {
 		$this->send404();
 	}
 
+	/**
+	 * @param string $entity
+	 * @param int $id
+	 */
 	public function readAction($entity, $id) {
 		if (is_string($entity) && strlen($entity) > 1 && is_numeric($id)) {
+			// Checks if entity exists and is available
+			$this->checkEntity($entity);
+
 			$fqcn = $this->getFQCN($entity);
 
 			$object = $fqcn::findFirst($id);
@@ -50,7 +65,14 @@ class DefaultController extends Controller {
 		$this->send404();
 	}
 
+	/**
+	 * @param string $entity
+	 * @return bool
+	 */
 	public function createAction($entity) {
+		// Checks if entity exists and is available
+		$this->checkEntity($entity);
+
 		$errorList = array();
 		$fqcn = $this->getFQCN($entity);
 		$formClass = $this->getFormFQCN($entity);
@@ -91,8 +113,16 @@ class DefaultController extends Controller {
 		$this->sendCreated('./'.$object->id);
 	}
 
+	/**
+	 * @param string $entity
+	 * @param int $id
+	 * @return bool
+	 */
 	public function deleteAction($entity, $id) {
 		if (is_string($entity) && strlen($entity) > 1 && is_numeric($id)) {
+			// Checks if entity exists and is available
+			$this->checkEntity($entity);
+
 			$errorList = array();
 			$fqcn = $this->getFQCN($entity);
 			$formClass = $this->getFormFQCN($entity);
@@ -121,16 +151,35 @@ class DefaultController extends Controller {
 		return false;
 	}
 
+	/**
+	 * @param string$entity
+	 * @param int $id
+	 * @return bool
+	 */
 	public function replaceAction($entity, $id) {
-		$this->update('put', $entity, $id);
+		return $this->update('put', $entity, $id);
 	}
 
+	/**
+	 * @param string$entity
+	 * @param int $id
+	 * @return bool
+	 */
 	public function modifyAction($entity, $id) {
-		$this->update('patch', $entity, $id);
+		return $this->update('patch', $entity, $id);
 	}
 
-	private function update($action, $entity, $id) {
+	/**
+	 * @param string $action
+	 * @param string$entity
+	 * @param int $id
+	 * @return bool
+	 */
+	protected function update($action, $entity, $id) {
 		if (is_string($entity) && strlen($entity) > 1 && is_numeric($id)) {
+			// Checks if entity exists and is available
+			$this->checkEntity($entity);
+
 			$errorList = array();
 			$fqcn = $this->getFQCN($entity);
 			$formClass = $this->getFormFQCN($entity);
@@ -185,6 +234,7 @@ class DefaultController extends Controller {
 				}
 
 				if ($object->save() == false) {
+					// TODO manage if error
 					foreach ($object->getMessages() as $message) {
 						print_r($message);
 					}
@@ -202,7 +252,11 @@ class DefaultController extends Controller {
 		$this->send404();
 	}
 
-	private function sendJson($httpResponseCode, $jsonData = null) {
+	/**
+	 * @param int $httpResponseCode
+	 * @param mixed $jsonData
+	 */
+	protected function sendJson($httpResponseCode, $jsonData = null) {
 		// Using HTTP Response object
 		$response = $this->getResponse();
 		// Change the HTTP status
@@ -237,15 +291,26 @@ class DefaultController extends Controller {
 		exit;
 	}
 
-	private function getFQCN($className) {
+	/**
+	 * @param string $className
+	 * @return string
+	 */
+	protected function getFQCN($className) {
 		return self::POPO_FQCN.$className;
 	}
 
-	private function getFormFQCN($className) {
+	/**
+	 * @param string $className
+	 * @return string
+	 */
+	protected function getFormFQCN($className) {
 		return self::FORM_FQCN.$className.'Form';
 	}
 
-	private function sendCreated($url) {
+	/**
+	 * @param string $url
+	 */
+	protected function sendCreated($url) {
 		if ($url != '') {
 			// Using HTTP Response object
 			$response = $this->getResponse();
@@ -256,17 +321,60 @@ class DefaultController extends Controller {
 		}
 	}
 
-	private function send404() {
+	protected function send403() {
+		$response = $this->getResponse();
+		$response->setStatusCode(403, "Forbidden");
+		$response->setContent('Forbidden');
+		$response->send();
+		exit;
+	}
+
+	protected function send404() {
 		$response = $this->getResponse();
 		$response->setStatusCode(404, "Not Found");
 		$response->setContent('Not Found');
 		$response->send();
+		exit;
 	}
 
-	private function getResponse() {
+	/**
+	 * @return \Phalcon\Http\Response
+	 */
+	protected function getResponse() {
 		$response = new Response();
 		// TODO really handle cors
 		$response->setHeader('Access-Control-Allow-Origin', '*');
 		return $response;
+	}
+
+	/**
+	 * @param string $entity
+	 * @return bool
+	 */
+	protected function entityExists($entity) {
+		$fqcn = $this->getFQCN($entity);
+		return class_exists($fqcn);
+	}
+
+	/**
+	 * @param string $entity
+	 * @return bool
+	 */
+	protected function checkEntity($entity) {
+		if (strlen($entity) > 1) {
+			if ($this->entityExists($entity)) {
+				$fqcn = $this->getFQCN($entity);
+				// Get properties
+				$annotations = PhpClass::getClassAnnotations($fqcn);
+
+				if (!empty($annotations)) {
+					if ($annotations->has('Api') || $annotations->has('API')) {
+						return true;
+					}
+				}
+				$this->send403();
+			}
+		}
+		$this->send404();
 	}
 }
