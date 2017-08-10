@@ -122,7 +122,7 @@ class Utils {
 	}
 
 	/**
-	 * @param string $data
+	 * @param mixed $data
 	 * @param string $filename
 	 * @return bool
 	 */
