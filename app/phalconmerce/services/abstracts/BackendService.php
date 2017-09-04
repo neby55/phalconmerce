@@ -9,27 +9,23 @@
 
 namespace Phalconmerce\Services\Abstracts;
 
+use Backend\Models\Menu;
+use Backend\Models\SubMenu;
 
-abstract class BackendService  implements \Phalcon\Di\InjectionAwareInterface {
+abstract class BackendService extends MainService {
+	public function getMenu() {
+		$menuItems =  array();
 
-	protected $_dependencyInjector;
+		// TODO define here Menu labels and links (without baseURL, and without the first "/")
+		// Use Menu, MenuLink & SubMenu
+		$menuItems[] = new Menu('Home', 'dashboard', '');
 
-	/**
-	 * Sets the dependency injector
-	 *
-	 * @param mixed $dependencyInjector
-	 */
-	public function setDI(\Phalcon\DiInterface $dependencyInjector) {
-		$this->_dependencyInjector = $dependencyInjector;
+		$productsMenuItems = new Menu('Products', 'barcode', '');
+		$productsMenuItems->addSubMenu(new SubMenu('First product type', 'first-type'));
+		$productsMenuItems->addSubMenu(new SubMenu('Second product type', 'second-type'));
+
+		$menuItems[] = $productsMenuItems;
+
+		return $menuItems;
 	}
-
-	/**
-	 * Returns the internal dependency injector
-	 *
-	 * @return \Phalcon\DiInterface
-	 */
-	public function getDI() {
-		return $this->_dependencyInjector;
-	}
-
 }

@@ -30,8 +30,6 @@ abstract class FrontendService  implements \Phalcon\Di\InjectionAwareInterface {
 	const COOKIE_CURRENCY_NAME = 'currency';
 	const COOKIES_LIFETIME_IN_DAYS = 365;
 
-	protected $_dependencyInjector;
-
 	public function __construct() {
 		// TODO retriveve infos to complete properties
 		$this->baseURL = '';
@@ -40,16 +38,6 @@ abstract class FrontendService  implements \Phalcon\Di\InjectionAwareInterface {
 		$this->metaTitle = '';
 		$this->metaDescription = '';
 		$this->metaKeywords = '';
-	}
-
-
-	/**
-	 * Sets the dependency injector
-	 *
-	 * @param mixed $dependencyInjector
-	 */
-	public function setDI(\Phalcon\DiInterface $dependencyInjector) {
-		$this->_dependencyInjector = $dependencyInjector;
 	}
 
 	/**
@@ -80,15 +68,6 @@ abstract class FrontendService  implements \Phalcon\Di\InjectionAwareInterface {
 		// Handle if $duration is expire timestamp
 		$expire = $duration > time() ? $duration : time() + $duration;
 		return setcookie($name, $value, $expire, $this->getBaseURL().'/');
-	}
-
-	/**
-	 * Returns the internal dependency injector
-	 *
-	 * @return \Phalcon\DiInterface
-	 */
-	public function getDI() {
-		return $this->_dependencyInjector;
 	}
 
 	/**

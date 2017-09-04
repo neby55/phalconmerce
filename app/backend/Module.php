@@ -16,6 +16,7 @@ use Phalcon\Mvc\ModuleDefinitionInterface;
 use Phalcon\DiInterface;
 use Phalcon\Mvc\View;
 use Phalcon\Events\Manager as EventsManager;
+use Phalconmerce\Services\BackendService;
 
 class Module implements ModuleDefinitionInterface {
 	/**
@@ -30,6 +31,8 @@ class Module implements ModuleDefinitionInterface {
 				'Backend\Models' => __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR,
 				'Backend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
 				'Backend\Forms' => __DIR__ . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR,
+				'Phalconmerce\Services' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
+				'Phalconmerce\Services\Abstracts' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
 			],
 			true
 		);
@@ -56,6 +59,14 @@ class Module implements ModuleDefinitionInterface {
 			$dispatcher = new Dispatcher();
 			$dispatcher->setDefaultNamespace("\\Backend\\Controllers\\");
 			return $dispatcher;
+		});
+
+		/**
+		 * Phalconmerce backendService
+		 */
+		$dependencyInjector->set('backendService', function () {
+			$service = new BackendService();
+			return $service;
 		});
 
 		/**

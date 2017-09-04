@@ -13,7 +13,7 @@ namespace Phalconmerce\Services\Abstracts;
 use Phalcon\Di;
 use Phalconmerce\Services\FrontendService;
 
-abstract class TranslationService  implements \Phalcon\Di\InjectionAwareInterface {
+abstract class TranslationService extends MainService {
 
 	/** @var string $langCode */
 	protected $langCode;
@@ -32,8 +32,6 @@ abstract class TranslationService  implements \Phalcon\Di\InjectionAwareInterfac
 	public static $validCurrenciesList = array(1=>'EUR', 2=>'USD');
 	/** @var array Sigle for available currencies */
 	public static $currenciesSiglesList = array('EUR'=>'€', 'USD'=>'$');
-
-	protected $_dependencyInjector;
 
 	public function __construct() {
 		// TODO implements like innocentstone
@@ -283,24 +281,6 @@ msgstr %s
 	}
 
 	/**
-	 * Sets the dependency injector
-	 *
-	 * @param mixed $dependencyInjector
-	 */
-	public function setDI(\Phalcon\DiInterface $dependencyInjector) {
-		$this->_dependencyInjector = $dependencyInjector;
-	}
-
-	/**
-	 * Returns the internal dependency injector
-	 *
-	 * @return \Phalcon\DiInterface
-	 */
-	public function getDI() {
-		return $this->_dependencyInjector;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function getLangCode() {
@@ -379,4 +359,5 @@ msgstr %s
 
 }
 // Callback close method from FrontOrder when script is finished
-register_shutdown_function(array("TranslationStatic", "close"));
+// TODO check if it is necessary
+// register_shutdown_function(array("TranslationStatic", "close"));
