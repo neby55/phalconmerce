@@ -18,6 +18,12 @@ $backendRouter->add('/',
 		"action"     => "index",
 	]
 );
+$backendRouter->add('',
+	[
+		"controller" => "index",
+		"action"     => "index",
+	]
+);
 
 $backendRouter->add(
 	'/:controller',

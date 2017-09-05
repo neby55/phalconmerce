@@ -16,6 +16,8 @@ use Phalcon\Mvc\ModuleDefinitionInterface;
 use Phalcon\DiInterface;
 use Phalcon\Mvc\View;
 use Phalcon\Events\Manager as EventsManager;
+use Phalconmerce\Plugins\NotFoundPlugin;
+use Phalconmerce\Plugins\BackendSecurityPlugin;
 use Phalconmerce\Services\BackendService;
 
 class Module implements ModuleDefinitionInterface {
@@ -33,6 +35,8 @@ class Module implements ModuleDefinitionInterface {
 				'Backend\Forms' => __DIR__ . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR,
 				'Phalconmerce\Services' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
 				'Phalconmerce\Services\Abstracts' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
+				'Phalconmerce\Plugins' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR,
+				'Phalconmerce\Plugins\Abstracts' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
 			],
 			true
 		);
@@ -56,8 +60,23 @@ class Module implements ModuleDefinitionInterface {
 		 * Dispatcher
 		 */
 		$dependencyInjector->set('dispatcher', function () {
+			$eventsManager = new EventsManager;
+			/**
+			 * Check if the user is allowed to access certain action using the SecurityPlugin
+			 */
+			$eventsManager->attach('dispatch:beforeDispatch', new BackendSecurityPlugin);
+			/**
+			 * Handle exceptions and not-found exceptions using NotFoundPlugin
+			 */
+			$eventsManager->attach('dispatch:beforeException', new NotFoundPlugin);
+
+			/**
+			 * Create the dispatcher
+			 */
 			$dispatcher = new Dispatcher();
 			$dispatcher->setDefaultNamespace("\\Backend\\Controllers\\");
+			$dispatcher->setEventsManager($eventsManager);
+
 			return $dispatcher;
 		});
 

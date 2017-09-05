@@ -37,7 +37,7 @@ Retours de commande
 
 Customers, si BtoB, tax à 0, et ajout de champs dans customers
 
-SSG (Static Site Generator) : proposer la possibilité de générer les fichiers HTML statiques via l'interface (ainsi, pas de router+cache, juste HTML). Valable pour toutes les pages => oblige à faire les parties liées aux sessions en Ajax.
+Option : SSG (Static Site Generator) : proposer la possibilité de générer les fichiers HTML statiques via l'interface (ainsi, pas de router+cache, juste HTML). Valable pour toutes les pages => oblige à faire les parties liées aux sessions en Ajax.
 
 Traductions
 -----------

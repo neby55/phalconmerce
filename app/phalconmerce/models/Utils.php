@@ -142,9 +142,11 @@ class Utils {
 	 * @return bool
 	 */
 	public static function loadData($filename) {
-		$content = file_get_contents(self::getDataFullFilename($filename));
-		if (!empty($content)) {
-			return unserialize($content);
+		if (file_exists(self::getDataFullFilename($filename))) {
+			$content = file_get_contents(self::getDataFullFilename($filename));
+			if (!empty($content)) {
+				return unserialize($content);
+			}
 		}
 		return false;
 	}
