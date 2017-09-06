@@ -4,7 +4,6 @@ namespace Cli\Tasks;
 
 use Cli\Models\Task;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
-use Phalconmerce\Models\Popo\Generators\Popo\PhpProductClass;
 use Phalconmerce\Models\Popo\Generators\Popo\Property;
 use Phalconmerce\Models\Popo\Generators\Popo\Relationship;
 use Phalconmerce\Models\Popo\Generators\Popo\RelationshipManyToMany;
@@ -18,8 +17,6 @@ class PopoTask extends Task {
 		echo "      php app/cli.php popo relationships" . PHP_EOL;
 		echo "- \"POPO Generator\" for generating empty POPO Classes (mandatory)" . PHP_EOL;
 		echo "      php app/cli.php popo generator" . PHP_EOL;
-		echo "- \"POPO Product Generator\" for generating empty POPO Product Classes (also mandatory)" . PHP_EOL;
-		echo "      php app/cli.php popo productgenerator" . PHP_EOL;
 	}
 
 	public function relationshipsAction($params) {
@@ -182,174 +179,13 @@ class PopoTask extends Task {
 		}
 	}
 
-	public function productGeneratorAction($params) {
-		// Get options passed to CLI
-		$options = $this->console->getOptions();
-
-		// All abstract classes to override
-		$abstractClassesList = PhpClass::getAbstractClasses();
-		if (sizeof($params) > 0) {
-			$askedClassNameList = $params;
-
-			if (sizeof($askedClassNameList) <= 0) {
-				echo 'No class name specified'.PHP_EOL;
-				$this->displayProductGeneratorHelp();
-			}
-			else {
-				$className = current($askedClassNameList);
-
-				$coreType = self::askQuestion('Choose your Product Type ['.PhpProductClass::CORE_TYPE_SIMPLE_PRODUCT.'=>Simple Product, '.PhpProductClass::CORE_TYPE_CONFIGURABLE_PRODUCT.'=Configurable Product, '.PhpProductClass::CORE_TYPE_GROUPED_PRODUCT.'=Grouped Product] :', array(1,2,3));
-
-				// TODO check relationships for fk_configurableproduct_id & fk_groupedproduct_id
-
-				$abstractColumnsList = array(
-					'id',
-					'sku',
-					'price vat excluded',
-					'weight',
-					'stock',
-					'name',
-					'short description',
-					'description',
-					'status'
-				);
-
-				print 'Those properties are inherited from AbstractProduct :'.PHP_EOL;
-				print self::TAB_CHARACTER.join(PHP_EOL.self::TAB_CHARACTER, $abstractColumnsList).PHP_EOL;
-				$propertyName = '';
-				$propertiesList = array();
-				while ($propertyName != 'quit') {
-					$propertyName = self::askQuestion('What property do you want to add to your object [quit to stop adding properties] ?');
-					if ($propertyName != 'quit') {
-						$propertyObject = new Property($propertyName);
-
-						// Type
-						$questionValues = '';
-						foreach (Property::$phpTypesList as $curValue=>$curLabel) {
-							$questionValues .= $curValue.'='.$curLabel.',';
-						}
-						$questionValues = substr($questionValues, 0, -1);
-						$propertyObject->setType(self::askQuestion('Its type ['.$questionValues.'] ?', array_keys(Property::$phpTypesList)));
-
-						// Size
-						if ($propertyObject->isNumeric()) {
-							$propertyObject->setLength(self::askQuestion('Its size [empty for automatic sizing] ?', array(), 0));
-						}
-						else if ($propertyObject->getType() == 3) { // string
-							$propertyObject->setLength(self::askQuestion('Its size (maximum characters) ?'));
-						}
-
-						// Translate
-						if ($propertyObject->getType() == 3) { // string
-							$response = self::askQuestion('Does this property needs to be translated [yes/no] ?');
-							$propertyObject->setTranslate($response == 'yes' || $response == 'y');
-						}
-
-						// Ask for extra parameters
-						$response = self::askQuestion('Do you want to setup extra parameters for this property (signed/unsigned, default value, unique, nullable) [yes/no] ?');
-						if ($response == 'yes' || $response == 'y') {
-							// Unsigned
-							if ($propertyObject->isNumeric()) {
-								$response = self::askQuestion('Unsigned or not [1=unsigned, 2=signed] ?', array(1, 2));
-								$propertyObject->setUnsigned($response == 1);
-							}
-
-							// Default
-							$propertyObject->setDefault(self::askQuestion('Its default value (value or SQL expression) ?'));
-
-							// Unique
-							$response = self::askQuestion('In database, does this property should be UNIQUE [yes/no] ?');
-							$propertyObject->setUnique($response == 'yes' || $response == 'y');
-
-							// Nullable
-							$response = self::askQuestion('In database, can this property have NULL values [yes/no] ?');
-							$propertyObject->setNullable($response == 'yes' || $response == 'y');
-						}
-						else {
-							// default values for parameters
-							$propertyObject->setUnsigned(false);
-							$propertyObject->setDefault('');
-							$propertyObject->setUnique(false);
-							$propertyObject->setNullable(true);
-						}
-
-						$propertiesList[] = $propertyObject;
-
-						print 'Property "'.$propertyName.'"" added.'.PHP_EOL.PHP_EOL;
-					}
-				}
-
-				// Create PHP Class file
-				$phpClass = new PhpProductClass($className, $coreType);
-
-				// If a prefix is given for tables' name
-				if (array_key_exists('table-prefix', $options)) {
-					$phpClass->initTableName($options['table-prefix']);
-				}
-				else {
-					$phpClass->initTableName();
-				}
-
-				$phpClass->initTableName();
-				if (sizeof($propertiesList) > 0) {
-					foreach ($propertiesList as $currentPropertyObject) {
-						$phpClass->addProperty($currentPropertyObject);
-					}
-				}
-
-				$currentPhpContent = $phpClass->getPhpContent();
-
-				if ($phpClass->save($currentPhpContent)) {
-					echo $phpClass->getClassName().' class file generated'.PHP_EOL;
-				}
-				else {
-					echo 'ERROR : Can\'t create class "'.$phpClass->getClassName().'"'.PHP_EOL;
-				}
-
-				// If a second PHP Class file is needed (Configurable/Grouped)
-				$secondCoreType = $phpClass->getSecondClassNameCoreType();
-				if ($secondCoreType !== false) {
-					// Create PHP Class file
-					$phpSecondClass = new PhpProductClass($className, $secondCoreType);
-					$phpSecondClass->initTableName();
-					if ($phpClass->isSecondClassNeedsProperties() && sizeof($propertiesList) > 0) {
-						foreach ($propertiesList as $currentPropertyObject) {
-							$phpSecondClass->addProperty($currentPropertyObject);
-						}
-					}
-
-					$currentPhpContent = $phpSecondClass->getPhpContent();
-
-					if ($phpSecondClass->save($currentPhpContent)) {
-						echo $phpSecondClass->getClassName().' class file generated'.PHP_EOL;
-					}
-					else {
-						echo 'ERROR : Can\'t create class "'.$phpSecondClass->getClassName().'"'.PHP_EOL;
-					}
-				}
-			}
-		}
-		else {
-			$this->displayProductGeneratorHelp();
-		}
-	}
-
 	private static function displayGeneratorHelp() {
-		echo 'Phalconmerce tool for generate empty POPO Classes (excepting Product)'.PHP_EOL;
+		echo 'Phalconmerce tool for generate empty POPO Classes'.PHP_EOL;
 		echo 'for Phalconmerce Abstract Classes'.PHP_EOL.PHP_EOL;
 		echo 'Usage :'.PHP_EOL;
 		echo '  php app/cli.php [options] popo generator [<ClassName> [<ClassName>...]]'.PHP_EOL.PHP_EOL;
 		echo 'Options :'.PHP_EOL;
 		echo '  --all'.self::TAB_CHARACTER.'to generate every Classes'.PHP_EOL;
-		echo '  --table-prefix=prefix'.self::TAB_CHARACTER.'to prefix every related tables'.PHP_EOL;
-		exit;
-	}
-
-	private static function displayProductGeneratorHelp() {
-		echo 'Phalconmerce tool for generate empty POPO Product Classes'.PHP_EOL.PHP_EOL;
-		echo 'Usage :'.PHP_EOL;
-		echo '  php app/cli.php popo productgenerator <ProductClassName>'.PHP_EOL.PHP_EOL;
-		echo 'Options :'.PHP_EOL;
 		echo '  --table-prefix=prefix'.self::TAB_CHARACTER.'to prefix every related tables'.PHP_EOL;
 		exit;
 	}

@@ -141,10 +141,7 @@ class PhpClass {
 			while (false !== ($entry = readdir($handle))) {
 				if ($entry != '.' && $entry != '..' && substr($entry, -4) == '.php') {
 					$abstractClassName = substr($entry, 0, -4);
-					// We cannot generate Product, there is another script to do that
-					if (!in_array($abstractClassName, PhpProductClass::$abstractProductClassesList)) {
-						$abstractClassesList[str_replace('Abstract', '', $abstractClassName)] = $abstractClassName;
-					}
+					$abstractClassesList[str_replace('Abstract', '', $abstractClassName)] = $abstractClassName;
 				}
 			}
 		}

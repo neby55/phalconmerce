@@ -19,6 +19,12 @@ abstract class AbstractProduct extends AbstractModel {
 	public $id;
 
 	/**
+	 * @Column(type="integer", nullable=false)
+	 * @var int
+	 */
+	public $fk_attributeset_id;
+
+	/**
 	 * @Column(type="integer", length=1, nullable=false)
 	 * @var int
 	 */

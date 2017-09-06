@@ -11,6 +11,8 @@ Séparer currency et lang
 Voir comment gérer les filtres produits
 	- annotations
 	- metod dans la classe enfant
+=> propriétés => filtrable
+mais possibilité d'ajouter des attributs via BO (+csv via slug ?)
 
 Proposer les données "SESSION" par Ajax
 	- contenu du panier
@@ -36,6 +38,8 @@ Factures
 Retours de commande
 
 Customers, si BtoB, tax à 0, et ajout de champs dans customers
+
+!! Penser "mise à jour" des fichiers => abstracts !!
 
 Option : SSG (Static Site Generator) : proposer la possibilité de générer les fichiers HTML statiques via l'interface (ainsi, pas de router+cache, juste HTML). Valable pour toutes les pages => oblige à faire les parties liées aux sessions en Ajax.
 
