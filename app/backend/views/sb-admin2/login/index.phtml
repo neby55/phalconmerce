@@ -3,10 +3,9 @@
 		<div class="col-md-4 col-md-offset-4">
 			<div class="login-panel panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title">Please Sign In (<?= $test ?>)</h3>
+					<h3 class="panel-title">Sign In</h3>
 				</div>
 				<div class="panel-body">
-					(<?= $titi ?>)
 					<form role="form" method="post" action="<?= $url->get('login') ?>">
 						<fieldset>
 							<div class="form-group">
@@ -29,3 +28,11 @@
 		</div>
 	</div>
 </div>
+
+<style type="text/css">
+BODY, HTML {
+	background: url('<?= $url->getStaticBaseUri() ?>/img/login/2.jpg') transparent center no-repeat;
+	height: 100%;
+	background-size: cover;
+}
+</style>

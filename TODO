@@ -8,11 +8,9 @@ Séparer currency et lang
 	- permettre de gérer un objet "SiteLang" composé de lang et currency
 	- ou permettre de gérer Lang et Currency séparemment
 
-Voir comment gérer les filtres produits
-	- annotations
-	- metod dans la classe enfant
-=> propriétés => filtrable
-mais possibilité d'ajouter des attributs via BO (+csv via slug ?)
+Filtres :
+	- pour chaque slug, le dév va écrire la requête permettant d'avoir la liste des productIds correspondants à la ou aux valeurs fournies via le filtre (selon type range, int, string, etc.)
+	- ainsi, on fera ensuite un array_intersect des ids sur les différents filtres + catégorie
 
 Proposer les données "SESSION" par Ajax
 	- contenu du panier

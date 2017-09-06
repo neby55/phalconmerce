@@ -40,6 +40,14 @@ class Module implements ModuleDefinitionInterface {
 	 */
 	public function registerServices(DiInterface $dependencyInjector) {
 		/**
+		 * The Logger component
+		 */
+		$dependencyInjector->set('logger', function () {
+			$logger = new \Phalcon\Logger\Adapter\File(APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'frontend.log');
+			return $logger;
+		});
+
+		/**
 		 * Dispatcher
 		 */
 		$dependencyInjector->set('dispatcher', function ()

@@ -21,6 +21,13 @@ abstract class AbstractProductHasAttribute extends AbstractModelManyToMany {
 	public $fk_attribute_id;
 
 	/**
+	 * @Column(type="boolean", nullable=false)
+	 * @Index
+	 * @var boolean
+	 */
+	public $isRequired;
+
+	/**
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */

@@ -14,7 +14,7 @@ class AbstractModel extends Model {
 	/**
 	 * Timestamp representing row creation datetime
 	 *
-	 * @Column(type="timestamp", nullable=false)
+	 * @Column(type="timestamp", nullable=false, default=CURRENT_TIMESTAMP)
 	 * @var string
 	 */
 	public $inserted;

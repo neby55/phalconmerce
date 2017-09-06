@@ -22,6 +22,12 @@ abstract class AbstractManufacturer extends AbstractModel {
 	public $id;
 
 	/**
+	 * @Column(type="integer", nullable=false)
+	 * @var int
+	 */
+	public $fk_country_id;
+
+	/**
 	 * @Column(type="string", length=128, nullable=false)
 	 * @var string
 	 */

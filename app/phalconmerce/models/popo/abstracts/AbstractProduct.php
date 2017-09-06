@@ -25,6 +25,12 @@ abstract class AbstractProduct extends AbstractModel {
 	public $fk_attributeset_id;
 
 	/**
+	 * @Column(type="integer", nullable=false)
+	 * @var int
+	 */
+	public $fk_manufacturer_id;
+
+	/**
 	 * @Column(type="integer", length=1, nullable=false)
 	 * @var int
 	 */
@@ -59,6 +65,18 @@ abstract class AbstractProduct extends AbstractModel {
 	 * @var int
 	 */
 	public $stock;
+
+	/**
+	 * @Column(type="timestamp", nullable=true)
+	 * @var string
+	 */
+	public $newsFromDate;
+
+	/**
+	 * @Column(type="timestamp", nullable=true)
+	 * @var string
+	 */
+	public $newsToDate;
 
 	/**
 	 * @Column(type="string", length=64, nullable=false)

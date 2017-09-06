@@ -24,6 +24,12 @@ $backendRouter->add('',
 		"action"     => "index",
 	]
 );
+$backendRouter->add('login',
+	[
+		"controller" => "login",
+		"action"     => "index",
+	]
+);
 
 $backendRouter->add(
 	'/:controller',

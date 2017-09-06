@@ -168,14 +168,15 @@ class Table {
 					// unique
 					if ($columnCollection->hasArgument('unique') && $columnCollection->getArgument('unique') == 'true') {
 						$this->addIndex(new Index(
-							'UNIQUE',
-							[$columnName]
+							$columnName.'Unique',
+							[$columnName],
+							'UNIQUE'
 						));
 					}
 					// index for status/active fields
 					if ($propertyName == 'status' || $propertyName == 'active') {
 						$this->addIndex(new Index(
-							$columnName,
+							$columnName.'Index',
 							[$columnName]
 						));
 					}
@@ -188,7 +189,7 @@ class Table {
 					// index for foreign keys
 					else if (!empty($fkData)) {
 						$this->addIndex(new Index(
-							$columnName,
+							$columnName.'Index',
 							[$columnName]
 						));
 					}

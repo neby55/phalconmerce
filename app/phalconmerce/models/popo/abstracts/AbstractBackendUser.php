@@ -21,7 +21,7 @@ abstract class AbstractBackendUser extends AbstractModel {
 	public $username;
 
 	/**
-	 * @Column(type="string", length=255, nullable=false)
+	 * @Column(type="string", length=255, unique=true, nullable=false)
 	 * @var string
 	 */
 	public $email;
@@ -33,19 +33,19 @@ abstract class AbstractBackendUser extends AbstractModel {
 	public $hashedPassword;
 
 	/**
-	 * @Column(type="int", length=2, nullable=false)
-	 * @var int
+	 * @Column(type="string", length=16, nullable=false)
+	 * @var string
 	 */
 	public $role;
 
 	/**
-	 * @Column(type="string", length=32, nullable=true)
+	 * @Column(type="string", length=32, unique=true, nullable=true)
 	 * @var string
 	 */
 	public $token;
 
 	/**
-	 * @Column(type="timestamp", nullable=true)
+	 * @Column(type="timestamp", nullable=true, default="0000-00-00 00:00:00")
 	 * @var int
 	 */
 	public $tokenExpiry;
@@ -66,5 +66,18 @@ abstract class AbstractBackendUser extends AbstractModel {
 			2 => 'editor',
 			3 => 'admin'
 		);
+	}
+
+	/**
+	 * @param string $email
+	 * @return static
+	 */
+	public static function findByEmail($email) {
+		return self::find([
+			'conditions' => 'email = :email:',
+			'bind'       => [
+				':email' => $email,
+			]
+		])->getFirst();
 	}
 }

@@ -21,6 +21,13 @@ abstract class AbstractAttributeSetHasAttribute extends AbstractModelManyToMany 
 	public $fk_attribute_id;
 
 	/**
+	 * @Column(type="boolean", nullable=false)
+	 * @Index
+	 * @var boolean
+	 */
+	public $isRequired;
+
+	/**
 	 * @Column(type="integer", length=4, nullable=false, default=999)
 	 * @Index
 	 * @var int

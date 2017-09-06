@@ -49,6 +49,15 @@ class Module implements ModuleDefinitionInterface {
 	 * @param mixed $dependencyInjector
 	 */
 	public function registerServices(DiInterface $dependencyInjector) {
+
+		/**
+		 * The Logger component
+		 */
+		$dependencyInjector->set('logger', function () {
+			$logger = new \Phalcon\Logger\Adapter\File(APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'backend.log');
+			return $logger;
+		});
+
 		// TODO handle ACL in for backend, like invo/plugins/SecurityPlugin
 
 		/**
