@@ -7,6 +7,9 @@ use Phalconmerce\Models\Utils;
 
 class LoginController extends ControllerBase {
 
+	/**
+	 * @return bool|\Phalcon\Http\Response|\Phalcon\Http\ResponseInterface
+	 */
 	public function indexAction() {
 		if ($this->request->isPost()) {
 			// Token sent in login form is checked here, so never remove the input hidden
@@ -21,7 +24,7 @@ class LoginController extends ControllerBase {
 
 				if ($backendUser) {
 					if ($this->security->checkHash($password, $backendUser->hashedPassword)) {
-						$this->session->set('user', $backendUser);
+						$this->session->set('backendUser', $backendUser);
 						// TODO use translation system
 						$this->flashSession->success('Connected');
 
@@ -54,5 +57,13 @@ class LoginController extends ControllerBase {
 		}
 	}
 
+	/**
+	 * @return \Phalcon\Http\Response|\Phalcon\Http\ResponseInterface
+	 */
+	public function logoutAction() {
+		$this->session->remove('backendUser');
+		$this->flashSession->success('Logged out');
+		return $this->redirectToRoute('backend-login');
+	}
 }
 

@@ -3,12 +3,13 @@
 		<br>
 		<div class="jumbotron">
 			<h1 class="display-3">500</h1>
+			<?= $this->flash->output(); ?>
 			<hr class="my-4">
 			<p class="lead">
 				Arf... this is ankward...
 			</p>
 			<p class="lead">
-				<a class="btn btn-primary btn-lg" href="<?= $url->get('') ?>" role="button">Home</a>
+				<a class="btn btn-primary btn-lg" href="<?= $this->url->get('') ?>" role="button">Home</a>
 			</p>
 		</div>
 		<h1></h1>

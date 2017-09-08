@@ -52,7 +52,8 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 
 		// User
 		$resources['user'] = array(
-			'index' => array('index')
+			'index' => array('index'),
+			'login' => array('logout')
 		);
 		$resources['user'] = array_merge_recursive($resources['guest'], $resources['user']);
 
@@ -120,7 +121,7 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 	 * @return bool
 	 */
 	public function beforeDispatch(Event $event, Dispatcher $dispatcher) {
-		$user = $this->session->get('user');
+		$user = $this->session->get('backendUser');
 		if (is_object($user) && is_a($user, '\Phalconmerce\Models\Popo\BackendUser')) {
 			$role = $user->role;
 		}
@@ -133,6 +134,8 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 
 		$acl = $this->getAcl();
 		if (!$acl->isResource($controller)) {
+			Utils::debug($this->router->getMatches());
+			Utils::debug($acl->getResources());exit;
 			$dispatcher->forward([
 				'controller' => 'errors',
 				'action' => 'show404'

@@ -99,6 +99,31 @@ $router->setDefaultAction('index');
 
 $di->set('router', $router);
 
+
+// These routes simulate real URIs
+/*$testRoutes = [
+	"/admin-5917bo/logout",
+];
+
+// Testing each route
+foreach ($testRoutes as $testRoute) {
+	// Handle the route
+	$router->handle($testRoute);
+
+	echo "Testing ", $testRoute, "<br>";
+
+	// Check if some route was matched
+	if ($router->wasMatched()) {
+		echo "Controller: ", $router->getControllerName(), "<br>";
+		echo "Action: ", $router->getActionName(), "<br>";
+	} else {
+		echo "The route wasn't matched by any route<br>";
+	}
+
+	echo "<br>";
+}
+exit;*/
+
 /**
  * Database connection is created based in the parameters defined in the configuration file
  */
