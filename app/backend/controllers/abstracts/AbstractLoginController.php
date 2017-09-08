@@ -1,11 +1,12 @@
 <?php
 
-namespace Backend\Controllers;
+namespace Backend\Controllers\Abstracts;
 
+use Backend\Controllers\ControllerBase;
 use Phalconmerce\Models\Popo\BackendUser;
 use Phalconmerce\Models\Utils;
 
-class LoginController extends ControllerBase {
+abstract class AbstractLoginController extends ControllerBase {
 
 	/**
 	 * @return bool|\Phalcon\Http\Response|\Phalcon\Http\ResponseInterface

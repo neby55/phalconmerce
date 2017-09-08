@@ -9,11 +9,10 @@
 
 namespace Phalconmerce\Services\Abstracts;
 
-
 use Phalcon\Di;
 use Phalconmerce\Services\FrontendService;
 
-abstract class TranslationService extends MainService {
+abstract class AbstractTranslationService extends MainService {
 
 	/** @var string $langCode */
 	protected $langCode;

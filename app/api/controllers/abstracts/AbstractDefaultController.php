@@ -7,7 +7,7 @@
  *    Benjamin CORDIER <ben@progweb.fr>
  */
 
-namespace Api\Controllers;
+namespace Api\Controllers\Abstracts;
 
 use Phalcon\Di;
 use Phalcon\Http\Response;
@@ -15,7 +15,7 @@ use Phalcon\Mvc\Controller;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Utils;
 
-class DefaultController extends Controller {
+abstract class AbstractDefaultController extends Controller {
 
 	const POPO_FQCN = '\Phalconmerce\Models\Popo\\';
 	const FORM_FQCN = '\Backend\Forms\\';

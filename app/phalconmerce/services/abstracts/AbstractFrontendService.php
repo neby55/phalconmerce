@@ -10,7 +10,7 @@
 namespace Phalconmerce\Services\Abstracts;
 
 
-abstract class FrontendService  implements \Phalcon\Di\InjectionAwareInterface {
+abstract class AbstractFrontendService extends MainService {
 	/** @var string */
 	protected $baseURL;
 	/** @var string */

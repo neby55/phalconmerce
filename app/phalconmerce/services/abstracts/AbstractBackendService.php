@@ -14,11 +14,10 @@ use Backend\Models\MenuControllerIndexLink;
 use Backend\Models\MenuNamedRouteLink;
 use Backend\Models\SubMenu;
 
-abstract class BackendService extends MainService {
+abstract class AbstractBackendService extends MainService {
 	public function getMenu() {
 		$menuItems =  array();
 
-		// TODO define here Menu labels and links (without baseURL, and without the first "/")
 		// Use Menu, MenuLink & SubMenu
 		$menuItems[] = new Menu('Home', 'home', new MenuNamedRouteLink('backend-index'));
 

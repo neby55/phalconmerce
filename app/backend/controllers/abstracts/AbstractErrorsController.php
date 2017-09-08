@@ -1,10 +1,11 @@
 <?php
 
-namespace Backend\Controllers;
+namespace Backend\Controllers\Abstracts;
 
 use Phalconmerce\Models\Utils;
+use Backend\Controllers\ControllerBase;
 
-class ErrorsController extends ControllerBase {
+abstract class AbstractErrorsController extends ControllerBase {
 
 	public function initiliaze() {
 		$this->view->setTemplateBefore('main_default');

@@ -1,12 +1,12 @@
 <?php
 
-namespace Backend\Controllers;
+namespace Backend\Controllers\Abstracts;
 
 use Backend\Forms\Labels;
 use Phalcon\Mvc\Controller;
 use Phalconmerce\Models\Utils;
 
-class ControllerBase extends Controller {
+abstract class AbstractControllerBase extends Controller {
 	/**
 	 * @var string
 	 */

@@ -9,7 +9,7 @@
 
 namespace Phalconmerce\Services\Abstracts;
 
-class MainService implements \Phalcon\Di\InjectionAwareInterface {
+abstract class MainService implements \Phalcon\Di\InjectionAwareInterface {
 
 	protected $_dependencyInjector;
 

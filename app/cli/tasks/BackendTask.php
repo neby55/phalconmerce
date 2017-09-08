@@ -117,7 +117,7 @@ class BackendTask extends Task {
 		echo self::TAB_CHARACTER . '--delete' . self::TAB_CHARACTER . 'to delete existing files (be careful)' . PHP_EOL;
 		echo PHP_EOL;
 		echo 'Examples :' . PHP_EOL;
-		echo self::TAB_CHARACTER . '# Create all files for the bacnkend interface' . PHP_EOL;
+		echo self::TAB_CHARACTER . '# Create all files for the backend interface' . PHP_EOL;
 		echo self::TAB_CHARACTER . 'php app/cli.php --all backend generate' . PHP_EOL . PHP_EOL;
 		echo self::TAB_CHARACTER . '# Create file for backend interface related to the "Order" class' . PHP_EOL;
 		echo self::TAB_CHARACTER . 'php app/cli.php backend generate Order' . PHP_EOL . PHP_EOL;

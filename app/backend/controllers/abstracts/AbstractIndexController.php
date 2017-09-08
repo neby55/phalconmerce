@@ -1,10 +1,11 @@
 <?php
 
-namespace Backend\Controllers;
+namespace Backend\Controllers\Abstracts;
 
+use Backend\Controllers\ControllerBase;
 use Phalconmerce\Models\Utils;
 
-class IndexController extends ControllerBase {
+abstract class AbstractIndexController extends ControllerBase {
 
 	public function indexAction() {
 		$this->setSubtitle('Dashboard');

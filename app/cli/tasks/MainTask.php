@@ -11,6 +11,7 @@ class MainTask extends Task {
 		echo PHP_EOL;
 		echo 'Usage :'.self::TAB_CHARACTER. 'php app/cli.php popo'.PHP_EOL;
 		echo self::TAB_CHARACTER. 'php app/cli.php table' . PHP_EOL;
+		echo self::TAB_CHARACTER. 'php app/cli.php abstract'.PHP_EOL;
 		echo self::TAB_CHARACTER. 'php app/cli.php backend'.PHP_EOL;
 		echo PHP_EOL;
 	}

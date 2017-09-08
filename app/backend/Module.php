@@ -32,6 +32,7 @@ class Module implements ModuleDefinitionInterface {
 			[
 				'Backend\Models' => __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR,
 				'Backend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
+				'Backend\Controllers\Abstracts' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
 				'Backend\Forms' => __DIR__ . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR,
 				'Phalconmerce\Services' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
 				'Phalconmerce\Services\Abstracts' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
