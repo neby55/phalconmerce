@@ -9,23 +9,19 @@
 
 namespace Backend\Models;
 
-use Phalcon\Di;
 
-abstract class MenuLink {
-	/** @var string */
-	protected $link;
+class MenuExternalLink extends MenuLink {
+	public function __construct($link) {
+		if (filter_var($link, FILTER_VALIDATE_URL) !== false) {
+			$this->link = $link;
+		}
+	}
 
 	/**
 	 * @return bool
 	 */
 	public function isExternal() {
-		return false;
+		return true;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getURL() {
-		return $this->link;
-	}
 }

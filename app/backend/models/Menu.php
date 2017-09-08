@@ -23,7 +23,12 @@ class Menu {
 		$this->label = $label;
 		$this->icon = $icon;
 		if (is_string($link)) {
-			$this->link = new MenuLink($link);
+			if (substr($link, 0, 7) == 'http://' || substr($link, 0, 8) == 'https://') {
+				$this->link = new MenuExternalLink($link);
+			}
+			else {
+				$this->link = new MenuControllerIndexLink($link);
+			}
 		}
 		else if (is_a($link, '\Backend\Models\MenuLink')) {
 			$this->link = $link;

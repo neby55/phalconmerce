@@ -7,6 +7,7 @@ use Phalconmerce\Models\Utils;
 class IndexController extends ControllerBase {
 
 	public function indexAction() {
+		$this->setSubtitle('Dashboard');
 		$this->tag->setTitle('Home');
 	}
 

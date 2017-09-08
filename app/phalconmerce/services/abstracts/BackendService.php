@@ -10,6 +10,8 @@
 namespace Phalconmerce\Services\Abstracts;
 
 use Backend\Models\Menu;
+use Backend\Models\MenuControllerIndexLink;
+use Backend\Models\MenuNamedRouteLink;
 use Backend\Models\SubMenu;
 
 abstract class BackendService extends MainService {
@@ -18,11 +20,12 @@ abstract class BackendService extends MainService {
 
 		// TODO define here Menu labels and links (without baseURL, and without the first "/")
 		// Use Menu, MenuLink & SubMenu
-		$menuItems[] = new Menu('Home', 'dashboard', '');
+		$menuItems[] = new Menu('Home', 'home', new MenuNamedRouteLink('backend-index'));
 
-		$productsMenuItems = new Menu('Products', 'barcode', '');
-		$productsMenuItems->addSubMenu(new SubMenu('First product type', 'first-type'));
-		$productsMenuItems->addSubMenu(new SubMenu('Second product type', 'second-type'));
+		$productsMenuItems = new Menu('CMS', 'edit', '');
+		$productsMenuItems->addSubMenu(new SubMenu('Pages', new MenuControllerIndexLink('cmspage')));
+		$productsMenuItems->addSubMenu(new SubMenu('Blocks', new MenuControllerIndexLink('cmsblock')));
+		$productsMenuItems->addSubMenu(new SubMenu('Designs', new MenuControllerIndexLink('cmsdesign')));
 
 		$menuItems[] = $productsMenuItems;
 

@@ -42,7 +42,7 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 	 * To modify resources' definitions, you should overload this method
 	 * @return array
 	 */
-	protected static function getAllResources() {
+	protected function getAllResources() {
 		$resources = array();
 		// Guest
 		$resources['guest'] = array(
@@ -57,13 +57,6 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 		);
 		$resources['user'] = array_merge_recursive($resources['guest'], $resources['user']);
 
-		// Admin
-		$resources['admin'] = array(
-			// TODO try with *
-			'currency' => array('index', 'new', 'edit', 'save', 'delete')
-		);
-		$resources['admin'] = array_merge_recursive($resources['user'], $resources['admin']);
-
 		return $resources;
 	}
 
@@ -72,7 +65,7 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 	 * @return array|bool
 	 */
 	protected function getResources($role) {
-		$resourcesList = self::getAllResources();
+		$resourcesList = $this->getAllResources();
 
 		if (array_key_exists($role, $resourcesList)) {
 			return $resourcesList[$role];
@@ -98,10 +91,17 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 				$acl->addRole($role);
 
 				$currentResources = $this->getResources($role->getName());
-				foreach ($currentResources as $resource => $actions) {
-					$acl->addResource(new Resource($resource), $actions);
-					foreach ($actions as $action) {
-						$acl->allow($role->getName(), $resource, $action);
+				// Admins have no resources defined, so we have to check the $variable to avoid a warning
+				if (!empty($currentResources)) {
+					foreach ($currentResources as $resource => $actions) {
+						$acl->addResource(new Resource($resource), $actions);
+						// To avoid warning if resources array's structure is wrong
+						if (!is_array($actions) && is_string($actions)) {
+							$actions = array($actions);
+						}
+						foreach ($actions as $action) {
+							$acl->allow($role->getName(), $resource, $action);
+						}
 					}
 				}
 			}
@@ -129,42 +129,44 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 			$role = '';
 		}
 
-		$controller = $dispatcher->getControllerName();
-		$action = $dispatcher->getActionName();
+		// Admin can access to every page, so we check the others
+		if ($role != 'admin') {
+			$controller = $dispatcher->getControllerName();
+			$action = $dispatcher->getActionName();
 
-		$acl = $this->getAcl();
-		if (!$acl->isResource($controller)) {
-			Utils::debug($this->router->getMatches());
-			Utils::debug($acl->getResources());exit;
-			$dispatcher->forward([
-				'controller' => 'errors',
-				'action' => 'show404'
-			]);
-
-			return false;
-		}
-
-		$allowed = $acl->isAllowed($role, $controller, $action);
-		if (!$allowed) {
-			// If connected
-			if (!empty($role)) {
-				$dispatcher->forward(array(
+			$acl = $this->getAcl();
+			if (!$acl->isResource($controller)) {
+				$dispatcher->forward([
 					'controller' => 'errors',
 					'action' => 'show403'
-				));
+				]);
+
 				return false;
 			}
-			// If not, redirect to signin
-			else {
-				// If login page
-				if ($controller == 'login' && $action == 'index') {
-					return true;
-				}
-				else {
-					$this->view->disable();
-					return $this->response->redirect(array(
-						'for' => 'backend-login'
+
+			$allowed = $acl->isAllowed($role, $controller, $action);
+			if (!$allowed) {
+				// If connected
+				if (!empty($role)) {
+					$this->flash('Can\'t access to '.$controller.'::'.$action);
+					$dispatcher->forward(array(
+						'controller' => 'errors',
+						'action' => 'show403'
 					));
+					return false;
+				}
+				// If not, redirect to signin
+				else {
+					// If login page
+					if ($controller == 'login' && $action == 'index') {
+						return true;
+					}
+					else {
+						$this->view->disable();
+						return $this->response->redirect(array(
+							'for' => 'backend-login'
+						));
+					}
 				}
 			}
 		}

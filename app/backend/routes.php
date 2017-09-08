@@ -19,7 +19,7 @@ $backendRouter->add(
 		'controller' => 1,
 		'action' => 'index'
 	]
-);
+)->setName('backend-controller');
 
 $backendRouter->add(
 	'/:controller/:action/:params',
