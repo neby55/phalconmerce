@@ -61,11 +61,6 @@ class Module implements ModuleDefinitionInterface {
 		// TODO handle ACL in for backend, like invo/plugins/SecurityPlugin
 
 		/**
-		 * URL
-		 */
-		$dependencyInjector->get('url')->setBaseUri($dependencyInjector->get('config')->baseUri . '/' . $dependencyInjector->get('config')->adminDir . '/');
-
-		/**
 		 * Dispatcher
 		 */
 		$dependencyInjector->set('dispatcher', function () {

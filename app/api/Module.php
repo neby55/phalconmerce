@@ -44,11 +44,6 @@ class Module implements ModuleDefinitionInterface {
 	 */
 	public function registerServices(DiInterface $dependencyInjector) {
 		/**
-		 * URL
-		 */
-		$dependencyInjector->get('url')->setBaseUri($dependencyInjector->get('config')->baseUri . '/' . $dependencyInjector->get('config')->apiDir . '/');
-
-		/**
 		 * Dispatcher
 		 */
 		$dependencyInjector->set('dispatcher', function () {
