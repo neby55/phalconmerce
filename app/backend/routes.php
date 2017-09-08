@@ -11,25 +11,18 @@
  * You can add URL using $backendRouter
  * @var \Phalcon\Mvc\Router\Group $backendRouter
  */
-
 $backendRouter->add('/',
 	[
 		"controller" => "index",
 		"action"     => "index",
 	]
-);
-$backendRouter->add('',
-	[
-		"controller" => "index",
-		"action"     => "index",
-	]
-);
-$backendRouter->add('login',
+)->setName('backend-index');
+$backendRouter->add('/login',
 	[
 		"controller" => "login",
 		"action"     => "index",
 	]
-);
+)->setName('backend-login');
 
 $backendRouter->add(
 	'/:controller',

@@ -90,9 +90,7 @@ if ($config->apiEnabled === true) {
 if (file_exists(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'routes.php')) {
 	require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'frontend' . DIRECTORY_SEPARATOR . 'routes.php';
 }
-
-$router->removeExtraSlashes(true);
-
+//$router->removeExtraSlashes(true);
 // define default module
 $router->setDefaultModule('frontend');
 

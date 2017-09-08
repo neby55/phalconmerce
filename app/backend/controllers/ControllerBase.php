@@ -31,29 +31,6 @@ class ControllerBase extends Controller {
 		$this->view->setVar('controllerURL', strtolower($this->popoClassName));
 		$this->view->setVar('popoClassName', $this->popoClassName);
 
-		$this->view->setTemplateBefore('main_default');
-
-		// TODO Check user connection
-		/** @var \Phalcon\Session\Adapter\Files $session */
-		$session = $this->di->getShared('session');
-		$user = $session->get('connectedUser', false);
-		$this->view->setVar('user', $user);
-		$this->view->setVar('url', $this->di->getShared('url'));
-		/*
-				if ($user === false) {
-					$this->view->setTemplateBefore('main_default');
-					if ($this->dispatcher->getControllerName() != 'index' || $this->dispatcher->getActionName() != 'login') {
-						$this->dispatcher->forward(
-							[
-								"controller" => "index",
-								"action" => "login",
-							]
-						);
-					}
-				}
-				else {
-					$this->view->setTemplateBefore('main_connected');
-				}*/
 		$this->view->setTemplateBefore('main_connected');
 	}
 
@@ -67,5 +44,23 @@ class ControllerBase extends Controller {
 	public function indexAction() {
 		// Provide labels Object handling labels for table headers
 		$this->view->setVar('labelsObject', new Labels($this->popoClassName));
+	}
+
+	/**
+	 * @param string $routeName
+	 * @param array $params
+	 * @return \Phalcon\Http\Response|\Phalcon\Http\ResponseInterface
+	 */
+	public function redirectToRoute($routeName, $params=array()) {
+		$this->view->disable();
+		if (is_array($params) && sizeof($params) > 0) {
+			$params['for'] = $routeName;
+			return $this->response->redirect($params);
+		}
+		else {
+			return $this->response->redirect(array(
+				'for' => $routeName
+			));
+		}
 	}
 }

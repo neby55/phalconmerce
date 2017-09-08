@@ -14,7 +14,7 @@ class IndexController extends ControllerBase {
     }
 
 	public function route404Action() {
-		echo '404 not found :/';
+		echo 'front 404 not found :/';
 	}
 
 }

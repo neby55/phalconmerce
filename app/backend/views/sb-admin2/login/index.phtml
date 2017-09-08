@@ -6,19 +6,22 @@
 					<h3 class="panel-title">Sign In</h3>
 				</div>
 				<div class="panel-body">
-					<form role="form" method="post" action="<?= $url->get('login') ?>">
+					<?= $this->flash->output(); ?>
+					<?= $this->flashSession->output(); ?>
+					<form role="form" method="post" action="<?= $this->url->get(array('for'=>'backend-login')) ?>">
 						<fieldset>
+							<input type="hidden" name="<?php echo $this->security->getTokenKey() ?>" value="<?php echo $this->security->getToken() ?>"/>
 							<div class="form-group">
 								<input class="form-control" placeholder="E-mail" name="<?= $config->adminDir ?>-email" type="email" autofocus>
 							</div>
 							<div class="form-group">
 								<input class="form-control" placeholder="Password" name="<?= $config->adminDir ?>-password" type="password" value="">
 							</div>
-							<div class="checkbox">
+							<!--<div class="checkbox">
 								<label>
 									<input name="remember" type="checkbox" value="Remember Me">Remember Me
 								</label>
-							</div>
+							</div>-->
 							<!-- Change this to a button or input when using this as a form -->
 							<input type="submit" class="btn btn-lg btn-success btn-block" value="Login">
 						</fieldset>
@@ -31,7 +34,7 @@
 
 <style type="text/css">
 BODY, HTML {
-	background: url('<?= $url->getStaticBaseUri() ?>/img/login/2.jpg') transparent center no-repeat;
+	background: url('//res.cloudinary.com/progweb/image/upload/v1504856757/phalconmerce/dist/img/login/2.jpg') transparent center no-repeat;
 	height: 100%;
 	background-size: cover;
 }

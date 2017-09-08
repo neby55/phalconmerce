@@ -21,7 +21,7 @@ class MenuLink {
 
 	public function getURL() {
 		$dependencyInjector = Di::getDefault();
-		$baseURL = $dependencyInjector->get('config')->baseUri . '/' . $dependencyInjector->get('config')->adminDir . '/';
+		$baseURL = $dependencyInjector->get('config')->baseUri . '/' . $dependencyInjector->get('config')->adminDir;
 		return str_replace('//', '/', $baseURL.$this->link);
 	}
 }

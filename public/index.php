@@ -41,7 +41,9 @@ try {
 
 	echo $application->handle()->getContent();
 
-} catch (\Exception $e) {
+}
+catch (\Exception $e) {
+	// TODO use log system
 	echo $e->getMessage() . '<br>';
 	echo '<pre>' . $e->getTraceAsString() . '</pre>';
 }
