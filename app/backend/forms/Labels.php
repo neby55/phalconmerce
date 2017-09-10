@@ -17,13 +17,14 @@ class Labels {
 	protected $labelsList;
 
 	public function __construct($className) {
+		$this->labelsList = array();
 		if (!empty($className)) {
 			$filename = APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'csv' . DIRECTORY_SEPARATOR . 'labels.csv';
 
 			if (file_exists($filename)) {
 				if (($fp = fopen($filename, "r")) !== false) {
 					while (($data = fgetcsv($fp, 1024, ";")) !== false) {
-						if (strtolower($data[0]) == strtolower($data[0])) {
+						if (strtolower($data[0]) == strtolower($className)) {
 							$this->labelsList[strtolower($data[1])] = array(
 								$data[2],
 								$data[3]

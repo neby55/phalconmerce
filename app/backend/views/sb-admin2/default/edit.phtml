@@ -20,6 +20,9 @@
 									<?php endforeach ?>
 								</p>
 								<?php endif; ?>
+								<?php if ($this->view->form->hasHelpBlock($element->getName())) : ?>
+								<p class="help-block"><?= $this->view->form->getHelpBlock($element->getName()) ?></p>
+								<?php endif; ?>
 							</div>
 							<?php endforeach ?>
 							<br>

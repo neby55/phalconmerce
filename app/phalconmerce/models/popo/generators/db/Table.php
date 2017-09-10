@@ -121,7 +121,7 @@ class Table {
 
 					// Unsigned
 					if ($columnOptions['type'] == Column::TYPE_INTEGER) {
-						if ($columnCollection->hasArgument('unsigned') && $columnCollection->getArgument('unsigned') == 'false') {
+						if ($columnCollection->hasArgument('unsigned') && $columnCollection->getArgument('unsigned') === false) {
 							$columnOptions['unsigned'] = false;
 						}
 						else {

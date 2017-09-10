@@ -15,7 +15,7 @@ abstract class AbstractCategory extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
 	public $fk_category_id;

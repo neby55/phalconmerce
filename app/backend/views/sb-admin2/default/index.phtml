@@ -33,7 +33,7 @@
 						<?php endforeach; ?>
 						<td class="text-right">
 							<?= $this->tag->linkTo([$this->url->get(array('for'=>'backend-controller-edit', 'controller'=>$this->dispatcher->getControllerName(), 'id'=>$currentObject->id)), '<i class="glyphicon glyphicon-edit"></i> Edit', "class" => 'btn btn-sm btn-warning']) ?>
-							<?= $this->tag->linkTo([$this->url->get(array('for'=>'backend-controller-delete', 'controller'=>$this->dispatcher->getControllerName())), '<i class="glyphicon glyphicon-trash"></i> Delete', "class" => 'btn btn-sm btn-danger']) ?>
+							<?= $this->tag->linkTo([$this->url->get(array('for'=>'backend-controller-delete', 'controller'=>$this->dispatcher->getControllerName(), 'id'=>$currentObject->id)), '<i class="glyphicon glyphicon-trash"></i> Delete', "class" => 'btn btn-sm btn-danger']) ?>
 						</td>
 					</tr>
 					<?php endforeach; ?>

@@ -32,6 +32,11 @@ class FormBase extends Form {
 	 */
 	protected $elementsList;
 
+	/**
+	 * @var \Phalcon\Forms\Element[]
+	 */
+	protected $helpBlocksList;
+
 	protected static $excludedProperties = array(
 		'id',
 		'inserted',
@@ -63,6 +68,8 @@ class FormBase extends Form {
 		$fqcn = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::POPO_NAMESPACE . '\\' . $this->popoClassName;
 		$propertiesList = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::getClassProperties($fqcn);
 		$labelsObject = new Labels($this->popoClassName);
+		$helpBlocksObject = new HelpBlocks($this->popoClassName);
+		$this->helpBlocksList = array();
 		//Utils::debug($propertiesList);exit;
 
 		foreach ($propertiesList as $currentPropertyName => $currentPropertyReflect) {
@@ -74,7 +81,7 @@ class FormBase extends Form {
 					// Get column annotations infos
 					$columnCollection = $currentPropertyReflect->get('Column');
 					// If field is editable in backend
-					if (!$columnCollection->hasArgument('editable') || $columnCollection->getArgument('editable') == 'false') {
+					if (!$columnCollection->hasArgument('editable') || $columnCollection->getArgument('editable') !== false) {
 						if ($columnCollection->hasArgument('type')) {
 							$type = $columnCollection->getArgument('type');
 							$length = 0;
@@ -187,10 +194,10 @@ class FormBase extends Form {
 							}
 
 							// Mandatory / Required
-							if (!$columnCollection->hasArgument('nullable') || $columnCollection->getArgument('nullable') != 'false') {
+							if (!$columnCollection->hasArgument('nullable') || $columnCollection->getArgument('nullable') === false) {
 								$item->addValidators(array(
 									new PresenceOf(array(
-										'message' => 'This field is required'
+										'message' => 'This field is required--'
 									))
 								));
 							}
@@ -198,7 +205,8 @@ class FormBase extends Form {
 							// Adding item to this form, if created
 							if (isset($item)) {
 								$item->setLabel($labelsObject->getLongLabelForProperty($currentPropertyName));
-								$this->elementsList[$currentPropertyName] = $item;
+								$this->addElement($currentPropertyName, $item);
+								$this->addHelpBlock($currentPropertyName, $helpBlocksObject->getText($currentPropertyName));
 							}
 						}
 					}
@@ -210,8 +218,8 @@ class FormBase extends Form {
 	/**
 	 * Add an element/item to elements' list
 	 *
-	 * @param $currentPropertyName
-	 * @param $element
+	 * @param string $currentPropertyName
+	 * @param \Phalcon\Forms\Element$element
 	 */
 	protected function addElement($currentPropertyName, $element) {
 		$this->elementsList[$currentPropertyName] = $element;
@@ -230,5 +238,31 @@ class FormBase extends Form {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Add an help-block's text to form's list
+	 *
+	 * @param string $currentPropertyName
+	 * @param string $text
+	 */
+	protected function addHelpBlock($currentPropertyName, $text) {
+		$this->helpBlocksList[$currentPropertyName] = $text;
+	}
+
+	/**
+	 * @param string $propertyName
+	 * @return bool
+	 */
+	public function hasHelpBlock($propertyName) {
+		return array_key_exists($propertyName, $this->helpBlocksList);
+	}
+
+	/**
+	 * @param string $propertyName
+	 * @return bool
+	 */
+	public function getHelpBlock($propertyName) {
+		return $this->helpBlocksList[$propertyName];
 	}
 }

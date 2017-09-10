@@ -30,7 +30,7 @@ $backendRouter->add(
 	]
 )->setName('backend-controller-index');
 $backendRouter->add(
-	'/:controller/new',
+	'/:controller/new/',
 	[
 		'controller' => 1,
 		'action' => 'new'
@@ -41,11 +41,11 @@ $backendRouter->add(
 	[
 		'controller' => 1,
 		'action' => 'edit',
-		"id"     => 2,
+		'id'     => 2,
 	]
 )->setName('backend-controller-edit');
 $backendRouter->add(
-	'/:controller/save',
+	'/:controller/save/',
 	[
 		'controller' => 1,
 		'action' => 'save'
@@ -56,25 +56,25 @@ $backendRouter->add(
 	[
 		'controller' => 1,
 		'action' => 'delete',
-		"params"     => 2,
+		'id'     => 2,
 	]
 )->setName('backend-controller-delete');
 
 $backendRouter->add('/',
 	[
-		"controller" => "index",
-		"action"     => "index",
+		'controller' => 'index',
+		'action'     => 'index',
 	]
 )->setName('backend-index');
 $backendRouter->add('/login',
 	[
-		"controller" => "login",
-		"action"     => "index",
+		'controller' => 'login',
+		'action'     => 'index',
 	]
 )->setName('backend-login');
 $backendRouter->add('/logout',
 	[
-		"controller" => "login",
-		"action"     => "logout",
+		'controller' => 'login',
+		'action'     => 'logout',
 	]
 )->setName('backend-logout');
