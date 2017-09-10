@@ -14,14 +14,6 @@
  */
 
 $backendRouter->add(
-	'/:controller',
-	[
-		'controller' => 1,
-		'action' => 'index'
-	]
-)->setName('backend-controller');
-
-$backendRouter->add(
 	'/:controller/:action/:params',
 	[
 		"controller" => 1,
@@ -29,6 +21,45 @@ $backendRouter->add(
 		"params"     => 3,
 	]
 );
+
+$backendRouter->add(
+	'/:controller',
+	[
+		'controller' => 1,
+		'action' => 'index'
+	]
+)->setName('backend-controller-index');
+$backendRouter->add(
+	'/:controller/new',
+	[
+		'controller' => 1,
+		'action' => 'new'
+	]
+)->setName('backend-controller-new');
+$backendRouter->add(
+	'/:controller/edit/:id',
+	[
+		'controller' => 1,
+		'action' => 'edit',
+		"id"     => 2,
+	]
+)->setName('backend-controller-edit');
+$backendRouter->add(
+	'/:controller/save',
+	[
+		'controller' => 1,
+		'action' => 'save'
+	]
+)->setName('backend-controller-save');
+$backendRouter->add(
+	'/:controller/delete/:id',
+	[
+		'controller' => 1,
+		'action' => 'delete',
+		"params"     => 2,
+	]
+)->setName('backend-controller-delete');
+
 $backendRouter->add('/',
 	[
 		"controller" => "index",

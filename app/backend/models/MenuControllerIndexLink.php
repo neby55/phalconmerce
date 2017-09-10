@@ -14,7 +14,7 @@ use Phalcon\Di;
 class MenuControllerIndexLink extends MenuLink {
 	public function __construct($controller) {
 		$this->link = Di::getDefault()->get('url')->get(array(
-			'for' => 'backend-controller',
+			'for' => 'backend-controller-index',
 			'controller' => $controller
 		));
 	}

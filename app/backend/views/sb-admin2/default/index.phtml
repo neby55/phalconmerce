@@ -3,7 +3,7 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<a href="./new/" class="btn btn-xs btn-info">add</a>&nbsp;&nbsp;&nbsp;List
+				<a href="<?= $this->url->get(array('for'=>'backend-controller-new', 'controller'=>$this->dispatcher->getControllerName())) ?>" class="btn btn-xs btn-info">add</a>&nbsp;&nbsp;&nbsp;List
 			</div>
 			<!-- /.panel-heading -->
 			<div class="panel-body">
@@ -32,8 +32,8 @@
 							<?php endif; ?>
 						<?php endforeach; ?>
 						<td class="text-right">
-							<?= $this->tag->linkTo([$controllerURL.'/edit/'.$currentObject->id, '<i class="glyphicon glyphicon-edit"></i> Edit', "class" => 'btn btn-sm btn-warning']) ?>
-							<?= $this->tag->linkTo([$controllerURL.'/delete/'.$currentObject->id, '<i class="glyphicon glyphicon-trash"></i> Delete', "class" => 'btn btn-sm btn-danger']) ?>
+							<?= $this->tag->linkTo([$this->url->get(array('for'=>'backend-controller-edit', 'controller'=>$this->dispatcher->getControllerName(), 'id'=>$currentObject->id)), '<i class="glyphicon glyphicon-edit"></i> Edit', "class" => 'btn btn-sm btn-warning']) ?>
+							<?= $this->tag->linkTo([$this->url->get(array('for'=>'backend-controller-delete', 'controller'=>$this->dispatcher->getControllerName())), '<i class="glyphicon glyphicon-trash"></i> Delete', "class" => 'btn btn-sm btn-danger']) ?>
 						</td>
 					</tr>
 					<?php endforeach; ?>

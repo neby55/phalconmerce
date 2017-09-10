@@ -182,10 +182,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 		$this->flash->success("##CLASSNAME## was updated successfully");
 
-		// TODO improve it to use routeName like below
-		// return $this->redirectToRoute('##CONTROLLER_NAME##-edit', array('id' => $object->id));
-		$this->view->disable();
-		return $this->response->redirect('##CONTROLLER_NAME##/edit/'.$object->id);
+		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller'=>'##CONTROLLER_NAME##'));
 	}
 
 	/**
@@ -225,10 +222,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 		$this->flashSession->success("##CLASSNAME## was deleted");
 
-		// TODO improve it to use routeName like below
-		// return $this->redirectToRoute('##CONTROLLER_NAME##-list');
-		$this->view->disable();
-		return $this->response->redirect('##CONTROLLER_NAME##/');
+		return $this->redirectToRoute('backend-controller-index', array('controller'=>'##CONTROLLER_NAME##'));
 	}
 }
 EOT;
