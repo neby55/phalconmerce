@@ -32,6 +32,11 @@ abstract class AbstractControllerBase extends Controller {
 		$this->view->setVar('popoClassName', $this->popoClassName);
 
 		$this->view->setTemplateBefore('main_connected');
+
+		// Disabling default validators requiring all fields to be filled
+		\Phalcon\Mvc\Model::setup(array(
+			'notNullValidations' => false
+		));
 	}
 
 	public function setSubtitle($str) {
