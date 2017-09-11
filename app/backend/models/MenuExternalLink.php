@@ -12,6 +12,7 @@ namespace Backend\Models;
 
 class MenuExternalLink extends MenuLink {
 	public function __construct($link) {
+		parent::__construct();
 		if (filter_var($link, FILTER_VALIDATE_URL) !== false) {
 			$this->link = $link;
 		}
@@ -22,6 +23,13 @@ class MenuExternalLink extends MenuLink {
 	 */
 	public function isExternal() {
 		return true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isActive() {
+		return false;
 	}
 
 }

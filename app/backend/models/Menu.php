@@ -37,6 +37,23 @@ class Menu {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isActive() {
+		if ($this->hasSubMenu()) {
+			foreach ($this->getSubMenuList() as $currentSubMenu) {
+				if ($currentSubMenu->isActive()) {
+					return true;
+				}
+			}
+		}
+		else {
+			return $this->link->isActive();
+		}
+		return false;
+	}
+
+	/**
 	 * @param SubMenu $subMenu
 	 */
 	public function addSubMenu($subMenu) {

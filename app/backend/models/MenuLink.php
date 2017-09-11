@@ -15,6 +15,14 @@ abstract class MenuLink {
 	/** @var string */
 	protected $link;
 
+	/** @var \Phalcon\Mvc\Router */
+	protected static $router;
+
+	public function __construct() {
+		/** @var \Phalcon\Mvc\Router $router */
+		self::$router = Di::getDefault()->get('router');
+	}
+
 	/**
 	 * @return bool
 	 */
@@ -27,5 +35,15 @@ abstract class MenuLink {
 	 */
 	public function getURL() {
 		return $this->link;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isActive() {
+		if (is_object(self::$router)) {
+			return self::$router->getRewriteUri() == $this->link;
+		}
+		return false;
 	}
 }

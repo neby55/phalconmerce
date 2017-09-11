@@ -13,20 +13,20 @@ class SubMenu {
 	/** @var string */
 	protected $label;
 	/** @var MenuLink */
-	protected $link;
+	protected $menuLink;
 
 	public function __construct($label, $link) {
 		$this->label = $label;
 		if (is_string($link)) {
 			if (substr($link, 0, 7) == 'http://' || substr($link, 0, 8) == 'https://') {
-				$this->link = new MenuExternalLink($link);
+				$this->menuLink = new MenuExternalLink($link);
 			}
 			else {
-				$this->link = new MenuControllerIndexLink($link);
+				$this->menuLink = new MenuControllerIndexLink($link);
 			}
 		}
 		else if (is_a($link, '\Backend\Models\MenuLink')) {
-			$this->link = $link;
+			$this->menuLink = $link;
 		}
 	}
 
@@ -41,6 +41,13 @@ class SubMenu {
 	 * @return MenuLink
 	 */
 	public function getLink() {
-		return $this->link;
+		return $this->menuLink;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isActive() {
+		return $this->menuLink->isActive();
 	}
 }

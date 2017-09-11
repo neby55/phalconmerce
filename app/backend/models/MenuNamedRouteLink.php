@@ -13,6 +13,7 @@ use Phalcon\Di;
 
 class MenuNamedRouteLink extends MenuLink {
 	public function __construct($routeName, $params=array()) {
+		parent::__construct();
 		if (is_array($params) && sizeof($params) > 0) {
 			$params['for'] = $routeName;
 		}
