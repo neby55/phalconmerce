@@ -16,7 +16,7 @@ class PopoTask extends Task {
 		echo "- \"POPO Relationships\" for getting all relationships between classes (mandatory and must be done before others CLI tools)" . PHP_EOL;
 		echo "      php app/cli.php popo relationships" . PHP_EOL;
 		echo "- \"POPO Generator\" for generating empty POPO Classes (mandatory)" . PHP_EOL;
-		echo "      php app/cli.php popo generator" . PHP_EOL;
+		echo "      php app/cli.php popo generate" . PHP_EOL;
 	}
 
 	public function relationshipsAction($params) {
@@ -111,7 +111,7 @@ class PopoTask extends Task {
 		}
 	}
 
-	public function generatorAction($params) {
+	public function generateAction($params) {
 		// First of all, Load relationshps
 		$relationshipsList = Utils::loadData(Relationship::DATA_FILENAME);
 		if (!isset($relationshipsList) || $relationshipsList === false || !is_array($relationshipsList)) {
@@ -136,7 +136,7 @@ class PopoTask extends Task {
 
 			if (sizeof($askedTables) <= 0) {
 				echo 'No table specified'.PHP_EOL;
-				$this->displayGeneratorHelp();
+				$this->displayGenerateHelp();
 			}
 			else {
 				foreach ($abstractClassesList as $currentNewClass=>$currentAbstractClass) {
@@ -147,7 +147,7 @@ class PopoTask extends Task {
 			}
 		}
 		else {
-			$this->displayGeneratorHelp();
+			$this->displayGenerateHelp();
 		}
 
 		if (isset($selectedClasses) && sizeof($selectedClasses) > 0) {
@@ -175,15 +175,15 @@ class PopoTask extends Task {
 		}
 		else {
 			echo 'ERROR : No class specified'.PHP_EOL.PHP_EOL;
-			$this->displayGeneratorHelp();
+			$this->displayGenerateHelp();
 		}
 	}
 
-	private static function displayGeneratorHelp() {
+	private static function displayGenerateHelp() {
 		echo 'Phalconmerce tool for generate empty POPO Classes'.PHP_EOL;
 		echo 'for Phalconmerce Abstract Classes'.PHP_EOL.PHP_EOL;
 		echo 'Usage :'.PHP_EOL;
-		echo '  php app/cli.php [options] popo generator [<ClassName> [<ClassName>...]]'.PHP_EOL.PHP_EOL;
+		echo '  php app/cli.php [options] popo generate [<ClassName> [<ClassName>...]]'.PHP_EOL.PHP_EOL;
 		echo 'Options :'.PHP_EOL;
 		echo '  --all'.self::TAB_CHARACTER.'to generate every Classes'.PHP_EOL;
 		echo '  --table-prefix=prefix'.self::TAB_CHARACTER.'to prefix every related tables'.PHP_EOL;
