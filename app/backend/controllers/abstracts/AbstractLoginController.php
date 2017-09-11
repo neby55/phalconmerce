@@ -5,8 +5,9 @@ namespace Backend\Controllers\Abstracts;
 use Backend\Controllers\ControllerBase;
 use Phalconmerce\Models\Popo\BackendUser;
 use Phalconmerce\Models\Utils;
+use Phalconmerce\Services\BackendService;
 
-abstract class AbstractLoginController extends ControllerBase {
+abstract class AbstractLoginController extends AbstractControllerBase {
 
 	/**
 	 * @return bool|\Phalcon\Http\Response|\Phalcon\Http\ResponseInterface
@@ -25,20 +26,24 @@ abstract class AbstractLoginController extends ControllerBase {
 
 				if ($backendUser) {
 					if ($this->security->checkHash($password, $backendUser->hashedPassword)) {
-						$this->session->set('backendUser', $backendUser);
-						// TODO use translation system
-						$this->flashSession->success('Connected');
+						if (BackendService::setConnectedUser($backendUser)) {
+							$this->flashSession->success($this->translate('Connected'));
 
-						return $this->redirectToRoute('backend-index');
+							return $this->redirectToRoute('backend-index');
+						}
+						else {
+							$this->flashSession->error($this->translate('User connection failed'));
+							return $this->redirectToRoute('backend-login');
+						}
 					}
 					else {
-						$this->flashSession->error('Email/Password not recognized');
+						$this->flashSession->error($this->translate('Email/Password not recognized'));
 						return $this->redirectToRoute('backend-login');
 					}
 				} else {
 					// To protect against timing attacks. Regardless of whether a user exists or not, the script will take roughly the same amount as it will always be computing a hash.
 					$this->security->hash(rand());
-					$this->flashSession->error('Email/Password not recognized');
+					$this->flashSession->error($this->translate('Email/Password not recognized'));
 					return $this->redirectToRoute('backend-login');
 				}
 			}
@@ -49,11 +54,7 @@ abstract class AbstractLoginController extends ControllerBase {
 		}
 		// GET
 		else {
-			$this->tag->setTitle('Login');
-			$this->view->setVars(array(
-				'test' => 'toto',
-				'titi' => 'tata'
-			));
+			$this->tag->setTitle($this->translate('Login'));
 			$this->view->setTemplateBefore('main_default');
 		}
 	}
@@ -62,8 +63,8 @@ abstract class AbstractLoginController extends ControllerBase {
 	 * @return \Phalcon\Http\Response|\Phalcon\Http\ResponseInterface
 	 */
 	public function logoutAction() {
-		$this->session->remove('backendUser');
-		$this->flashSession->success('Logged out');
+		BackendService::disconnect();
+		$this->flashSession->success($this->translate('Logged out'));
 		return $this->redirectToRoute('backend-login');
 	}
 }

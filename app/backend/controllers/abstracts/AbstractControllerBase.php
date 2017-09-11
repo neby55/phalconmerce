@@ -40,7 +40,7 @@ abstract class AbstractControllerBase extends Controller {
 	}
 
 	public function setSubtitle($str) {
-		$this->view->setVar('h1', $str);
+		$this->view->setVar('h1', $this->di->get('backendService')->t($str));
 	}
 
 	/**
@@ -67,5 +67,13 @@ abstract class AbstractControllerBase extends Controller {
 				'for' => $routeName
 			));
 		}
+	}
+
+	/**
+	 * @param string $str
+	 * @return string
+	 */
+	public function translate($str) {
+		return $this->di->get('backendService')->t($str);
 	}
 }

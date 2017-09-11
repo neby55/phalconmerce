@@ -24,13 +24,14 @@ class Labels {
 			if (file_exists($filename)) {
 				if (($fp = fopen($filename, "r")) !== false) {
 					while (($data = fgetcsv($fp, 1024, ";")) !== false) {
-						if (strtolower($data[0]) == strtolower($className)) {
+						if (strtolower($data[0]) == strtolower($className) || $data[0] == '*') {
 							$this->labelsList[strtolower($data[1])] = array(
 								$data[2],
 								$data[3]
 							);
 						}
 					}
+					fclose($fp);
 				}
 			}
 			// TODO make logs

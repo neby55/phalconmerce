@@ -30,6 +30,7 @@ class HelpBlocks {
 							$this->helpBlocksList[strtolower($data[1])] = $data[2];
 						}
 					}
+					fclose($fp);
 				}
 			}
 			// TODO make logs

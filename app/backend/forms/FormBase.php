@@ -9,6 +9,7 @@
 
 namespace Backend\Forms;
 
+use Phalcon\Di;
 use Phalcon\Forms\Element\Radio;
 use Phalcon\Forms\Element\TextArea;
 use Phalcon\Forms\Form;
@@ -58,11 +59,11 @@ class FormBase extends Form {
 		}
 
 		if (!isset($options['edit'])) {
-			$this->view->setVar('formTitle', 'Add');
+			$this->view->setVar('formTitle', Di::getDefault()->get('backendService')->t('Add'));
 		}
 		else {
 			$this->add(new Hidden("id"));
-			$this->view->setVar('formTitle', 'Edit');
+			$this->view->setVar('formTitle', Di::getDefault()->get('backendService')->t('Edit'));
 		}
 
 		$fqcn = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::POPO_NAMESPACE . '\\' . $this->popoClassName;
@@ -144,8 +145,8 @@ class FormBase extends Form {
 										$item = new Select(
 											$currentPropertyName,
 											[
-												2 => 'Disabled',
-												1 => 'Enabled'
+												2 => $this->di->get('backendService')->t('Disabled'),
+												1 => $this->di->get('backendService')->t('Enabled')
 											]
 										);
 										$item->setAttribute('class', 'form-control');
@@ -174,8 +175,8 @@ class FormBase extends Form {
 									$item = new Select(
 										$currentPropertyName,
 										[
-											2 => 'No',
-											1 => 'Yes'
+											2 => $this->di->get('backendService')->t('No'),
+											1 => $this->di->get('backendService')->t('Yes')
 										]
 									);
 									$item->setAttribute('class', 'form-control');
@@ -197,7 +198,7 @@ class FormBase extends Form {
 							if (!$columnCollection->hasArgument('nullable') || $columnCollection->getArgument('nullable') === false) {
 								$item->addValidators(array(
 									new PresenceOf(array(
-										'message' => 'This field is required'
+										'message' => $this->di->get('backendService')->t('This field is required')
 									))
 								));
 							}

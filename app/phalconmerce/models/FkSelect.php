@@ -9,6 +9,8 @@
 
 namespace Phalconmerce\Models;
 
+use Phalcon\Di;
+
 class FkSelect {
 	/** @var string */
 	protected $valueField;
@@ -87,7 +89,7 @@ class FkSelect {
 	 * @return array
 	 */
 	public function getValues($filters=array()) {
-		$values = array('' => 'choose');
+		$values = array('' => Di::getDefault()->get('backendService')->t('choose'));
 		$fqcn = $this->fqcn;
 
 		$data = $fqcn::find($filters);

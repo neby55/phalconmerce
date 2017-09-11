@@ -34,7 +34,7 @@ abstract class AbstractInvoice extends AbstractModel {
 	public $number;
 
 	/**
-	 * @Column(type="string", length=255, nullable=true)
+	 * @Column(type="string", length=255, editable=false, nullable=true)
 	 * @var string
 	 */
 	public $pdfFile;
