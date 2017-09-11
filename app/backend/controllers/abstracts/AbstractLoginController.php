@@ -63,7 +63,7 @@ abstract class AbstractLoginController extends AbstractControllerBase {
 	 * @return \Phalcon\Http\Response|\Phalcon\Http\ResponseInterface
 	 */
 	public function logoutAction() {
-		BackendService::disconnect();
+		BackendService::disconnectUser();
 		$this->flashSession->success($this->translate('Logged out'));
 		return $this->redirectToRoute('backend-login');
 	}
