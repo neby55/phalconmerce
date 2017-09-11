@@ -121,8 +121,8 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 	 * @return bool
 	 */
 	public function beforeDispatch(Event $event, Dispatcher $dispatcher) {
-		$user = $this->session->get('backendUser');
-		if (is_object($user) && is_a($user, '\Phalconmerce\Models\Popo\BackendUser')) {
+		$user = $this->di->get('backendService')->getConnectedUser();
+		if (is_object($user) && is_a($user, '\Phalconmerce\Models\Popo\Abstracts\AbstractBackendUser')) {
 			$role = $user->role;
 		}
 		else {

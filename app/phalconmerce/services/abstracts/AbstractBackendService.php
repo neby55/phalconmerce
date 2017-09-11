@@ -14,6 +14,7 @@ use Backend\Models\Menu;
 use Backend\Models\MenuControllerIndexLink;
 use Backend\Models\MenuNamedRouteLink;
 use Backend\Models\SubMenu;
+use Phalconmerce\Models\Utils;
 
 abstract class AbstractBackendService extends MainService {
 	/** @var string */
@@ -78,7 +79,11 @@ abstract class AbstractBackendService extends MainService {
 	 * @return mixed
 	 */
 	public function getConnectedUser() {
-		return Di::getDefault()->get('session')->get('backendUser');
+		$backendUser = Di::getDefault()->get('session')->get($this->backendUserSessionName);
+		if (is_a($backendUser, '\Phalconmerce\Models\Popo\Abstracts\AbstractBackendUser')) {
+			return $backendUser;
+		}
+		return false;
 	}
 
 	/**
@@ -87,7 +92,8 @@ abstract class AbstractBackendService extends MainService {
 	 */
 	public function setConnectedUser($backendUser) {
 		if (is_a($backendUser, '\Phalconmerce\Models\Popo\Abstracts\AbstractBackendUser')) {
-			return Di::getDefault()->get('session')->get($this->backendUserSessionName);
+			Di::getDefault()->get('session')->set($this->backendUserSessionName, $backendUser);
+			return true;
 		}
 		return false;
 	}
@@ -95,8 +101,8 @@ abstract class AbstractBackendService extends MainService {
 	/**
 	 * @return bool
 	 */
-	public static function disconnectUser() {
-		Di::getDefault()->get('session')->remove('backendUser');
+	public function disconnectUser() {
+		Di::getDefault()->get('session')->remove($this->backendUserSessionName);
 		return true;
 	}
 

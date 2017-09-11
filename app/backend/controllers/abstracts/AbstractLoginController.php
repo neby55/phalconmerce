@@ -21,14 +21,12 @@ abstract class AbstractLoginController extends AbstractControllerBase {
 				$email = $this->request->getPost($config->adminDir . '-email', 'email', '', true);
 				$password = $this->request->getPost($config->adminDir . '-password', null, '', true);
 
-				Utils::debug($email);
 				$backendUser = BackendUser::findByEmail($email);
 
 				if ($backendUser) {
 					if ($this->security->checkHash($password, $backendUser->hashedPassword)) {
-						if (BackendService::setConnectedUser($backendUser)) {
+						if ($this->di->get('backendService')->setConnectedUser($backendUser)) {
 							$this->flashSession->success($this->translate('Connected'));
-
 							return $this->redirectToRoute('backend-index');
 						}
 						else {
@@ -48,7 +46,7 @@ abstract class AbstractLoginController extends AbstractControllerBase {
 				}
 			}
 			else {
-				$this->flashSession->notice('CSRF protection');
+				$this->flashSession->notice('Disconnected (CSRF protection)s');
 				return $this->redirectToRoute('backend-login');
 			}
 		}
@@ -63,7 +61,7 @@ abstract class AbstractLoginController extends AbstractControllerBase {
 	 * @return \Phalcon\Http\Response|\Phalcon\Http\ResponseInterface
 	 */
 	public function logoutAction() {
-		BackendService::disconnectUser();
+		$this->di->get('backendService')->disconnectUser();
 		$this->flashSession->success($this->translate('Logged out'));
 		return $this->redirectToRoute('backend-login');
 	}
