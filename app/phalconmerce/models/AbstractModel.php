@@ -34,4 +34,11 @@ class AbstractModel extends Model {
 			$object->$currentProperty = $currentValue;
 		}
 	}
+
+	/**
+	 * @return array
+	 */
+	public static function getBackendListProperties() {
+		return array();
+	}
 }

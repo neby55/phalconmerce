@@ -49,64 +49,129 @@ class PhpClass {
 	 * @return string
 	 */
 	public function getPhpContent() {
-		$phpContent = '<?php'.PHP_EOL.PHP_EOL;
-		$phpContent .= 'namespace '.self::POPO_NAMESPACE.';'.PHP_EOL.PHP_EOL;
-		$phpContent .= 'use '.self::POPO_ABSTRACT_NAMESPACE.'\\%s;'.PHP_EOL.PHP_EOL;
-		$phpContent .= '// Remove @Api annotations to disable acces to this class from API service'.PHP_EOL;
-		$phpContent .= '/**'.PHP_EOL;
-		$phpContent .= ' * @Api'.PHP_EOL;
-		$phpContent .= ' */'.PHP_EOL.PHP_EOL;
-		$phpContent .= 'class %s extends %s {'.PHP_EOL;
+		/* -- PROPERTIES -- */
+		$propertiesContent = '';
 		if (is_array($this->propertiesList) && sizeof($this->propertiesList) > 0) {
-			$phpContent .= self::TAB_CHARACTER.'/** Properties generated with Popo Cli Generator */'.PHP_EOL;
+			$propertiesContent .= self::TAB_CHARACTER.'/** Properties generated with Popo Cli Generator */'.PHP_EOL;
 			foreach ($this->propertiesList as $currentProperty) {
-				$phpContent .= $currentProperty->getPhpContent(self::TAB_CHARACTER);
+				$propertiesContent .= $currentProperty->getPhpContent(self::TAB_CHARACTER);
 			}
-			$phpContent .= PHP_EOL;
+			$propertiesContent .= PHP_EOL;
 		}
-		$phpContent .= self::TAB_CHARACTER.'// Add here your own properties'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.'// See the extended Class to know current herited properties'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.'// To understand Annotations you must provide to your class, see https://docs.phalconphp.com/en/3.0.0/reference/models-metadata.html#annotations-strategy'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.'// or take a look at abstract classes provided by Phalconmerce'.PHP_EOL;
-		$phpContent .= PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.'public static $backendListProperties = array('.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'// TODO set properties to display in backend list view'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'// \'myProperty\' => \'Label\', // simple property'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'// \'mySecondProperty\' => array( // property with no human readable value'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'//	\'label\' => \'Label displayed\','.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'//	\'values\' => array('.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'//		1 => \'First possible value\','.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'//		2 => \'Second possible value\','.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'//		3 => \'Third possible value\','.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'//	)'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER. self::TAB_CHARACTER.'//)'.PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.');'.PHP_EOL;
-		$phpContent .= PHP_EOL;
-		$phpContent .= self::TAB_CHARACTER.'public function initialize() {'.PHP_EOL;
-		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'parent::initialize();'.PHP_EOL.PHP_EOL;
-		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// You can add here instructions that will be executed by the framework, after construction'.PHP_EOL.PHP_EOL;
-		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// Set the DB table related to this class'.PHP_EOL;
-		$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'$this->setSource(\'%s\');'.PHP_EOL;
-		$phpContent .= $this->getPhpInitializeFunctionExtra();
 
-		// If ForeignKeys
+		/* -- FOREIGN KEYS -- */
+		$foreignKeysContent = '';
 		if (sizeof($this->relationshipsList)) {
-			$phpContent .= PHP_EOL;
-			$phpContent .= str_repeat(self::TAB_CHARACTER, 2).'// Following lines contains relationships with other models'.PHP_EOL;
+			$foreignKeysContent .= PHP_EOL;
+			$foreignKeysContent .= str_repeat(self::TAB_CHARACTER, 2).'// Following lines contains relationships with other models'.PHP_EOL;
 			foreach ($this->relationshipsList as $currentRelationship) {
-				$phpContent .= $currentRelationship->getPhpContent().PHP_EOL;
+				$foreignKeysContent .= $currentRelationship->getPhpContent().PHP_EOL;
 			}
 		}
 
-		$phpContent .= self::TAB_CHARACTER.'}'.PHP_EOL;
-		$phpContent .= '}'.PHP_EOL;
+		$phpContent = <<<'EOT'
+<?php
 
-		return sprintf(
-			$phpContent,
-			$this->extendedClassName,
-			$this->className,
-			$this->extendedClassName,
-			$this->tableName
+namespace ##NAMESPACE##;
+
+use Phalconmerce\Models\FkSelect;
+use Phalconmerce\Services\BackendService;
+use ##ABSTRACT_NAMESPACE##\##ABSTRACT_CLASSNAME##;
+
+// Remove @Api annotations to disable acces to this class from API service
+/**
+ * @Api
+ */
+
+class ##CLASSNAME## extends ##ABSTRACT_CLASSNAME## {
+	##PROPERTIES##
+	// Add here your own properties
+	// See the extended Class to know current herited properties
+	// To understand Annotations you must provide to your class, see https://docs.phalconphp.com/en/3.0.0/reference/models-metadata.html#annotations-strategy
+	// or take a look at abstract classes provided by Phalconmerce
+
+	public function initialize() {
+		parent::initialize();
+
+		// You can add here instructions that will be executed by the framework, after construction
+
+		// Set the DB table related to this class
+		$this->setSource('##SOURCE##');
+
+		##FOREIGN_KEYS##
+	}
+
+	/**
+	 * Method called automatically by backend controller to konw which fields should be display in controller index (list)
+	 * @return array
+	 */
+	public static function getBackendListProperties() {
+		return array(
+			// TODO set properties to display in backend list view
+			// 'myProperty' => 'Label', // simple property
+			// 'mySecondProperty' => array( // property with no human readable value
+			//	'label' => 'Label displayed',
+			//	'values' => array(
+			//		0 => 'unknown',
+			//		1 => 'First possible value',
+			//		2 => 'Second possible value',
+			//		3 => 'Third possible value',
+			//      )
+			// ),
+			// 'status' => array(
+			//      'label' => 'Status',
+			//      'values' => BackendService::getBackendListStatusValues()
+			// )
+		);
+	}
+
+	/**
+	 * Static method returning possibles datas in <select> tag for the field "example"
+	 * @return array
+	 */
+	/*public static function exampleSelectOptions() {
+		return array(
+			0 => 'choose',
+			1 => 'first option',
+			2 => 'second option',
+			// etc.
+		);
+	}*/
+
+	/**
+	 * Static method returning fkSelect object used to generated <select> tag in form where category is a foreign key
+	 * @return FkSelect
+	 */
+	/*public static function fkSelect() {
+		// change properties list here
+		$displayedProperties = array(
+			'name'
+		);
+		return new FkSelect('id', '%s', '##NAMESPACE##\\##CLASSNAME##', $displayedProperties);
+	}*/
+}
+
+EOT;
+		return str_replace(
+			array(
+				'##NAMESPACE##',
+				'##ABSTRACT_NAMESPACE##',
+				'##CLASSNAME##',
+				'##ABSTRACT_CLASSNAME##',
+				'##PROPERTIES##',
+				'##SOURCE##',
+				'##FOREIGN_KEYS##'
+			),
+			array(
+				self::POPO_NAMESPACE,
+				self::POPO_ABSTRACT_NAMESPACE,
+				$this->className,
+				$this->extendedClassName,
+				$propertiesContent,
+				$this->tableName,
+				$foreignKeysContent
+			),
+			$phpContent
 		);
 	}
 

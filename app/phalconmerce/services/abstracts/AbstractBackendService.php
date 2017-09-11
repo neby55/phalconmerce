@@ -56,4 +56,15 @@ abstract class AbstractBackendService extends MainService {
 
 		return $menuItems;
 	}
+
+	/**
+	 * @return array
+	 */
+	public static function getBackendListStatusValues() {
+		return array(
+			0 => '<span class="btn btn-default btn-circle"><i class="fa fa-question"></i></span>',
+			1 => '<span class="btn btn-success btn-circle"><i class="fa fa-check"></i></span>',
+			2 => '<span class="btn btn-danger btn-circle"><i class="fa fa-times"></i></span>',
+		);
+	}
 }

@@ -13,11 +13,11 @@ use Phalcon\Forms\Element\Radio;
 use Phalcon\Forms\Element\TextArea;
 use Phalcon\Forms\Form;
 use Phalcon\Forms\Element\Select;
-use \Phalcon\Forms\Element\Text;
-use \Phalcon\Forms\Element\Hidden;
+use Phalcon\Forms\Element\Text;
+use Phalcon\Forms\Element\Hidden;
 use Phalcon\Validation\Message;
 use Phalcon\Validation\Message\Group;
-use \Phalcon\Validation\Validator\PresenceOf;
+use Phalcon\Validation\Validator\PresenceOf;
 use Phalconmerce\Models\FkSelect;
 use Phalconmerce\Models\Utils;
 
@@ -197,7 +197,7 @@ class FormBase extends Form {
 							if (!$columnCollection->hasArgument('nullable') || $columnCollection->getArgument('nullable') === false) {
 								$item->addValidators(array(
 									new PresenceOf(array(
-										'message' => 'This field is required--'
+										'message' => 'This field is required'
 									))
 								));
 							}
