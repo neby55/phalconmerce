@@ -25,7 +25,6 @@ abstract class AbstractDefaultController extends Controller {
 	 */
 	public function indexAction($params = array()) {
 		echo '<h1>index</h1>';
-		Utils::debug($params);
 	}
 
 	/**

@@ -15,7 +15,5 @@ use Phalconmerce\Models\Popo\Url;
 class UrlController extends ControllerBase {
 	public function dispatcherAction() {
 		$urlObject = $this->dispatcher->getParam('url');
-		Utils::debug($urlObject);
-
 	}
 }

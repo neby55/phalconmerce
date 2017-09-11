@@ -49,7 +49,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 		parent::indexAction();
 		// Get all currencies
 		$list = ##CLASSNAME##::find();
-		//Utils::debug($list);exit;
+		
 		$this->view->setVar('list', $list);
 
 		$this->view->setVar('listActionProperties', ##CLASSNAME##::getBackendListProperties());
