@@ -79,7 +79,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 				$this->dispatcher->forward(
 					[
-						"controller" => "##CONTROLLER_NAME##",
+						"controller" => $this->dispatcher->getControllerName(),
 						"action" => "index",
 					]
 				);
@@ -98,7 +98,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 		if (!$this->request->isPost()) {
 			$this->dispatcher->forward(
 				[
-					"controller" => "##CONTROLLER_NAME##",
+					"controller" => $this->dispatcher->getControllerName(),
 					"action" => "index",
 				]
 			);
@@ -120,7 +120,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 			$this->dispatcher->forward(
 				[
-					"controller" => "##CONTROLLER_NAME##",
+					"controller" => $this->dispatcher->getControllerName(),
 					"action" => "index",
 				]
 			);
@@ -138,7 +138,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 			$this->dispatcher->forward(
 				[
-					"controller" => "##CONTROLLER_NAME##",
+					"controller" => $this->dispatcher->getControllerName(),
 					"action" => "new",
 				]
 			);
@@ -153,7 +153,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 			$this->dispatcher->forward(
 				[
-					"controller" => "##CONTROLLER_NAME##",
+					"controller" => $this->dispatcher->getControllerName(),
 					"action" => "new",
 				]
 			);
@@ -166,7 +166,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 		$this->flash->success("##CLASSNAME## was updated successfully");
 
-		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller'=>'##CONTROLLER_NAME##'));
+		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller'=>$this->dispatcher->getControllerName()));
 	}
 
 	/**
@@ -183,7 +183,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 			$this->dispatcher->forward(
 				[
-					"controller" => "##CONTROLLER_NAME##",
+					"controller" => $this->dispatcher->getControllerName(),
 					"action" => "index",
 				]
 			);
@@ -197,7 +197,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 			$this->dispatcher->forward(
 				[
-					"controller" => "##CONTROLLER_NAME##",
+					"controller" => $this->dispatcher->getControllerName(),
 					"action" => "search",
 				]
 			);
@@ -206,12 +206,12 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 		$this->flashSession->success("##CLASSNAME## was deleted");
 
-		return $this->redirectToRoute('backend-controller-index', array('controller'=>'##CONTROLLER_NAME##'));
+		return $this->redirectToRoute('backend-controller-index', array('controller'=>$this->dispatcher->getControllerName()));
 	}
 }
 EOT;
 
-		$phpContent = str_replace(array('##CLASSNAME##', '##CONTROLLER_NAME##'), array($this->className, strtolower($this->className)), $phpContent);
+		$phpContent = str_replace('##CLASSNAME##', $this->className, $phpContent);
 		return $phpContent;
 	}
 
