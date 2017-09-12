@@ -21,9 +21,10 @@ abstract class AbstractLoginController extends AbstractControllerBase {
 				$email = $this->request->getPost($config->adminDir . '-email', 'email', '', true);
 				$password = $this->request->getPost($config->adminDir . '-password', null, '', true);
 
+				/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractBackendUser $backendUser */
 				$backendUser = BackendUser::findByEmail($email);
 
-				if ($backendUser) {
+				if ($backendUser && $backendUser->status == 1) {
 					if ($this->security->checkHash($password, $backendUser->hashedPassword)) {
 						if ($this->di->get('backendService')->setConnectedUser($backendUser)) {
 							$this->flashSession->success($this->translate('Connected'));
@@ -38,7 +39,8 @@ abstract class AbstractLoginController extends AbstractControllerBase {
 						$this->flashSession->error($this->translate('Email/Password not recognized'));
 						return $this->redirectToRoute('backend-login');
 					}
-				} else {
+				}
+				else {
 					// To protect against timing attacks. Regardless of whether a user exists or not, the script will take roughly the same amount as it will always be computing a hash.
 					$this->security->hash(rand());
 					$this->flashSession->error($this->translate('Email/Password not recognized'));
