@@ -17,7 +17,10 @@ class ViewsPhtml {
 			$this->controllerName = $controllerName;
 		}
 		else {
-			$this->controllerName = strtolower($this->className);
+			$this->controllerName = strtolower(preg_replace('/([[:upper:]])/', '_$1', $this->className));
+			if (substr($this->controllerName, 0, 1) == '_') {
+				$this->controllerName = substr($this->controllerName, 1);
+			}
 		}
 	}
 

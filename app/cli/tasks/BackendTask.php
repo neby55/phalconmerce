@@ -79,7 +79,7 @@ class BackendTask extends Task {
 					// View
 					$views = new ViewsPhtml($currentClassName);
 					if (!$deletion && $views->filesExists()) {
-						echo 'View files "' . $currentClassName . '" already exist' . PHP_EOL;
+						echo 'View files "' . $currentClassName . '" already exists' . PHP_EOL;
 					}
 					else {
 						if ($views->save()) {
