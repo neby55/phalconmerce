@@ -32,6 +32,7 @@ class AbstractNotFoundPlugin extends Plugin
 			switch ($exception->getCode()) {
 				case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
 				case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+					$this->di->get('logger')->error('Exception : '.$exception->getMessage());
 					$dispatcher->forward(
 						[
 							'controller' => 'errors',

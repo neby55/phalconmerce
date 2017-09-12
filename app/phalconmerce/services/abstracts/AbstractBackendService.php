@@ -110,17 +110,17 @@ abstract class AbstractBackendService extends MainService {
 		$this->menuItems =  array();
 
 		$cmsMenuItems = new Menu($this->t('CMS'), 'edit', '');
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Blocks'), new MenuControllerIndexLink('cmsblock')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Content (banner)'), new MenuControllerIndexLink('cmscontentbanner')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Content (HTML)'), new MenuControllerIndexLink('cmscontenthtml')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Designs'), new MenuControllerIndexLink('cmsdesign')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Locations'), new MenuControllerIndexLink('cmslocation')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Pages'), new MenuControllerIndexLink('cmspage')));
+		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Blocks'), new MenuControllerIndexLink('cms_block')));
+		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Content (banner)'), new MenuControllerIndexLink('cms_content_banner')));
+		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Content (HTML)'), new MenuControllerIndexLink('cms_content_html')));
+		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Designs'), new MenuControllerIndexLink('cms_design')));
+		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Locations'), new MenuControllerIndexLink('cms_location')));
+		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Pages'), new MenuControllerIndexLink('cms_page')));
 		$this->menuItems[] = $cmsMenuItems;
 
 		$productsMenuItems = new Menu($this->t('Products'), 'barcode', '');
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Attributes'), new MenuControllerIndexLink('attribute')));
-		$productsMenuItems->addSubMenu(new SubMenu($this->t('Attribute Groups'), new MenuControllerIndexLink('attributeset')));
+		$productsMenuItems->addSubMenu(new SubMenu($this->t('Attribute Groups'), new MenuControllerIndexLink('attribute_set')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Categories'), new MenuControllerIndexLink('category')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Filters'), new MenuControllerIndexLink('filter')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Manufacturers'), new MenuControllerIndexLink('manufacturer')));
@@ -143,7 +143,7 @@ abstract class AbstractBackendService extends MainService {
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Languages'), new MenuControllerIndexLink('lang')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('States'), new MenuControllerIndexLink('state')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Tax'), new MenuControllerIndexLink('tax')));
-		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Users'), new MenuControllerIndexLink('backenduser')));
+		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Users'), new MenuControllerIndexLink('backend_user')));
 		$this->menuItems[] = $settingsMenuItems;
 	}
 
