@@ -27,6 +27,11 @@ abstract class AbstractControllerBase extends Controller {
 		$this->tag->prependTitle($config->adminTitle.' | ');
 		$this->setSubtitle('Page Name');
 
+		// Disable browser caching
+		$this->response->setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+		$this->response->setHeader('Pragma', 'no-cache');
+		$this->response->setHeader('Expires', '0');
+
 		// Informations need in views (URL)
 		$this->view->setVar('controllerURL', strtolower($this->popoClassName));
 		$this->view->setVar('popoClassName', $this->popoClassName);
