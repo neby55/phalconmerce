@@ -20,7 +20,7 @@ $backendRouter->add(
 		"action"     => 2,
 		"params"     => 3,
 	]
-);
+)->setName('backend-generic');
 
 $backendRouter->add(
 	'/:controller',
