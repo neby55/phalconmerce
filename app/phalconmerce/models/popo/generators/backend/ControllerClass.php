@@ -49,7 +49,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 		parent::indexAction();
 		// Get all currencies
 		$list = ##CLASSNAME##::find();
-		
+
 		$this->view->setVar('list', $list);
 
 		$this->view->setVar('listActionProperties', ##CLASSNAME##::getBackendListProperties());
@@ -86,6 +86,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 				return false;
 			}
 
+			$this->view->setVar('object', $object);
 			$this->view->form = new ##CLASSNAME##Form($object, array('edit' => true));
 		}
 	}

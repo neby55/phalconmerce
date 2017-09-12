@@ -10,6 +10,8 @@
 namespace Phalconmerce\Models;
 
 use Phalcon\Di;
+use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
+use Phalconmerce\Models\Popo\Generators\Popo\Property;
 
 class FkSelect {
 	/** @var string */
@@ -100,7 +102,22 @@ class FkSelect {
 				$this->labelFields = array($this->labelFields);
 			}
 			foreach ($this->labelFields as $currentLabelField) {
-				$labelList[] = $currentObject->$currentLabelField;
+				// if FK field
+				// TODO check if it's usefull
+				if (Property::isForeignKeyFromName($currentLabelField)) {
+					$currentPropertyObject = new Property($currentLabelField);
+					$fqcn = PhpClass::POPO_NAMESPACE.'\\'.$currentPropertyObject->getForeignKeyClassName();
+					$fkValues = self::getFromClasseName($fqcn);
+					if (is_array($fkValues) && sizeof($fkValues) > 0 && array_key_exists($currentObject->$currentLabelField, $fkValues)) {
+						$labelList[] = $fkValues[$currentObject->$currentLabelField];
+					}
+					else {
+						$labelList[] = $currentPropertyObject->getForeignKeyClassName().'::'.$currentObject->$currentLabelField;
+					}
+				}
+				else {
+					$labelList[] = $currentObject->$currentLabelField;
+				}
 			}
 			$idField = $this->valueField;
 			$values[$currentObject->$idField] = vsprintf($this->pattern, $labelList);

@@ -71,6 +71,7 @@ class FormBase extends Form {
 		$labelsObject = new Labels($this->popoClassName);
 		$helpBlocksObject = new HelpBlocks($this->popoClassName);
 		$this->helpBlocksList = array();
+		$currentReflectionClass = new \ReflectionClass($fqcn);
 		//Utils::debug($propertiesList);exit;
 
 		foreach ($propertiesList as $currentPropertyName => $currentPropertyReflect) {
@@ -126,10 +127,20 @@ class FormBase extends Form {
 								}
 								// If short string
 								else if ($type == 'string') {
-									$item = new Text($currentPropertyName);
-									$item->setAttribute('class', 'form-control');
-									$item->setFilters(array('string'));
-									$item->setAttribute('maxlength', $length);
+									if ($currentReflectionClass->hasMethod($currentPropertyName . 'SelectOptions')) {
+										$item = new Select(
+											$currentPropertyName,
+											call_user_func(array($fqcn, $currentPropertyName . 'SelectOptions'))
+										);
+										$item->setAttribute('class', 'form-control');
+										$item->setFilters(array('string'));
+									}
+									else {
+										$item = new Text($currentPropertyName);
+										$item->setAttribute('class', 'form-control');
+										$item->setFilters(array('string'));
+										$item->setAttribute('maxlength', $length);
+									}
 								}
 								// If float
 								else if ($type == 'float') {
@@ -141,7 +152,15 @@ class FormBase extends Form {
 								// If int
 								else if ($type == 'integer' || $type == 'int') {
 									// Status case
-									if ($currentPropertyName == 'status') {
+									if ($currentReflectionClass->hasMethod($currentPropertyName . 'SelectOptions')) {
+										$item = new Select(
+											$currentPropertyName,
+											call_user_func(array($fqcn, $currentPropertyName . 'SelectOptions'))
+										);
+										$item->setAttribute('class', 'form-control');
+										$item->setFilters(array('int'));
+									}
+									else if ($currentPropertyName == 'status') {
 										$item = new Select(
 											$currentPropertyName,
 											[
@@ -153,21 +172,10 @@ class FormBase extends Form {
 										$item->setFilters(array('int'));
 									}
 									else {
-										$currentReflectionClass = new \ReflectionClass($fqcn);
-										if ($currentReflectionClass->hasMethod($currentPropertyName . 'SelectOptions')) {
-											$item = new Select(
-												$currentPropertyName,
-												call_user_func(array($fqcn, $currentPropertyName . 'SelectOptions'))
-											);
-											$item->setAttribute('class', 'form-control');
-											$item->setFilters(array('int'));
-										}
-										else {
-											$item = new Text($currentPropertyName);
-											$item->setAttribute('class', 'form-control');
-											$item->setFilters(array('int'));
-											$item->setAttribute('maxlength', $length);
-										}
+										$item = new Text($currentPropertyName);
+										$item->setAttribute('class', 'form-control');
+										$item->setFilters(array('int'));
+										$item->setAttribute('maxlength', $length);
 									}
 								}
 								// If boolean
@@ -256,7 +264,7 @@ class FormBase extends Form {
 	 * @return bool
 	 */
 	public function hasHelpBlock($propertyName) {
-		return array_key_exists($propertyName, $this->helpBlocksList);
+		return array_key_exists($propertyName, $this->helpBlocksList) && !empty($this->helpBlocksList[$propertyName]);
 	}
 
 	/**

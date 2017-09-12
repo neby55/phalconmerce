@@ -27,7 +27,7 @@ abstract class AbstractBackendUser extends AbstractModel {
 	public $email;
 
 	/**
-	 * @Column(type="string", length=60, nullable=false, editable=false)
+	 * @Column(type="string", length=60, nullable=true, editable=false)
 	 * @var string
 	 */
 	public $hashedPassword;
