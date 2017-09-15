@@ -28,19 +28,19 @@ abstract class AbstractVouncher extends AbstractModel {
 	public $type;
 
 	/**
-	 * @Column(type="timestamp", nullable=true)
+	 * @Column(type="date", nullable=true)
 	 * @var string
 	 */
 	public $startDate;
 
 	/**
-	 * @Column(type="timestamp", nullable=true)
+	 * @Column(type="date", nullable=true)
 	 * @var string
 	 */
 	public $endDate;
 
 	/**
-	 * @Column(type="timestamp", nullable=true)
+	 * @Column(type="datetime", nullable=true)
 	 * @var string
 	 */
 	public $useDate;

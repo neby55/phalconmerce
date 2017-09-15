@@ -199,10 +199,11 @@ class Table {
 					}
 
 					// Add columun
-					$this->addColumn(new Column(
+					$currentColumn = new Column(
 						$columnName,
 						$columnOptions
-					));
+					);
+					$this->addColumn($currentColumn);
 
 					// For columns added after
 					$this->lastPropertyName = $columnName;

@@ -10,6 +10,7 @@
 namespace Backend\Forms;
 
 use Phalcon\Di;
+use Phalcon\Forms\Element\Date;
 use Phalcon\Forms\Element\Radio;
 use Phalcon\Forms\Element\TextArea;
 use Phalcon\Forms\Form;
@@ -192,7 +193,21 @@ class FormBase extends Form {
 								}
 								// If timestamp
 								else if ($type == 'timestamp') {
-									$item = new Text($currentPropertyName);
+									$item = new Date($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setAttribute('type', 'date');
+									$item->setAttribute('maxlength', 19);
+								}
+								// If date
+								else if ($type == 'date') {
+									$item = new Date($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setAttribute('type', 'date');
+									$item->setAttribute('maxlength', 10);
+								}
+								// If datetime
+								else if ($type == 'datetime') {
+									$item = new Date($currentPropertyName);
 									$item->setAttribute('class', 'form-control');
 									$item->setAttribute('type', 'date');
 									$item->setAttribute('maxlength', 19);
