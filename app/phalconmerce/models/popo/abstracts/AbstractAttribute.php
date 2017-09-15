@@ -21,7 +21,7 @@ abstract class AbstractAttribute extends AbstractModel {
 	public $name;
 
 	/**
-	 * @Column(type="string", length=128, nullable=false)
+	 * @Column(type="string", length=128, nullable=true)
 	 * @var string
 	 */
 	public $helpText;

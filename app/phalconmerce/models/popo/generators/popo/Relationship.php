@@ -11,6 +11,8 @@ class Relationship {
 	protected $externalPropertyName;
 	/** @var string */
 	protected $externalFQCN;
+	/** @var string */
+	protected $externalClassName;
 	/** @var int */
 	protected $relationshipType;
 
@@ -28,11 +30,12 @@ class Relationship {
 
 	const DATA_FILENAME = 'popo.relationships';
 
-	function __construct($propertyName, $className, $externalPropertyName, $externalFQCN, $relationshipType) {
+	function __construct($propertyName, $className, $externalPropertyName, $externalFQCN, $externalClassname, $relationshipType) {
 		$this->propertyName = $propertyName;
 		$this->className = $className;
 		$this->externalPropertyName = $externalPropertyName;
 		$this->externalFQCN = $externalFQCN;
+		$this->externalClassName = $externalClassname;
 		$this->setRelationshipType($relationshipType);
 	}
 
@@ -59,7 +62,8 @@ class Relationship {
 		$phpContent = str_repeat(PhpClass::TAB_CHARACTER, 2) . '$this->' . $this->getPhalconMethodName() . '(' . PHP_EOL;
 		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getPropertyName() . '\',' . PHP_EOL;
 		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalFQCN() . '\',' . PHP_EOL;
-		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalPropertyName() . '\'' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalPropertyName() . '\',' . PHP_EOL;
+		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . 'array(\'alias\' => \''.$this->getExternalClassName().'\')' . PHP_EOL;
 		$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 2) . ');' . PHP_EOL;
 
 		return $phpContent;
@@ -75,6 +79,7 @@ class Relationship {
 			$propertiesList['className'],
 			$propertiesList['externalPropertyName'],
 			$propertiesList['externalFQCN'],
+			$propertiesList['externalClassName'],
 			$propertiesList['relationshipType']
 		);
 	}
@@ -105,6 +110,13 @@ class Relationship {
 	 */
 	public function getExternalFQCN() {
 		return $this->externalFQCN;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getExternalClassName() {
+		return $this->externalClassName;
 	}
 
 	/**

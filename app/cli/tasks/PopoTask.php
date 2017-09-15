@@ -45,12 +45,13 @@ class PopoTask extends Task {
 					// 1:n or n:1
 					if (Property::isForeignKeyFromName($currentPropertyName)) {
 						$currentPropertyObject = new Property($currentPropertyName);
-						// First way
+						// First way (belongsTo)
 						$relationshipsList[strtolower($currentClassName)][$currentPropertyName] = new Relationship(
 							$currentPropertyObject->getName(),
 							$currentClassName,
 							$currentPropertyObject->getForeignKeyPropertyName(),
 							addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentPropertyObject->getForeignKeyClassName()),
+							$currentPropertyObject->getForeignKeyClassName(),
 							Relationship::TYPE_MANY_TO_1
 						);
 
@@ -65,12 +66,13 @@ class PopoTask extends Task {
 							);
 						}
 						else {
-							// Second way
+							// Second way (hasMany)
 							$relationshipsList[strtolower($currentPropertyObject->getForeignKeyClassName())][$currentPropertyObject->getForeignKeyPropertyName()] = new Relationship(
 								$currentPropertyObject->getForeignKeyPropertyName(),
 								$currentPropertyObject->getForeignKeyClassName(),
 								$currentPropertyName,
 								addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentClassName),
+								$currentClassName,
 								Relationship::TYPE_1_TO_MANY
 							);
 						}
@@ -86,6 +88,7 @@ class PopoTask extends Task {
 							if ($key != $key2) {
 								$currentNmRelationship->setExternalPropertyName($currentNmRelationship2->getPropertyName());
 								$currentNmRelationship->setExternalFQCN(addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentNmRelationship2->getClassName()));
+								$currentNmRelationship->setExternalClassName($currentNmRelationship2->getClassName());
 								$nmRelationshipsList[$key] = $currentNmRelationship;
 							}
 						}
@@ -93,6 +96,7 @@ class PopoTask extends Task {
 					// Now we add it to the $relationshipsList array
 					foreach ($nmRelationshipsList as $key=>$currentNmRelationship) {
 						$relationshipsList[strtolower($key)][$currentNmRelationship->getExternalFQCN()] = $currentNmRelationship;
+						$relationshipsList[strtolower($key)][$currentNmRelationship->getManyToManyFQCN()] = $currentNmRelationship->generateHasManyRelationship();
 					}
 				}
 			}

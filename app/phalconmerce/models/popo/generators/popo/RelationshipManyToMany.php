@@ -2,6 +2,8 @@
 
 namespace Phalconmerce\Models\Popo\Generators\Popo;
 
+use Phalconmerce\Models\Utils;
+
 class RelationshipManyToMany extends Relationship {
 	/** @var string */
 	protected $idPropertyName;
@@ -10,8 +12,8 @@ class RelationshipManyToMany extends Relationship {
 	/** @var string */
 	protected $manyToManyFQCN;
 
-	function __construct($propertyName, $className, $idPropertyName, $externalIdPropertyName, $manyToManyFQCN, $externalPropertyName='', $externalFQCN='') {
-		parent::__construct($propertyName, $className, $externalPropertyName, $externalFQCN, self::TYPE_MANY_TO_MANY);
+	function __construct($propertyName, $className, $idPropertyName, $externalIdPropertyName, $manyToManyFQCN, $externalPropertyName='', $externalFQCN='', $externalClassname='') {
+		parent::__construct($propertyName, $className, $externalPropertyName, $externalFQCN, $externalClassname, self::TYPE_MANY_TO_MANY);
 		$this->idPropertyName = $idPropertyName;
 		$this->externalIdPropertyName = $externalIdPropertyName;
 		$this->manyToManyFQCN = $manyToManyFQCN;
@@ -33,11 +35,27 @@ class RelationshipManyToMany extends Relationship {
 			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getPropertyName() . '\',' . PHP_EOL;
 			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalPropertyName() . '\',' . PHP_EOL;
 			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalFQCN() . '\',' . PHP_EOL;
-			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalIdPropertyName() . '\'' . PHP_EOL;
+			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . '\'' . $this->getExternalIdPropertyName() . '\',' . PHP_EOL;
+			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 3) . 'array(\'alias\' => \''.$this->getExternalClassName().'\')' . PHP_EOL;
 			$phpContent .= str_repeat(PhpClass::TAB_CHARACTER, 2) . ');' . PHP_EOL;
 		}
 
 		return $phpContent;
+	}
+
+	/**
+	 * @return Relationship
+	 */
+	public function generateHasManyRelationship() {
+		$object = new Relationship(
+			$this->getIdPropertyName(),
+			$this->getClassName(),
+			$this->getPropertyName(),
+			$this->getManyToManyFQCN(),
+			Utils::getClassnameFromFQCN($this->getManyToManyFQCN()),
+			self::TYPE_1_TO_MANY
+		);
+		return $object;
 	}
 
 	/**
@@ -52,7 +70,8 @@ class RelationshipManyToMany extends Relationship {
 			$propertiesList['externalIdPropertyName'],
 			$propertiesList['manyToManyFQCN'],
 			$propertiesList['externalPropertyName'],
-			$propertiesList['externalFQCN']
+			$propertiesList['externalFQCN'],
+			$propertiesList['externalClassName']
 		);
 	}
 
@@ -89,5 +108,12 @@ class RelationshipManyToMany extends Relationship {
 	 */
 	public function setExternalPropertyName($externalPropertyName) {
 		$this->externalPropertyName = $externalPropertyName;
+	}
+
+	/**
+	 * @param string $externalClassName
+	 */
+	public function setExternalClassName($externalClassName) {
+		$this->externalClassName = $externalClassName;
 	}
 }

@@ -111,6 +111,14 @@ class Utils {
 	}
 
 	/**
+	 * @param string $fqcn
+	 * @return string
+	 */
+	public static function getClassnameFromFQCN($fqcn) {
+		return substr($fqcn, strrpos($fqcn, '\\')+1);
+	}
+
+	/**
 	 * @param string $filename
 	 * @return string
 	 */
@@ -155,6 +163,11 @@ class Utils {
 	 * @param mixed $var
 	 */
 	public static function debug($var) {
-		echo '<pre style="background: black;color:white;padding:8px 10px;">'.print_r($var,1).'</pre>';
+		if (is_a($var, '\Phalcon\Mvc\Model')) {
+			echo '<pre style="background: black;color:white;padding:8px 10px;">'.get_class($var).PHP_EOL.print_r($var->toArray(),1).'</pre>';
+		}
+		else {
+			echo '<pre style="background: black;color:white;padding:8px 10px;">'.print_r($var,1).'</pre>';
+		}
 	}
 }
