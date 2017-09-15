@@ -167,7 +167,10 @@ class Table {
 					}
 					// Timestamp default value exception to avoid CURRENT_TIMESTAMP limitation to only one column
 					else if ($columnOptions['type'] == Column::TYPE_TIMESTAMP) {
-						$columnOptions['default'] = '0000-00-00 00:00:00';
+						// If not null
+						if ($columnOptions['notNull']) {
+							$columnOptions['default'] = '0000-00-00 00:00:00';
+						}
 					}
 					// unique
 					if ($columnCollection->hasArgument('unique') && $columnCollection->getArgument('unique') == 'true') {
@@ -199,10 +202,11 @@ class Table {
 					}
 
 					// Add columun
-					$this->addColumn(new Column(
+					$currentColumn = new Column(
 						$columnName,
 						$columnOptions
-					));
+					);
+					$this->addColumn($currentColumn);
 
 					// For columns added after
 					$this->lastPropertyName = $columnName;
