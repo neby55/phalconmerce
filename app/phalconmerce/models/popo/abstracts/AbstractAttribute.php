@@ -6,6 +6,12 @@ use Phalconmerce\Models\AbstractModel;
 
 abstract class AbstractAttribute extends AbstractModel {
 
+	const TYPE_INT = 1;
+	const TYPE_FLOAT = 2;
+	const TYPE_STRING = 3;
+	const TYPE_DROPDOWN = 4;
+	const TYPE_BOOLEAN = 5;
+
 	/**
 	 * @Primary
 	 * @Identity
