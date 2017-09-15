@@ -165,6 +165,10 @@ class Table {
 					if ($columnCollection->hasArgument('default')) {
 						$columnOptions['default'] = $columnCollection->getArgument('default');
 					}
+					// Timestamp default value exception to avoid CURRENT_TIMESTAMP limitation to only one column
+					else if ($columnOptions['type'] == Column::TYPE_TIMESTAMP) {
+						$columnOptions['default'] = '0000-00-00 00:00:00';
+					}
 					// unique
 					if ($columnCollection->hasArgument('unique') && $columnCollection->getArgument('unique') == 'true') {
 						$this->addIndex(new Index(

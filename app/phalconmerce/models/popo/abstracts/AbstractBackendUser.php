@@ -45,7 +45,7 @@ abstract class AbstractBackendUser extends AbstractModel {
 	public $token;
 
 	/**
-	 * @Column(type="timestamp", nullable=true, default="0000-00-00 00:00:00")
+	 * @Column(type="timestamp", nullable=true)
 	 * @var int
 	 */
 	public $tokenExpiry;
