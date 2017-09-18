@@ -6,6 +6,9 @@ use Phalconmerce\Models\AbstractModel;
 
 abstract class AbstractPromotion extends AbstractModel {
 
+	const TYPE_PERCENT = 1;
+	const TYPE_AMOUNT = 2;
+
 	/**
 	 * @Primary
 	 * @Identity
@@ -60,6 +63,25 @@ abstract class AbstractPromotion extends AbstractModel {
 		$this->prefix = 'pmt_';
 
 		parent::initialize();
+	}
+
+	/**
+	 * @param float $price
+	 * @return bool|float
+	 */
+	public function getPromotionalPrice($price) {
+		if (is_numeric($price)) {
+			// casting $price
+			$price = (float) $price;
+			if ($this->type == self::TYPE_AMOUNT) {
+				return $price - $this->value;
+			}
+			else if ($this->type == self::TYPE_PERCENT) {
+				return $price - ($price * $this->value / 100);
+			}
+			return $price;
+		}
+		return false;
 	}
 
 }

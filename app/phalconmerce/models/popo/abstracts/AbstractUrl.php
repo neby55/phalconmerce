@@ -15,20 +15,20 @@ abstract class AbstractUrl extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", nullable=false, editable=false)
 	 * @var int
 	 */
 	public $fk_lang_id;
 
 	/**
-	 * @Column(type="string", length=32, nullable=true)
+	 * @Column(type="string", length=32, nullable=true, editable=false)
 	 * @Index
 	 * @var string
 	 */
 	public $entity;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", nullable=false, editable=false)
 	 * @Index
 	 * @var int
 	 */
