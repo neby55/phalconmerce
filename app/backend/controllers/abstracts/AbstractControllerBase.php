@@ -65,7 +65,12 @@ abstract class AbstractControllerBase extends Controller {
 		$this->view->disable();
 		if (is_array($params) && sizeof($params) > 0) {
 			$params['for'] = $routeName;
-			return $this->response->redirect($params);
+			if (array_key_exists('fragment', $params)) {
+				return $this->response->redirect($this->url->get($params).'#'.$params['fragment']);
+			}
+			else {
+				return $this->response->redirect($params);
+			}
 		}
 		else {
 			return $this->response->redirect(array(

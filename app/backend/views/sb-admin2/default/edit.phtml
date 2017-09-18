@@ -9,6 +9,9 @@
 					<div class="col-lg-12">
 						<?= $this->tag->form($this->url->get(array('for'=>'backend-controller-save', 'controller'=>$this->dispatcher->getControllerName()))) ?>
 							<?php foreach ($this->view->form as $element) : ?>
+							<?php if (is_a($element, '\Phalcon\Forms\Element\Hidden')) : ?>
+								<?= $element->render() ?>
+							<?php else : ?>
 							<div class="form-group<?php if ($element->hasMessages()) : ?> has-error<?php endif ?>">
 								<label for="<?=  $element->getName() ?>" class="control-label"><?=  $element->getLabel() ?></label>
 								<?= $element->render(array('class' => 'form-control')) ?>
@@ -24,6 +27,7 @@
 								<p class="help-block no-message"><?= $this->view->form->getHelpBlock($element->getName()) ?></p>
 								<?php endif; ?>
 							</div>
+							<?php endif; ?>
 							<?php endforeach ?>
 							<br>
 							<input type="submit" class="btn btn-success btn-block" value="Valid">

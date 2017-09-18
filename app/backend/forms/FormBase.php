@@ -176,7 +176,9 @@ class FormBase extends Form {
 										$item = new Text($currentPropertyName);
 										$item->setAttribute('class', 'form-control');
 										$item->setFilters(array('int'));
-										$item->setAttribute('maxlength', $length);
+										if ($length > 0) {
+											$item->setAttribute('maxlength', $length);
+										}
 									}
 								}
 								// If boolean
