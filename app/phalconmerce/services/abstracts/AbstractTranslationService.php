@@ -30,6 +30,8 @@ abstract class AbstractTranslationService extends MainService {
 	/** @var array Rates for available currencies */
 	protected $currenciesRatesList;
 
+	const DEFAULT_LANG_CODE = 'en';
+
 	/** @var array Available Lang Codes and its LangIds (in index) */
 	public static $validLangList = array(1=>'fr', 2=>'en');
 	/** @var array Available Currency Codes and default currencies for LangIds (in index) */
@@ -78,6 +80,17 @@ abstract class AbstractTranslationService extends MainService {
 			return $translated;
 		}
 		return vsprintf($str, $data);
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function getCurrentLang() {
+		$lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : '';
+		if (self::isValidLangCode($lang)) {
+			return $lang;
+		}
+		return self::DEFAULT_LANG_CODE;
 	}
 
 	/**

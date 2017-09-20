@@ -8,8 +8,7 @@
  */
 
 /**
- * You can add URL using $router
- * @var \Phalcon\Mvc\Router $router
+ * Never modify this file, you should edit files in "routes" folder
  */
 
 $router->add('/',
@@ -17,7 +16,11 @@ $router->add('/',
 		"controller" => "index",
 		"action"     => "index",
 	]
-);
+)->setName('home');
+
+// Include developer defined routes
+require __DIR__.DIRECTORY_SEPARATOR.'routes'.DIRECTORY_SEPARATOR.'global.php';
+
 $router->notFound(
 	[
 		"controller" => "index",
@@ -43,4 +46,4 @@ if (is_array($dbUrlList)) {
 			]
 		);
 	}
-}
+};

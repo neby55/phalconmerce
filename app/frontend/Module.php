@@ -30,6 +30,7 @@ class Module implements ModuleDefinitionInterface {
 			[
 				'Frontend\Models' => __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR,
 				'Frontend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
+				'Frontend\Controllers\Abstracts' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
 				'POMO' => APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR . 'pomo' . DIRECTORY_SEPARATOR,
 			],
 			true
