@@ -9,7 +9,6 @@
 
 namespace Phalconmerce\Services\Abstracts;
 
-
 abstract class AbstractFrontendService extends MainService {
 	/** @var string */
 	protected $baseURL;
@@ -54,8 +53,8 @@ abstract class AbstractFrontendService extends MainService {
 	 * @param array $data
 	 * @return string
 	 */
-	public function l($str, $data=array()) {
-		return $this->getDI()->get('translation')->l($str, $data);
+	public function t($str, $data=array()) {
+		return $this->getDI()->get('translation')->t($str, $data);
 	}
 
 	/**

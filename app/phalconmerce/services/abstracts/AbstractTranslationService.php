@@ -10,10 +10,15 @@
 namespace Phalconmerce\Services\Abstracts;
 
 use Phalcon\Di;
+use Phalconmerce\Models\Utils;
 use Phalconmerce\Services\FrontendService;
+use POMO\MO;
+use POMO\PO;
 
 abstract class AbstractTranslationService extends MainService {
 
+	/** @var MO $mo */
+	protected $mo;
 	/** @var string $langCode */
 	protected $langCode;
 	/** @var string $langId */
@@ -33,12 +38,12 @@ abstract class AbstractTranslationService extends MainService {
 	public static $currenciesSiglesList = array('EUR'=>'€', 'USD'=>'$');
 
 	public function __construct() {
-		// TODO implements like innocentstone
 		$this->langCode = '';
 		$this->langId = '';
 		$this->currencyCode = '';
 		$this->poIndexesList = array();
 		$this->currenciesRatesList = array();
+		$this->mo = new MO();
 	}
 
 	/**
@@ -51,7 +56,7 @@ abstract class AbstractTranslationService extends MainService {
 		if (defined('DEBUG') && DEBUG == 1) {
 			$this->addPoIndex($str);
 		}
-		$translated = vsprintf(htmlentities($this->translate($str)), $data);
+		$translated = vsprintf(htmlentities($this->mo->translate($str)), $data);
 		if (trim($translated) != '') {
 			return $translated;
 		}
@@ -63,12 +68,12 @@ abstract class AbstractTranslationService extends MainService {
 	 * @param array $data
 	 * @return string
 	 */
-	public function l($str, $data=array()) {
+	public function t($str, $data=array()) {
 		// tant qu'on est pas en prod, on ajoute dans la DB le PO
 		if (defined('DEBUG') && DEBUG == 1) {
 			$this->addPoIndex($str);
 		}
-		$translated = vsprintf($this->translate($str), $data);
+		$translated = vsprintf($this->mo->translate($str), $data);
 		if (trim($translated) != '') {
 			return $translated;
 		}
@@ -135,7 +140,7 @@ abstract class AbstractTranslationService extends MainService {
 			}*/
 			if (file_exists($moFilename)) {
 				// TODO extends from POMO ?
-				return $this->import_from_file($moFilename);
+				return $this->mo->import_from_file($moFilename);
 			}
 		}
 		return false;
@@ -218,10 +223,10 @@ msgstr %s
 ';
 
 			foreach ($this->poIndexesList as $currentPoIndex) {
-				$content .= sprintf($contentLine, POMO\PO::poify($currentPoIndex), ($isPotFile ? '""' : POMO\PO::poify($this->l($currentPoIndex))));
+				$content .= sprintf($contentLine, PO::poify($currentPoIndex), ($isPotFile ? '""' : PO::poify($this->l($currentPoIndex))));
 			}
 
-			file_put_contents(__PATH__.'share/po_indexes'.($isPotFile ? '.pot' : '_'.$langCode.'.po'), $content);
+			Utils::saveData('po_indexes'.($isPotFile ? '.pot' : '_'.$langCode.'.po'), $content);
 
 			return true;
 		}
@@ -239,14 +244,13 @@ msgstr %s
 	 * @return bool
 	 */
 	private function loadPoIndexes() {
-		// TODO make direct SQL request or add a Model
-		$pdo = DbConnection::getInstance();
+		$pdo = $this->getDI()->get('db');
 
 		$sql = '
 			SELECT name
 			FROM poIndexes
 		';
-		$stmt = $pdo->query($sql, PDO::FETCH_ASSOC);
+		$stmt = $pdo->query($sql, \PDO::FETCH_ASSOC);
 		$results = $stmt->fetchAll();
 		$this->poIndexesList = array();
 		foreach ($results as $curRow) {
@@ -259,6 +263,7 @@ msgstr %s
 	 * @return bool
 	 */
 	private function saveDB() {
+		$pdo = $this->getDI()->get('db');
 		$sql = '
 			REPLACE INTO poIndexes (id, name) VALUES (:id, :str)
 		';
@@ -359,4 +364,4 @@ msgstr %s
 }
 // Callback close method from FrontOrder when script is finished
 // TODO check if it is necessary
-// register_shutdown_function(array("TranslationStatic", "close"));
+// register_shutdown_function(array("Phalconmerce\Services\TranslationService", "close"));

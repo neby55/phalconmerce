@@ -16,6 +16,9 @@ return new \Phalcon\Config(array(
 	'adminDir' => 'admin',
 	'adminTitle' => 'Phalconmerce',
 	'adminTheme' => 'sb-admin2',
+	'frontDir' => '',
+	'frontTitle' => 'Phalconmerce.com',
+	'frontTheme' => 'v1',
 	'apiEnabled' => true,
 	'apiDir' => 'api',
 	'apiCorsAllowOrigin' => array('localhost'), // set an array of allowed domains, or just the string *

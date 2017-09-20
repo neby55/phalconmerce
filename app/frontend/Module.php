@@ -9,11 +9,14 @@
 
 namespace Frontend;
 
+use Phalcon\Di;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 use Phalcon\DiInterface;
 use Phalcon\Mvc\View;
+use Phalconmerce\Services\FrontendService;
+use Phalconmerce\Services\TranslationService;
 
 class Module implements ModuleDefinitionInterface {
 	/**
@@ -25,8 +28,9 @@ class Module implements ModuleDefinitionInterface {
 		$loader = new Loader();
 		$loader->registerNamespaces(
 			[
-				'Frontend\Models' => __DIR__ . DIRECTORY_SEPARATOR. 'models' . DIRECTORY_SEPARATOR,
-				'Frontend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR .'controllers' . DIRECTORY_SEPARATOR,
+				'Frontend\Models' => __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR,
+				'Frontend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
+				'POMO' => APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR . 'pomo' . DIRECTORY_SEPARATOR,
 			],
 			true
 		);
@@ -50,11 +54,26 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * Dispatcher
 		 */
-		$dependencyInjector->set('dispatcher', function ()
-		{
+		$dependencyInjector->set('dispatcher', function () {
 			$dispatcher = new Dispatcher();
 			$dispatcher->setDefaultNamespace("\\Frontend\\Controllers\\");
 			return $dispatcher;
+		});
+
+		/**
+		 * Phalconmerce TranslationService
+		 */
+		$dependencyInjector->set('translation', function () {
+			$service = new TranslationService();
+			return $service;
+		});
+
+		/**
+		 * Phalconmerce FrontendService
+		 */
+		$dependencyInjector->set('frontendService', function () {
+			$service = new FrontendService();
+			return $service;
 		});
 
 		/**
@@ -62,7 +81,7 @@ class Module implements ModuleDefinitionInterface {
 		 */
 		$dependencyInjector->set('view', function () {
 			$view = new View();
-			$view->setViewsDir(__DIR__ . '/views/');
+			$view->setViewsDir(__DIR__ . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . DI::getDefault()->get('config')->frontTheme . DIRECTORY_SEPARATOR);
 			return $view;
 		});
 	}
