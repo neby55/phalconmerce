@@ -23,8 +23,8 @@ require __DIR__.DIRECTORY_SEPARATOR.'routes'.DIRECTORY_SEPARATOR.'global.php';
 
 $router->notFound(
 	[
-		"controller" => "index",
-		"action"     => "route404",
+		"controller" => "errors",
+		"action"     => "show404",
 	]
 );
 
@@ -42,7 +42,7 @@ if (is_array($dbUrlList)) {
 			[
 				"controller" => "url",
 				"action"     => "dispatcher",
-				"url" => $currentUrlObject
+				"params" => array($currentUrlObject)
 			]
 		);
 	}

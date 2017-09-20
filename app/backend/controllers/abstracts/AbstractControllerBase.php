@@ -232,6 +232,10 @@ abstract class AbstractControllerBase extends Controller {
 			);
 			return false;
 		}
+		else {
+			// Update permalinks cache file
+			$this->updateUrlCache();
+		}
 
 		$form->clear();
 
@@ -240,5 +244,17 @@ abstract class AbstractControllerBase extends Controller {
 		$this->flash->success($this->popoClassName." successfully updated");
 
 		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-3'));
+	}
+
+	public function updateUrlCache() {
+		$allUrl = Url::find('status = 1');
+
+		$data = array();
+
+		foreach ($allUrl as $currentUrlObject) {
+			$data[$currentUrlObject->permalink] = $currentUrlObject;
+		}
+
+		return Utils::saveData($data, 'routes');
 	}
 }

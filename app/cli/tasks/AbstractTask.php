@@ -20,6 +20,7 @@ class AbstractTask extends Task {
 		return array(
 			'api'.DIRECTORY_SEPARATOR.'controllers' => 'Api\Controllers',
 			'backend'.DIRECTORY_SEPARATOR.'controllers' => 'Backend\Controllers',
+			'frontend'.DIRECTORY_SEPARATOR.'controllers' => 'Frontend\Controllers',
 			'phalconmerce'.DIRECTORY_SEPARATOR.'plugins' => 'Phalconmerce\Plugins',
 			'phalconmerce'.DIRECTORY_SEPARATOR.'services' => 'Phalconmerce\Services',
 		);

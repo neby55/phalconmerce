@@ -239,7 +239,7 @@ msgstr %s
 				$content .= sprintf($contentLine, PO::poify($currentPoIndex), ($isPotFile ? '""' : PO::poify($this->l($currentPoIndex))));
 			}
 
-			Utils::saveData('po_indexes'.($isPotFile ? '.pot' : '_'.$langCode.'.po'), $content);
+			Utils::saveData($content, 'po_indexes'.($isPotFile ? '.pot' : '_'.$langCode.'.po'));
 
 			return true;
 		}
