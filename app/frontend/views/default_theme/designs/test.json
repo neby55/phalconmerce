@@ -1,0 +1,9 @@
+{
+  "name" : "DesignExample",
+  "params" : {
+    "h1" : "string",
+    "pContent" : "string",
+    "link" : "string",
+    "homeText" : "string"
+  }
+}
