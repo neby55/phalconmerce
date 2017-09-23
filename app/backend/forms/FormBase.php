@@ -116,6 +116,19 @@ class FormBase extends Form {
 									$item->setMessages(new Group([new Message('Foreign Key select can\'t be generated. Please configure the static method "fkSelect" for this class')]));
 								}
 							}
+							// If its design slug
+							else if ($currentPropertyName == 'designSlug') {
+								$item = new Select(
+									$currentPropertyName,
+									$this->di->get('backendService')->getDesignsSelectOptions()
+								);
+								$item->setAttribute('class', 'form-control');
+								$item->setFilters(array('string'));
+							}
+							// If its design data
+							else if ($currentPropertyName == 'designData') {
+								// TODO
+							}
 							else {
 
 								// TODO placeholders

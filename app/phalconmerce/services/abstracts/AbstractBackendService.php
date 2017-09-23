@@ -111,10 +111,6 @@ abstract class AbstractBackendService extends MainService {
 
 		$cmsMenuItems = new Menu($this->t('CMS'), 'edit', '');
 		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Blocks'), new MenuControllerIndexLink('cms_block')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Content (banner)'), new MenuControllerIndexLink('cms_content_banner')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Content (HTML)'), new MenuControllerIndexLink('cms_content_html')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Designs'), new MenuControllerIndexLink('cms_design')));
-		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Locations'), new MenuControllerIndexLink('cms_location')));
 		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Pages'), new MenuControllerIndexLink('cms_page')));
 		$this->menuItems[] = $cmsMenuItems;
 

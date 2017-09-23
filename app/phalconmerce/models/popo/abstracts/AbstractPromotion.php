@@ -2,9 +2,9 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\AbstractDesignedModel;
 
-abstract class AbstractPromotion extends AbstractModel {
+abstract class AbstractPromotion extends AbstractDesignedModel {
 
 	const TYPE_PERCENT = 1;
 	const TYPE_AMOUNT = 2;

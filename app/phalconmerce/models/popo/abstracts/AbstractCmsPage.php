@@ -9,9 +9,9 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\AbstractDesignedModel;
 
-abstract class AbstractCmsPage extends AbstractModel {
+abstract class AbstractCmsPage extends AbstractDesignedModel {
 
 	/**
 	 * @Primary

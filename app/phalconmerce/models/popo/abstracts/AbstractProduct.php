@@ -3,13 +3,13 @@
 namespace Phalconmerce\Models\Popo\Abstracts;
 
 use Phalcon\Db\Column;
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\AbstractDesignedModel;
 
 /**
  * Class AbstractProduct
  * @package Phalconmerce\Models\Popo\Abstracts
  */
-abstract class AbstractProduct extends AbstractModel {
+abstract class AbstractProduct extends AbstractDesignedModel {
 	/**
 	 * @Primary
 	 * @Identity

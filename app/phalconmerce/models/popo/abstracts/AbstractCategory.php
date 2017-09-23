@@ -2,9 +2,9 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\AbstractDesignedModel;
 
-abstract class AbstractCategory extends AbstractModel {
+abstract class AbstractCategory extends AbstractDesignedModel {
 
 	/**
 	 * @Primary

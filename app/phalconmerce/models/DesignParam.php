@@ -21,6 +21,7 @@ class DesignParam {
 	const TYPE_BOOLEAN = 4;
 	const TYPE_ARRAY = 5;
 	const TYPE_OBJECT = 6;
+	const TYPE_HTML = 7;
 
 	public function __construct($name='', $type=0) {
 		$this->name = $name;
@@ -49,6 +50,7 @@ class DesignParam {
 			'boolean' => self::TYPE_BOOLEAN,
 			'array' => self::TYPE_ARRAY,
 			'object' => self::TYPE_OBJECT,
+			'html' => self::TYPE_HTML,
 		);
 	}
 

@@ -21,6 +21,8 @@ class Design {
 	/** @var DesignParam[] */
 	protected $params;
 
+	const VIEWS_DIRECTORY = '_designs';
+
 	public function __construct($slug='', $name='', $params=null) {
 		$this->slug = $slug;
 		$this->name = $name;
@@ -28,7 +30,7 @@ class Design {
 	}
 
 	protected static function getDesignsDirectory() {
-		return APP_PATH.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'frontend'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.Di::getDefault()->get('config')->frontTheme.DIRECTORY_SEPARATOR.'designs';
+		return APP_PATH.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'frontend'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.Di::getDefault()->get('config')->frontTheme.DIRECTORY_SEPARATOR.self::VIEWS_DIRECTORY;
 	}
 
 	/**
@@ -109,7 +111,7 @@ class Design {
 
 	/**
 	 * @param string $filename
-	 * @return bool|Design
+	 * @return Design
 	 */
 	public static function loadFromFile($filename) {
 		if (substr($filename, -5) != '.json') {
@@ -119,7 +121,7 @@ class Design {
 		else {
 			$slug = substr($filename, 0, -5);
 		}
-		$phpFilename = $slug.'.php';
+		$phpFilename = $slug.'.phtml';
 
 		$absoluteFilename = self::getDesignsDirectory().DIRECTORY_SEPARATOR.$filename;
 		$absolutePhpFilename = self::getDesignsDirectory().DIRECTORY_SEPARATOR.$filename;
@@ -168,5 +170,12 @@ class Design {
 	 */
 	public function getParams() {
 		return $this->params;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getViewPick() {
+		return self::VIEWS_DIRECTORY.'/'.$this->slug;
 	}
 }

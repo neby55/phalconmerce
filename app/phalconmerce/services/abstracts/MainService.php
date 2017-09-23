@@ -48,7 +48,7 @@ abstract class MainService implements \Phalcon\Di\InjectionAwareInterface {
 	public function getDesignsSelectOptions() {
 		$this->loadDesignsIfNeeded();
 
-		$options = array();
+		$options = array('' => $this->getDi()->get('backendService')->t('choose'));
 
 		if (is_array($this->designsList) && sizeof($this->designsList)) {
 			foreach ($this->designsList as $currentDesign) {
