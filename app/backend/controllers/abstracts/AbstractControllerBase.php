@@ -2,9 +2,11 @@
 
 namespace Backend\Controllers\Abstracts;
 
+use Backend\Forms\DesignForm;
 use Backend\Forms\Labels;
 use Backend\Forms\UrlForm;
 use Phalcon\Mvc\Controller;
+use Phalconmerce\Models\Design;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Popo\Lang;
 use Phalconmerce\Models\Popo\Url;
@@ -126,6 +128,12 @@ abstract class AbstractControllerBase extends Controller {
 		}
 	}
 
+	public function addDesignForm($object) {
+		if (!isset($this->view->formDesign) && !is_object($this->view->formDesign) && !empty($object->designSlug)) {
+			$this->view->formDesign = new DesignForm($object);
+		}
+	}
+
 	/**
 	 * Saves current object in screen
 	 */
@@ -243,7 +251,88 @@ abstract class AbstractControllerBase extends Controller {
 
 		$this->flash->success($this->popoClassName." successfully updated");
 
-		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-3'));
+		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-url'));
+	}
+
+	/**
+	 * Saves current object in screen
+	 */
+	public function saveDesignAction() {
+		if (!$this->request->isPost()) {
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "index",
+				]
+			);
+			return false;
+		}
+
+		$id = $this->request->getPost("id", "int");
+		$classname = PhpClass::POPO_NAMESPACE.'\\'.$this->popoClassName;
+
+		$object = $classname::findFirstById($id);
+
+		if (!$object) {
+			$this->flash->error($this->popoClassName." does not exist");
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "edit",
+					'params' => array($id)
+				]
+			);
+			return false;
+		}
+
+		$form = new DesignForm($object);
+
+		$data = $this->request->getPost();
+		if (!$form->isValid($data, $object)) {
+			$this->view->formDesign = $form;
+			foreach ($form->getMessages() as $message) {
+				$this->flash->error($message);
+			}
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "edit",
+					'params' => array($id)
+				]
+			);
+			return false;
+		}
+
+		$design = Design::loadFromFile($object->designSlug);
+		foreach ($design->getParams() as $currentParam) {
+			$object->designData[$currentParam->getName()] = $this->request->getPost($currentParam->getName(), $currentParam->getFilter());
+		}
+
+		if ($object->save() == false) {
+			$this->view->formDesign = $form;
+			foreach ($object->getMessages() as $message) {
+				$this->flash->error($message);
+			}
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "edit",
+					'params' => array($id)
+				]
+			);
+			return false;
+		}
+
+		$form->clear();
+
+		$this->view->formDesign = $form;
+
+		$this->flash->success($this->popoClassName." successfully updated");
+
+		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-design'));
 	}
 
 	public function updateUrlCache() {

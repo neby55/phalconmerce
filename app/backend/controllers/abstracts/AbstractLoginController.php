@@ -48,7 +48,7 @@ abstract class AbstractLoginController extends AbstractControllerBase {
 				}
 			}
 			else {
-				$this->flashSession->notice('Disconnected (CSRF protection)s');
+				$this->flashSession->notice('Disconnected (CSRF protection)');
 				return $this->redirectToRoute('backend-login');
 			}
 		}

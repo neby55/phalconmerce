@@ -83,6 +83,8 @@ class Module implements ModuleDefinitionInterface {
 		$dependencyInjector->set('view', function () {
 			$view = new View();
 			$view->setViewsDir(__DIR__ . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . DI::getDefault()->get('config')->frontTheme . DIRECTORY_SEPARATOR);
+			$view->setVar('langId', DI::getDefault()->get('translation')->getLangId());
+			$view->setVar('lang',DI::getDefault()->get('translation')->getLangCode() );
 			return $view;
 		});
 	}

@@ -158,7 +158,7 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 				// If not, redirect to signin
 				else {
 					// If login page
-					if ($controller == 'login' && $action == 'index') {
+					if ($controller == 'errors' || ($controller == 'login' && $action == 'index')) {
 						return true;
 					}
 					else {

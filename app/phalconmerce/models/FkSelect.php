@@ -103,13 +103,15 @@ class FkSelect {
 			}
 			foreach ($this->labelFields as $currentLabelField) {
 				// if FK field
-				// TODO check if it's usefull
 				if (Property::isForeignKeyFromName($currentLabelField)) {
 					$currentPropertyObject = new Property($currentLabelField);
 					$fqcn = PhpClass::POPO_NAMESPACE.'\\'.$currentPropertyObject->getForeignKeyClassName();
-					$fkValues = self::getFromClasseName($fqcn);
-					if (is_array($fkValues) && sizeof($fkValues) > 0 && array_key_exists($currentObject->$currentLabelField, $fkValues)) {
-						$labelList[] = $fkValues[$currentObject->$currentLabelField];
+					$fkSubSelect = self::getFromClasseName($fqcn);
+					if ($fkSubSelect !== false) {
+						$fkValues = $fkSubSelect->getValues();
+						if (is_array($fkValues) && sizeof($fkValues) > 0 && array_key_exists($currentObject->$currentLabelField, $fkValues)) {
+							$labelList[] = $fkValues[$currentObject->$currentLabelField];
+						}
 					}
 					else {
 						$labelList[] = $currentPropertyObject->getForeignKeyClassName().'::'.$currentObject->$currentLabelField;

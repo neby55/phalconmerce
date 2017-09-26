@@ -180,7 +180,7 @@ abstract class AbstractBackendService extends MainService {
 	 * @return string
 	 */
 	public function t($str) {
-		if (array_key_exists($str, $this->translationsList)) {
+		if (is_array($this->translationsList) && array_key_exists($str, $this->translationsList)) {
 			return $this->translationsList[$str];
 		}
 		return $str;

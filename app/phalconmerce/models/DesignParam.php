@@ -14,6 +14,8 @@ class DesignParam {
 	protected $name;
 	/** @var int */
 	protected $type;
+	/** @var string */
+	protected $help;
 
 	const TYPE_INT = 1;
 	const TYPE_FLOAT = 2;
@@ -22,10 +24,12 @@ class DesignParam {
 	const TYPE_ARRAY = 5;
 	const TYPE_OBJECT = 6;
 	const TYPE_HTML = 7;
+	const TYPE_URL = 8;
 
-	public function __construct($name='', $type=0) {
+	public function __construct($name='', $type=0, $help='') {
 		$this->name = $name;
 		$this->type = $type;
+		$this->help = $help;
 	}
 
 	/**
@@ -51,6 +55,7 @@ class DesignParam {
 			'array' => self::TYPE_ARRAY,
 			'object' => self::TYPE_OBJECT,
 			'html' => self::TYPE_HTML,
+			'url' => self::TYPE_URL,
 		);
 	}
 
@@ -72,6 +77,26 @@ class DesignParam {
 	/**
 	 * @return string
 	 */
+	public function getFilter() {
+		switch ($this->type) {
+			case self::TYPE_INT :
+			case self::TYPE_BOOLEAN :
+				return 'int';
+			case self::TYPE_FLOAT :
+				return 'float';
+			case self::TYPE_STRING :
+				return 'string';
+			case self::TYPE_HTML :
+				return 'trim';
+			case self::TYPE_URL :
+				return 'int';
+		}
+		return '';
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getName() {
 		return $this->name;
 	}
@@ -81,5 +106,12 @@ class DesignParam {
 	 */
 	public function getType() {
 		return $this->type;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHelp() {
+		return $this->help;
 	}
 }

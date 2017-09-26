@@ -46,6 +46,16 @@ abstract class AbstractTranslationService extends MainService {
 		$this->poIndexesList = array();
 		$this->currenciesRatesList = array();
 		$this->mo = new MO();
+
+		// Load lang from cookie
+		if (isset($_COOKIE[FrontendService::COOKIE_LANG_NAME])) {
+			$this->langCode = $_COOKIE[FrontendService::COOKIE_LANG_NAME];
+		}
+		else {
+			$this->langCode = self::DEFAULT_LANG_CODE;
+		}
+
+		$this->langId = self::getLangIdFromLangCode($this->langCode);
 	}
 
 	/**

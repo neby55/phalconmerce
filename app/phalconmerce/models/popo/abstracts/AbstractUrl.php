@@ -2,7 +2,9 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
+use Phalcon\Di;
 use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\FkSelect;
 
 abstract class AbstractUrl extends AbstractModel {
 
@@ -65,4 +67,64 @@ abstract class AbstractUrl extends AbstractModel {
 	 */
 	public $status;
 
+	/**
+	 * Static method returning fkSelect object used to generated <select> tag in form where category is a foreign key
+	 * @return FkSelect
+	 */
+	public static function fkSelect() {
+		// change properties list here
+		$displayedProperties = array(
+			'fk_lang_id',
+			'entity',
+			'entityId'
+		);
+		return new FkSelect('id', '[%s] %s#%s', 'Phalconmerce\Models\Popo\\Url', $displayedProperties);
+	}
+
+	/**
+	 * @param string $entity
+	 * @param int $entityId
+	 * @param int $langId
+	 * @return string
+	 */
+	public static function getEntityPermalink($entity, $entityId, $langId) {
+		$object = self::findFirst(array(
+			'entity = :entity: AND entityId = :entity_id: AND fk_lang_id = :fk_lang_id:',
+			'bind' => array(
+				'entity' => $entity,
+				'entity_id' => $entityId,
+				'fk_lang_id' => $langId
+			)
+		));
+		if (!empty($object)) {
+			return Di::getDefault()->get('url')->getBaseUri().$object->permalink;
+		}
+		return false;
+	}
+
+	/**
+	 * @param int $langId
+	 * @return bool|static
+	 */
+	public function getUrlForOtherLang($langId) {
+		$object = self::findFirst(array(
+			'entity = :entity: AND entityId = :entity_id: AND fk_lang_id = :fk_lang_id:',
+			'bind' => array(
+				'entity' => $this->entity,
+				'entity_id' => $this->entityId,
+				'fk_lang_id' => $langId
+			)
+		));
+		if (!empty($object)) {
+			return $object;
+		}
+		return false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFullUrl() {
+		return Di::getDefault()->get('url')->getBaseUri().$this->permalink;
+	}
 }

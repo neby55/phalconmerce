@@ -9,7 +9,9 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
+use Phalcon\Di;
 use Phalconmerce\Models\AbstractDesignedModel;
+use Phalconmerce\Models\Popo\Url;
 
 abstract class AbstractCmsPage extends AbstractDesignedModel {
 
@@ -32,4 +34,13 @@ abstract class AbstractCmsPage extends AbstractDesignedModel {
 	 * @var int
 	 */
 	public $status;
+
+	/**
+	 * @param int $id
+	 * @param int $langId
+	 * @return mixed
+	 */
+	public static function getPermalinkFromId($id, $langId) {
+		return Url::getEntityPermalink('cms_page', $id, $langId);
+	}
 }
