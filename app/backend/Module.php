@@ -9,6 +9,7 @@
 
 namespace Backend;
 
+use Phalcon\Filter;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Di;
 use Phalcon\Loader;
@@ -91,6 +92,18 @@ class Module implements ModuleDefinitionInterface {
 		$dependencyInjector->set('backendService', function () {
 			$service = new BackendService();
 			return $service;
+		});
+
+		/**
+		 * Filter service and add a HTML filter
+		 */
+		$dependencyInjector->setShared('filter', function() {
+			$filter = new Filter();
+			$filter->add('html', function ($value) {
+				return $value;
+			});
+			return $filter;
+
 		});
 
 		/**

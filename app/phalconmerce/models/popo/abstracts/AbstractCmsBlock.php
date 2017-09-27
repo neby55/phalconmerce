@@ -15,18 +15,6 @@ abstract class AbstractCmsBlock extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="integer", nullable=false)
-	 * @var int
-	 */
-	public $fk_cmscontentbanner_id;
-
-	/**
-	 * @Column(type="integer", nullable=false)
-	 * @var int
-	 */
-	public $fk_cmscontenthtml_id;
-
-	/**
 	 * @Column(type="string", length=32, nullable=false)
 	 * @var string
 	 */
@@ -37,6 +25,12 @@ abstract class AbstractCmsBlock extends AbstractModel {
 	 * @var string
 	 */
 	public $code;
+
+	/**
+	 * @Column(type="text", nullable=true)
+	 * @var string
+	 */
+	public $html;
 
 	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)

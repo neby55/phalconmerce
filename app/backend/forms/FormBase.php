@@ -137,7 +137,7 @@ class FormBase extends Form {
 								if ($type == 'string' && $length > 255 || $type == 'text') {
 									$item = new TextArea($currentPropertyName);
 									$item->setAttribute('class', 'form-control');
-									$item->setFilters(array('string'));
+									$item->setFilters(array('html'));
 								}
 								// If short string
 								else if ($type == 'string') {

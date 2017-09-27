@@ -28,7 +28,13 @@ class ViewsPhtml {
 	 * @return string
 	 */
 	public function getNewContent() {
-		return $this->getEditContent();
+		$content = <<<'EOT'
+<?php
+
+require dirname(__FILE__).DIRECTORY_SEPARATOR.'edit.phtml';
+EOT;
+
+		return $content;
 	}
 
 	/**
