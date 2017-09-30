@@ -45,24 +45,24 @@ class DesignForm extends FormBase {
 						]
 					);
 					$item->setAttribute('class', 'form-control');
-					$item->setFilters(array('int'));
+					$item->setFilters(array($currentDesignParam->getFilter()));
 				}
 				else if ($currentDesignParam->getType() == DesignParam::TYPE_INT) {
 					$item = new Text($currentDesignParam->getName());
 					$item->setAttribute('class', 'form-control');
-					$item->setFilters(array('int'));
+					$item->setFilters(array($currentDesignParam->getFilter()));
 					$item->setAttribute('maxlength', 16);
 				}
 				else if ($currentDesignParam->getType() == DesignParam::TYPE_FLOAT) {
 					$item = new Text($currentDesignParam->getName());
 					$item->setAttribute('class', 'form-control');
-					$item->setFilters(array('float'));
+					$item->setFilters(array($currentDesignParam->getFilter()));
 					$item->setAttribute('maxlength', 16);
 				}
 				else if ($currentDesignParam->getType() == DesignParam::TYPE_STRING) {
 					$item = new Text($currentDesignParam->getName());
 					$item->setAttribute('class', 'form-control');
-					$item->setFilters(array('string'));
+					$item->setFilters(array($currentDesignParam->getFilter()));
 					$item->setAttribute('maxlength', 255);
 				}
 				else if ($currentDesignParam->getType() == DesignParam::TYPE_HTML) {
@@ -70,7 +70,7 @@ class DesignForm extends FormBase {
 					$item->setFilters(array('string'));*/
 					$item = new TextArea($currentDesignParam->getName());
 					$item->setAttribute('class', 'form-control '.$this->wysiwygClassSelector);
-					$item->setFilters(array('string'));
+					$item->setFilters(array($currentDesignParam->getFilter()));
 				}
 				else if ($currentDesignParam->getType() == DesignParam::TYPE_URL) {
 					$item = new Select(
@@ -78,7 +78,13 @@ class DesignForm extends FormBase {
 						Url::fkSelect()->getValues()
 					);
 					$item->setAttribute('class', 'form-control');
-					$item->setFilters(array('int'));
+					$item->setFilters(array($currentDesignParam->getFilter()));
+				}
+				else if ($currentDesignParam->getType() == DesignParam::TYPE_IMAGE) {
+					$item = new Text($currentDesignParam->getName());
+					$item->setAttribute('class', 'form-control');
+					$item->setFilters(array($currentDesignParam->getFilter()));
+					$item->setAttribute('maxlength', 255);
 				}
 
 				// Ajout au formulaire

@@ -37,4 +37,10 @@ abstract class AbstractCmsBlock extends AbstractModel {
 	 * @var int
 	 */
 	public $status;
+
+	public static function getBySlug($slug, $isActive=true) {
+		self::findFirst(array(
+			'code = :code:'.($isActive ? ' AND '),
+		))
+	}
 }

@@ -25,6 +25,7 @@ class DesignParam {
 	const TYPE_OBJECT = 6;
 	const TYPE_HTML = 7;
 	const TYPE_URL = 8;
+	const TYPE_IMAGE = 9;
 
 	public function __construct($name='', $type=0, $help='') {
 		$this->name = $name;
@@ -56,6 +57,8 @@ class DesignParam {
 			'object' => self::TYPE_OBJECT,
 			'html' => self::TYPE_HTML,
 			'url' => self::TYPE_URL,
+			'img' => self::TYPE_IMAGE,
+			'image' => self::TYPE_IMAGE,
 		);
 	}
 
@@ -87,9 +90,11 @@ class DesignParam {
 			case self::TYPE_STRING :
 				return 'string';
 			case self::TYPE_HTML :
-				return 'trim';
+				return 'html';
 			case self::TYPE_URL :
 				return 'int';
+			case self::TYPE_IMAGE :
+				return 'url';
 		}
 		return '';
 	}

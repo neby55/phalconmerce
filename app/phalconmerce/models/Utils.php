@@ -90,10 +90,6 @@ class Utils {
 	public static function getClassNameFromTableName($tableName) {
 		$className = $tableName;
 
-		// Remove ending 's' if needed
-		if (substr($className,-1) == 's' && substr($className,-2) != 'ss') {
-			$className = substr($className, 0, -1);
-		}
 		$className = '_'.$className;
 		$className = str_replace(array('_', ' '), '', (ucfirst(preg_replace_callback(
 			'/_[a-zA-Z]/',
@@ -102,10 +98,6 @@ class Utils {
 			},
 			$className)
 		)));
-		// Categories => category
-		if (substr($className, -2) == 'ie' && !in_array(substr($tableName, -3, 1), array('a','e','i','o','u', 'y'))) {
-			$className = substr($className, 0, -2).'y';
-		}
 
 		return $className;
 	}

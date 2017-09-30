@@ -1,0 +1,16 @@
+{
+  "name": "progweb/phalconmerce",
+  "description": "E-commerce framework based on Phalcon framework",
+  "authors": [
+    {
+      "name": "neby55",
+      "email": "ben@progweb.fr"
+    }
+  ],
+  "config": {
+    "vendor-dir": "app/library"
+  },
+  "require": {
+    "cloudinary/cloudinary_php": "dev-master"
+  }
+}

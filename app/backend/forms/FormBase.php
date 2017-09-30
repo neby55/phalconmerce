@@ -95,7 +95,7 @@ class FormBase extends Form {
 
 							// If this property means foreign key
 							if (preg_match('/^fk_([a-zA-Z][a-zA-Z0-9_]*)_id$/', $currentPropertyName, $matches)) {
-								$currentForeignClassName = $matches[1];
+								$currentForeignClassName = Utils::getClassNameFromTableName($matches[1]);
 								$filterType = $type == 'string' ? 'string' : 'int';
 								$fkFcqn = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::POPO_NAMESPACE . '\\' . $currentForeignClassName;
 								$fkSelect = FkSelect::getFromClasseName($fkFcqn);

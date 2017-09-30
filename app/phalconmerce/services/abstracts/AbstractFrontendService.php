@@ -9,6 +9,9 @@
 
 namespace Phalconmerce\Services\Abstracts;
 
+use Phalcon\Di;
+use Phalconmerce\Models\Popo\CmsBlock;
+
 abstract class AbstractFrontendService extends MainService {
 	/** @var string */
 	protected $baseURL;
@@ -67,6 +70,35 @@ abstract class AbstractFrontendService extends MainService {
 		// Handle if $duration is expire timestamp
 		$expire = $duration > time() ? $duration : time() + $duration;
 		return setcookie($name, $value, $expire, $this->getBaseURL().'/');
+	}
+
+	/**
+	 * @param string $slug
+	 * @return string
+	 */
+	public function showCmsBlock($slug) {
+		$object = CmsBlock::findFirst(array(
+			'code = :slug:',
+			'bind' => array(
+				'slug' => $slug
+			)
+		));
+		if (!empty($object) && is_object($object)) {
+			return $object->html;
+		}
+		return '';
+	}
+
+	/**
+	 * @param string $url
+	 * @return string
+	 */
+	public function addBaseUriIfNeeded($url) {
+		// If external URL
+		if (preg_match('/^https?:/i', $url) == 1) {
+			return $url;
+		}
+		return $this->getDI()->get('url')->getBaseUri().$url;
 	}
 
 	/**

@@ -42,6 +42,10 @@ class Module implements ModuleDefinitionInterface {
 			],
 			true
 		);
+		// Adding composer
+		$loader->registerFiles([
+			APP_PATH.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.'autoload.php'
+		]);
 		$loader->register();
 	}
 
@@ -105,6 +109,17 @@ class Module implements ModuleDefinitionInterface {
 			return $filter;
 
 		});
+
+		/**
+		 * Cloudinary API
+		 */
+		if (class_exists('\Cloudinary')) {
+			\Cloudinary::config($dependencyInjector->get('config')->cloudinary->toArray());
+			$dependencyInjector->set('cloudinary', function () {
+				$api = new \Cloudinary\Api();
+				return $api;
+			});
+		}
 
 		/**
 		 * Setting up the VIEW component
