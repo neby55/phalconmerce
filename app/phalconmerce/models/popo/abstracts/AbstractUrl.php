@@ -5,6 +5,8 @@ namespace Phalconmerce\Models\Popo\Abstracts;
 use Phalcon\Di;
 use Phalconmerce\Models\AbstractModel;
 use Phalconmerce\Models\FkSelect;
+use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
+use Phalconmerce\Models\Utils;
 
 abstract class AbstractUrl extends AbstractModel {
 
@@ -76,9 +78,11 @@ abstract class AbstractUrl extends AbstractModel {
 		$displayedProperties = array(
 			'fk_lang_id',
 			'entity',
-			'entityId'
+			'entityId',
+			//'entityName', be careful, very long
+			'metaTitle'
 		);
-		return new FkSelect('id', '[%s] %s#%s', 'Phalconmerce\Models\Popo\\Url', $displayedProperties);
+		return new FkSelect('id', '[%s] %s#%s - %s', 'Phalconmerce\Models\Popo\\Url', $displayedProperties);
 	}
 
 	/**
@@ -126,5 +130,13 @@ abstract class AbstractUrl extends AbstractModel {
 	 */
 	public function getFullUrl() {
 		return Di::getDefault()->get('url')->getBaseUri().$this->permalink;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getEntityObject() {
+		$fqcn = PhpClass::POPO_NAMESPACE.'\\'.Utils::getClassNameFromTableName($this->entity);
+		return $fqcn::findFirstById($this->entityId);
 	}
 }

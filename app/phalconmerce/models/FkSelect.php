@@ -117,6 +117,21 @@ class FkSelect {
 						$labelList[] = $currentPropertyObject->getForeignKeyClassName().'::'.$currentObject->$currentLabelField;
 					}
 				}
+				// Specific pseudo-label for Url "entity"
+				else if ($currentLabelField == 'entityName' && is_a($currentObject, PhpClass::POPO_NAMESPACE.'\\Url')) {
+					$currentForeignObject = $currentObject->getEntityObject();
+					if (!empty($currentForeignObject)) {
+						if (isset($currentForeignObject->name)) {
+							$labelList[] = $currentForeignObject->name;
+						}
+						else if (isset($currentForeignObject->title)) {
+							$labelList[] = $currentForeignObject->title;
+						}
+						else if (isset($currentForeignObject->sku)) {
+							$labelList[] = $currentForeignObject->sku;
+						}
+					}
+				}
 				else {
 					$labelList[] = $currentObject->$currentLabelField;
 				}
