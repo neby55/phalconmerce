@@ -38,6 +38,7 @@ use Phalconmerce\Models\Utils;
 class ##CLASSNAME##Controller extends ControllerBase {
 	public function initialize() {
 		parent::initialize();
+		self::$entity = '##CONTROLLER##';
 		$this->tag->setTitle('Set ##CLASSNAME##');
 		$this->setSubtitle('##CLASSNAME##');
 	}
@@ -211,7 +212,7 @@ class ##CLASSNAME##Controller extends ControllerBase {
 }
 EOT;
 
-		$phpContent = str_replace('##CLASSNAME##', $this->className, $phpContent);
+		$phpContent = str_replace(array('##CLASSNAME##', '##CONTROLLER##'), array($this->className, $this->controllerName), $phpContent);
 		return $phpContent;
 	}
 
