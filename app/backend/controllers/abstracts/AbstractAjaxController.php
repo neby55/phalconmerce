@@ -3,6 +3,7 @@
 namespace Backend\Controllers\Abstracts;
 
 use Backend\Controllers\ControllerBase;
+use Phalconmerce\Models\Popo\Category;
 use Phalconmerce\Models\Utils;
 
 abstract class AbstractAjaxController extends ControllerBase {
@@ -31,6 +32,59 @@ abstract class AbstractAjaxController extends ControllerBase {
 		}
 
 		$this->sendJson(200, $jsonData);
+	}
+
+	public function categoryJsTreeAction() {
+		$selectedIds = $this->request->getPost("selectedIds", "trim", array());
+		$options = $this->request->getPost("options", "trim", array());
+
+		$results = Category::find(array('fk_category_id = 0'));
+		$jsonData = array();
+
+		if (!empty($results) && $results->count() > 0) {
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCategory $currentCategory */
+			foreach ($results as $currentCategory) {
+				$jsonData[] = array(
+					'id' => $currentCategory->id,
+					'text' => $currentCategory->name,
+					'icon' => isset($options['icon']) ? $options['icon'] : '',
+					'state' => array(
+						'opened' => true,
+						'selected' => in_array($currentCategory->id, $selectedIds)
+					),
+					'children' => $this->subCcategoryJsTree($currentCategory->id, $selectedIds, $options),
+					'li_attr' => isset($options['li_attr']) ? $options['li_attr'] : array(),
+					'a_attr' => isset($options['a_attr']) ? $options['a_attr'] : array(),
+				);
+			}
+		}
+
+		$this->sendJson(200, $jsonData);
+	}
+
+	protected function subCcategoryJsTree($id, $selectedIds=array(), $options=array()) {
+		$results = Category::find(array('fk_category_id = '.$id));
+		$jsonData = array();
+
+		if (!empty($results) && $results->count() > 0) {
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCategory $currentCategory */
+			foreach ($results as $currentCategory) {
+				$jsonData[] = array(
+					'id' => $currentCategory->id,
+					'text' => $currentCategory->name,
+					'icon' => isset($options['icon']) ? $options['icon'] : '',
+					'state' => array(
+						'opened' => true,
+						'selected' => in_array($currentCategory->id, $selectedIds)
+					),
+					'children' => $this->subCcategoryJsTree($currentCategory->id, $selectedIds, $options),
+					'li_attr' => isset($options['li_attr']) ? $options['li_attr'] : array(),
+					'a_attr' => isset($options['a_attr']) ? $options['a_attr'] : array(),
+				);
+			}
+		}
+
+		return $jsonData;
 	}
 }
 
