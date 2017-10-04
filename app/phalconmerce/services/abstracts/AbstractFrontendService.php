@@ -10,6 +10,7 @@
 namespace Phalconmerce\Services\Abstracts;
 
 use Phalcon\Di;
+use Phalconmerce\Models\Popo\Url;
 use Phalconmerce\Models\Popo\CmsBlock;
 
 abstract class AbstractFrontendService extends MainService {
@@ -26,7 +27,7 @@ abstract class AbstractFrontendService extends MainService {
 	/** @var string */
 	protected $metaKeywords;
 
-	const PROJECT_NAME = 'InnocentStone';
+	const PROJECT_NAME = 'Phalconmerce';
 	const DEFAULT_LANG_ID = 2;
 	const COOKIE_LANG_NAME = 'lang';
 	const COOKIE_CURRENCY_NAME = 'currency';
@@ -99,6 +100,63 @@ abstract class AbstractFrontendService extends MainService {
 			return $url;
 		}
 		return $this->getDI()->get('url')->getBaseUri().$url;
+	}
+
+	/**
+	 * @param float $price
+	 * @return string
+	 */
+	public function formatPriceVatInc($price) {
+		return $this->formatPrice($price * $this->getVatRatio());
+	}
+
+	/**
+	 * @param float $price
+	 * @return string
+	 */
+	public function formatPriceVatExc($price) {
+		return $this->formatPrice($price);
+	}
+
+	/**
+	 * @param float $price
+	 * @return string
+	 */
+	public function formatPrice($price) {
+		// If decimals
+		if (floor($price) != $price) {
+			return number_format($price, 2, ',', ' ').' '.$this->getDI()->get('translation')->getCurrencySigle();
+		}
+		else {
+			return $price.' '.$this->getDI()->get('translation')->getCurrencySigle();
+		}
+	}
+
+	/**
+	 * @param string $entity
+	 * @param int $entityId
+	 * @return string
+	 */
+	public function getEntityPermalink($entity, $entityId) {
+		$object = Url::findFirst(array(
+			'entity = :entity: AND entityId = :entity_id: AND fk_lang_id = :fk_lang_id:',
+			'bind' => array(
+				'entity' => $entity,
+				'entity_id' => $entityId,
+				'fk_lang_id' => $this->getDI()->get('translation')->getLangId()
+			)
+		));
+		if (!empty($object)) {
+			return Di::getDefault()->get('url')->getBaseUri().$object->permalink;
+		}
+		return false;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getVatRatio() {
+		return 1.2;
 	}
 
 	/**

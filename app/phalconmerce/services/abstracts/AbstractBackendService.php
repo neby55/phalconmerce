@@ -112,7 +112,7 @@ abstract class AbstractBackendService extends MainService {
 		$cmsMenuItems = new Menu($this->t('CMS'), 'edit', '');
 		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Blocks'), new MenuControllerIndexLink('cms_block')));
 		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Pages'), new MenuControllerIndexLink('cms_page')));
-		$this->menuItems[] = $cmsMenuItems;
+		$this->menuItems['cms'] = $cmsMenuItems;
 
 		$productsMenuItems = new Menu($this->t('Products'), 'barcode', '');
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Attributes'), new MenuControllerIndexLink('attribute')));
@@ -123,14 +123,14 @@ abstract class AbstractBackendService extends MainService {
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Products'), new MenuControllerIndexLink('product')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Promotions'), new MenuControllerIndexLink('promotion')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Vounchers'), new MenuControllerIndexLink('vouncher')));
-		$this->menuItems[] = $productsMenuItems;
+		$this->menuItems['products'] = $productsMenuItems;
 
 		$productsMenuItems = new Menu($this->t('Sells'), 'money', '');
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Customers'), new MenuControllerIndexLink('customer')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Invoices'), new MenuControllerIndexLink('invoice')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Orders'), new MenuControllerIndexLink('order')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Shipments'), new MenuControllerIndexLink('shipment')));
-		$this->menuItems[] = $productsMenuItems;
+		$this->menuItems['sells'] = $productsMenuItems;
 
 		$settingsMenuItems = new Menu($this->t('Settings'), 'gears', '');
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Countries'), new MenuControllerIndexLink('country')));
@@ -140,7 +140,7 @@ abstract class AbstractBackendService extends MainService {
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('States'), new MenuControllerIndexLink('state')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Tax'), new MenuControllerIndexLink('tax')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Users'), new MenuControllerIndexLink('backend_user')));
-		$this->menuItems[] = $settingsMenuItems;
+		$this->menuItems['settings'] = $settingsMenuItems;
 	}
 
 	/**

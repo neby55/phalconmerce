@@ -31,6 +31,7 @@ abstract class AbstractTranslationService extends MainService {
 	protected $currenciesRatesList;
 
 	const DEFAULT_LANG_CODE = 'en';
+	const DEFAULT_CURRENCY_CODE = 'EUR';
 
 	/** @var array Available Lang Codes and its LangIds (in index) */
 	public static $validLangList = array(1=>'fr', 2=>'en');
@@ -54,8 +55,15 @@ abstract class AbstractTranslationService extends MainService {
 		else {
 			$this->langCode = self::DEFAULT_LANG_CODE;
 		}
-
 		$this->langId = self::getLangIdFromLangCode($this->langCode);
+
+		// Load currency from cookie
+		if (isset($_COOKIE[FrontendService::COOKIE_CURRENCY_NAME])) {
+			$this->currencyCode = $_COOKIE[FrontendService::COOKIE_CURRENCY_NAME];
+		}
+		else {
+			$this->currencyCode = self::DEFAULT_CURRENCY_CODE;
+		}
 	}
 
 	/**
@@ -340,6 +348,16 @@ msgstr %s
 	 */
 	public function getCurrencyCode() {
 		return $this->currencyCode;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCurrencySigle() {
+		if ($this->isValidCurrency($this->getCurrencyCode())) {
+			return self::$currenciesSiglesList[$this->getCurrencyCode()];
+		}
+		return '';
 	}
 
 	/**
