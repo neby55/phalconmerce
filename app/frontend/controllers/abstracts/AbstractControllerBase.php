@@ -43,29 +43,31 @@ class AbstractControllerBase extends Controller {
 			if ($design !== false) {
 				// Set every data
 				foreach ($design->getParams() as $currentParam) {
-					if (is_array($object->designData) && array_key_exists($currentParam->getName(), $object->designData)) {
-						if ($currentParam->getType() == DesignParam::TYPE_URL) {
-							/** @var Url $urlObject */
-							$urlObject = Url::findFirstById($object->designData[$currentParam->getName()]);
-							if (is_object($urlObject)) {
-								if ($this->di->get('translation')->getLangId() != $object->designData[$currentParam->getName()]) {
-									$newUrlObject = $urlObject->getUrlForOtherLang($this->di->get('translation')->getLangId());
-									if (is_object($newUrlObject)) {
-										$urlObject = $newUrlObject;
+					if (empty($this->view->getVar($currentParam->getName()))) {
+						if (is_array($object->designData) && array_key_exists($currentParam->getName(), $object->designData)) {
+							if ($currentParam->getType() == DesignParam::TYPE_URL) {
+								/** @var Url $urlObject */
+								$urlObject = Url::findFirstById($object->designData[$currentParam->getName()]);
+								if (is_object($urlObject)) {
+									if ($this->di->get('translation')->getLangId() != $object->designData[$currentParam->getName()]) {
+										$newUrlObject = $urlObject->getUrlForOtherLang($this->di->get('translation')->getLangId());
+										if (is_object($newUrlObject)) {
+											$urlObject = $newUrlObject;
+										}
 									}
+									$this->view->setVar($currentParam->getName(), $urlObject->getFullUrl());
 								}
-								$this->view->setVar($currentParam->getName(), $urlObject->getFullUrl());
+								else {
+									$this->view->setVar($currentParam->getName(), '');
+								}
 							}
 							else {
-								$this->view->setVar($currentParam->getName(), '');
+								$this->view->setVar($currentParam->getName(), $object->designData[$currentParam->getName()]);
 							}
 						}
 						else {
-							$this->view->setVar($currentParam->getName(), $object->designData[$currentParam->getName()]);
+							$this->view->setVar($currentParam->getName(), '');
 						}
-					}
-					else {
-						$this->view->setVar($currentParam->getName(), '');
 					}
 				}
 
