@@ -35,9 +35,9 @@ abstract class AbstractFrontendService extends MainService {
 
 	public function __construct() {
 		// TODO retriveve infos to complete properties
-		$this->baseURL = '';
-		$this->absoluteURL = '';
-		$this->currentURL = '';
+		$this->baseURL = Di::getDefault()->get('url')->getBaseUri();
+		$this->currentURL = Di::getDefault()->get('router')->getRewriteUri();
+		$this->absoluteURL = (isset($_SERVER['https']) ? 'https' : 'http').'://'.$_SERVER['SERVER_NAME'].$this->currentURL;
 		$this->metaTitle = '';
 		$this->metaDescription = '';
 		$this->metaKeywords = '';
