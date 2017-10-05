@@ -335,6 +335,50 @@ abstract class AbstractControllerBase extends Controller {
 		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-design'));
 	}
 
+	/**
+	 * Saves current object in screen
+	 */
+	public function ajaxOrderAction() {
+		$jsonResponse = array();
+		if (!$this->request->isPost()) {
+			$this->sendJson(400);
+		}
+
+		$idsArray = $this->request->getPost("ids", "string");
+
+		if (!empty($idsArray) && is_array($idsArray)) {
+			$classname = PhpClass::POPO_NAMESPACE.'\\'.$this->popoClassName;
+			$object = new $classname;
+			$position = 1;
+			foreach ($idsArray as $currentId) {
+				$currentObject = $classname::findFirst(array(
+					'id = :id:',
+					'bind' => array(
+						'id' => $currentId
+					),
+					'for_update' => true
+				));
+				if (!empty($currentObject)) {
+					$currentObject->position = $position;
+
+					if ($currentObject->save() == false) {
+						foreach ($object->getMessages() as $message) {
+							$jsonResponse['errors'][] = $message;
+						}
+						$this->sendJson(409, $jsonResponse);
+					}
+					$position++;
+				}
+			}
+		}
+		else {
+			$jsonResponse['errors'][] = "Ids incorrect";
+			$this->sendJson(409, $jsonResponse);
+		}
+
+		$this->sendJson(200);
+	}
+
 	public function updateUrlCache() {
 		$allUrl = Url::find('status = 1');
 
@@ -351,7 +395,7 @@ abstract class AbstractControllerBase extends Controller {
 	 * @param int $httpResponseCode
 	 * @param mixed $jsonData
 	 */
-	protected function sendJson($httpResponseCode, $jsonData = null) {
+	protected function sendJson($httpResponseCode, $jsonData = array()) {
 		// Using HTTP Response object
 		$response = $this->response;
 		// Change the HTTP status
@@ -378,10 +422,9 @@ abstract class AbstractControllerBase extends Controller {
 				$response->setStatusCode(405, "Method Not Allowed");
 		}
 
-		if ($jsonData) {
-			$response->setHeader('Content-Type', 'application/json');
-			$response->setJsonContent($jsonData);
-		}
+		$response->setHeader('Content-Type', 'application/json');
+		$response->setJsonContent($jsonData);
+
 		$response->send();
 		exit;
 	}
