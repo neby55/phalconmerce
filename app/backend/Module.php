@@ -59,7 +59,7 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * The Logger component
 		 */
-		$dependencyInjector->set('logger', function () {
+		$dependencyInjector->setShared('logger', function () {
 			$logger = new \Phalcon\Logger\Adapter\File(APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'backend.log');
 			return $logger;
 		});
@@ -93,7 +93,7 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * Phalconmerce backendService
 		 */
-		$dependencyInjector->set('backendService', function () {
+		$dependencyInjector->setShared('backendService', function () {
 			$service = new BackendService();
 			return $service;
 		});
@@ -115,7 +115,7 @@ class Module implements ModuleDefinitionInterface {
 		 */
 		if (class_exists('\Cloudinary')) {
 			\Cloudinary::config($dependencyInjector->get('config')->cloudinary->toArray());
-			$dependencyInjector->set('cloudinary', function () {
+			$dependencyInjector->setShared('cloudinary', function () {
 				$api = new \Cloudinary\Api();
 				return $api;
 			});

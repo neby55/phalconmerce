@@ -47,7 +47,7 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * The Logger component
 		 */
-		$dependencyInjector->set('logger', function () {
+		$dependencyInjector->setShared('logger', function () {
 			$logger = new \Phalcon\Logger\Adapter\File(APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'frontend.log');
 			return $logger;
 		});
@@ -64,7 +64,7 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * Phalconmerce TranslationService
 		 */
-		$dependencyInjector->set('translation', function () {
+		$dependencyInjector->setShared('translation', function () {
 			$service = new TranslationService();
 			return $service;
 		});
@@ -72,7 +72,7 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * Phalconmerce FrontendService
 		 */
-		$dependencyInjector->set('frontendService', function () {
+		$dependencyInjector->setShared('frontendService', function () {
 			$service = new FrontendService();
 			return $service;
 		});
