@@ -88,10 +88,13 @@ class FkSelect {
 
 	/**
 	 * @param array $filters
+	 * @param bool $noChoose
 	 * @return array
 	 */
-	public function getValues($filters=array()) {
-		$values = array('' => Di::getDefault()->get('backendService')->t('choose'));
+	public function getValues($filters=array(), $noChoose=false) {
+		if (!$noChoose) {
+			$values = array('' => Di::getDefault()->get('backendService')->t('choose'));
+		}
 		$fqcn = $this->fqcn;
 
 		$data = $fqcn::find($filters);
