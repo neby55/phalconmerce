@@ -34,6 +34,13 @@ abstract class AbstractCategory extends AbstractDesignedModel {
 	public $name;
 
 	/**
+	 * @Column(type="integer", length=4, nullable=true, default=999)
+	 * @Index
+	 * @var int
+	 */
+	public $position;
+
+	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)
 	 * @var int
 	 */
