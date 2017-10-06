@@ -3,8 +3,14 @@
 namespace Phalconmerce\Models\Popo\Abstracts;
 
 use Phalcon\Db\Column;
+use Phalcon\Mvc\Model\Resultset\Simple;
 use Phalconmerce\Models\AbstractDesignedModel;
 use Phalconmerce\Models\Popo\Image;
+use Phalconmerce\Models\Popo\ConfigurableProduct;
+use Phalconmerce\Models\Popo\ConfiguredProduct;
+use Phalconmerce\Models\Popo\SimpleProduct;
+use Phalconmerce\Models\Popo\GroupedProduct;
+use Phalconmerce\Models\Popo\Product;
 use Phalconmerce\Models\Utils;
 
 /**
@@ -180,5 +186,43 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 			return $imageResult->getFirst();
 		}
 		return new Image();
+	}
+
+	/**
+	 * Methods that return correct Object (simple, configrable, etc.) for given id
+	 * @param $id
+	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractProduct
+	 */
+	public static function getProductById($id) {
+		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractProduct $product */
+		$product = Product::findFirstById($id);
+
+		if (!empty($product)) {
+			$classname = '';
+			switch ($product->coreType) {
+				case self::PRODUCT_TYPE_SIMPLE :
+					$classname = 'SimpleProduct';
+					break;
+				case self::PRODUCT_TYPE_CONFIGURABLE :
+					$classname = 'ConfigurableProduct';
+					break;
+				case self::PRODUCT_TYPE_CONFIGURED :
+					$classname = 'ConfiguredProduct';
+					break;
+				case self::PRODUCT_TYPE_GROUPED :
+					$classname = 'GroupedProduct';
+					break;
+			}
+
+			if (!empty($classname)) {
+				$object = $classname::findFirstById($id);
+				if (empty($object)) {
+					$object = new $classname;
+					$object->fk_product_id = $id;
+				}
+				return $object;
+			}
+		}
+		return false;
 	}
 }
