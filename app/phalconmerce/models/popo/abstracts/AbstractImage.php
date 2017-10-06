@@ -95,8 +95,8 @@ abstract class AbstractImage extends AbstractModel {
 			case self::TYPE_EXTERNAL:
 				return $this->externalUrl;
 			case self::TYPE_CLOUDINARY:
-				return cloudinary_url_internal($this->cloudinaryPublicId, $options);
+				return \cloudinary_url_internal($this->cloudinaryPublicId, $options);
 		}
-		return Di::getDefault()->get('config')->imageUri.'/'.Di::getDefault()->get('config')->image404Uri;
+		return Di::getDefault()->get('config')->image404Uri;
 	}
 }

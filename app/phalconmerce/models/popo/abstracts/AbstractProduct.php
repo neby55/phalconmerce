@@ -4,6 +4,8 @@ namespace Phalconmerce\Models\Popo\Abstracts;
 
 use Phalcon\Db\Column;
 use Phalconmerce\Models\AbstractDesignedModel;
+use Phalconmerce\Models\Popo\Image;
+use Phalconmerce\Models\Utils;
 
 /**
  * Class AbstractProduct
@@ -163,5 +165,20 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 			);
 		}
 		return false;
+	}
+
+	/**
+	 * @return Image
+	 */
+	public function getFirstImage() {
+		/** @var \Phalcon\Mvc\Model\Resultset $imageObject */
+		$imageResult = $this->getImage(array(
+			'order' => 'position',
+			'limit' => 1
+		));
+		if (!empty($imageResult) && $imageResult->count() > 0) {
+			return $imageResult->getFirst();
+		}
+		return new Image();
 	}
 }
