@@ -15,10 +15,29 @@ abstract class AbstractAjaxController extends ControllerBase {
 	/**
 	 * method that returns (display as JSON) every resources in configured cloudinary account
 	 */
-	public function cloudinaryAction() {
+	public function cloudinaryGlobalAction() {
 		$api = \Phalcon\Di::getDefault()->get('cloudinary');
 		/** @var \Cloudinary\Api\Response $result */
-		$result = $api->resources(array("type" => "upload", 'max_results'=>100, 'prefix'=>'bernard-orcel/'));
+		$result = $api->resources(array("type" => "upload", 'max_results'=>100, 'prefix'=>$this->config->cloudinary['global_folder']));
+
+		$this->cloudinaryResponse($result);
+	}
+
+	/**
+	 * method that returns (display as JSON) every resources in configured cloudinary account
+	 */
+	public function cloudinaryProductsAction() {
+		$api = \Phalcon\Di::getDefault()->get('cloudinary');
+		/** @var \Cloudinary\Api\Response $result */
+		$result = $api->resources(array("type" => "upload", 'max_results'=>100, 'prefix'=>$this->config->cloudinary['products_folder']));
+
+		$this->cloudinaryResponse($result);
+	}
+
+	/**
+	 * @param \Cloudinary\Api\Response $result
+	 */
+	protected function cloudinaryResponse($result) {
 		$jsonData = array();
 
 		foreach ($result as $allResources) {

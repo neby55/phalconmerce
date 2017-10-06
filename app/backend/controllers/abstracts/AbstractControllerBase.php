@@ -8,6 +8,7 @@ use Backend\Forms\UrlForm;
 use Phalcon\Mvc\Controller;
 use Phalconmerce\Models\Design;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
+use Phalconmerce\Models\Popo\Image;
 use Phalconmerce\Models\Popo\Lang;
 use Phalconmerce\Models\Popo\Url;
 use Phalconmerce\Models\Utils;
@@ -376,6 +377,45 @@ abstract class AbstractControllerBase extends Controller {
 			$this->sendJson(409, $jsonResponse);
 		}
 
+		$this->sendJson(200);
+	}
+
+	/**
+	 * Saves current object in screen
+	 */
+	public function ajaxCloudinaryImageAction() {
+		$jsonResponse = array();
+		if (!$this->request->isPost()) {
+			$this->sendJson(400);
+		}
+
+		$cloudinaryPublicId = $this->request->getPost("public_id", "string");
+		$productId = $this->request->getPost("product_id", "int");
+		$classname = PhpClass::POPO_NAMESPACE.'\\'.$this->popoClassName;
+
+		$object = $classname::findFirstById($productId);
+
+		if (!$object) {
+			$jsonResponse['errors'][] = "Unrecognized entity id";
+			$this->sendJson(404, $jsonResponse);
+		}
+		if (empty($cloudinaryPublicId)) {
+			$jsonResponse['errors'][] = "Public id empty";
+			$this->sendJson(400, $jsonResponse);
+		}
+
+		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractImage $imageObject */
+		$imageObject = new Image();
+		$imageObject->cloudinaryPublicId = $cloudinaryPublicId;
+		$imageObject->fk_product_id = $object->id;
+		if ($imageObject->save() == false) {
+			foreach ($imageObject->getMessages() as $message) {
+				$jsonResponse['errors'][] = $message;
+			}
+			$this->sendJson(409, $jsonResponse);
+		}
+
+		// If nothing went wrong, send HTTP 200 => OK
 		$this->sendJson(200);
 	}
 

@@ -207,7 +207,22 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 		$this->flashSession->success("##CLASSNAME## was deleted");
 
-		return $this->redirectToRoute('backend-controller-index', array('controller'=>$this->dispatcher->getControllerName()));
+		$redirectRoute = $this->request->get('redirect', 'string', '');
+		$redirectData = $this->request->get('data', 'string', '');
+
+		if (!empty($redirectRoute) && !empty($redirectData)) {
+			$options = array('fragment'=>'tab-images');
+			if (strpos($redirectData, ';') !== false) {
+				list($options['controller'],$options['id']) = explode(';', $redirectData);
+			}
+			else {
+				$options['controller'] = $redirectData;
+			}
+			return $this->redirectToRoute($redirectRoute, $options);
+		}
+		else {
+			return $this->redirectToRoute('backend-controller-index', array('controller'=>$this->dispatcher->getControllerName()));
+		}
 	}
 }
 EOT;
