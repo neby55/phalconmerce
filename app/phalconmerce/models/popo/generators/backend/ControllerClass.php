@@ -211,9 +211,8 @@ class ##CLASSNAME##Controller extends ControllerBase {
 		$redirectData = $this->request->get('data', 'string', '');
 
 		if (!empty($redirectRoute) && !empty($redirectData)) {
-			$options = array('fragment'=>'tab-images');
 			if (strpos($redirectData, ';') !== false) {
-				list($options['controller'],$options['id']) = explode(';', $redirectData);
+				list($options['controller'],$options['id'],$options['fragment']) = explode(';', $redirectData);
 			}
 			else {
 				$options['controller'] = $redirectData;

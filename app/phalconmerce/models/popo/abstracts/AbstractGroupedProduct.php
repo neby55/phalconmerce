@@ -3,7 +3,9 @@
 namespace Phalconmerce\Models\Popo\Abstracts;
 
 use Phalcon\Db\Column;
-use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\Popo\GroupedProductHasProduct;
+use Phalconmerce\Models\Popo\Product;
+use Phalconmerce\Models\Utils;
 
 abstract class AbstractGroupedProduct extends AbstractFinalProduct {
 	/**
@@ -11,26 +13,16 @@ abstract class AbstractGroupedProduct extends AbstractFinalProduct {
 	 */
 	public $childrenProductList;
 
-	public function initialize() {
-		parent::initialize();
-
-		$this->loadRelatedProducts();
-	}
-
-	private function loadRelatedProducts() {
+	public function loadRelatedProducts() {
 		if ($this->id > 0) {
-			$tmpObject = new \Phalconmerce\Models\Popo\Product();
-			$this->childrenProductList = \Phalconmerce\Models\Popo\Product::find(
-				array(
-					'conditions' => $tmpObject->prefix . 'fk_groupedproduct_id = :groupedProductId:',
-					'bind' => array(
-						'groupedProductId' => $this->id
-					),
-					'bindTypes' => array(
-						Column::BIND_PARAM_INT
-					)
-				)
-			);
+			// Assuming GroupedProduct has a relationship with product determined in inialize()
+			$this->childrenProductList = array();
+			$resultSet = $this->getProduct();
+			if (!empty($resultSet) && $resultSet->count() > 0) {
+				foreach ($resultSet as $currentObject) {
+					$this->childrenProductList[] = $currentObject;
+				}
+			}
 		}
 	}
 
@@ -64,11 +56,10 @@ abstract class AbstractGroupedProduct extends AbstractFinalProduct {
 		if ($this->id > 0) {
 			if (is_a($product, 'AbstractProduct')) {
 				$fqcn = __CLASS__ . 'HasProduct';
-				$groupedProductHasProductTmp = new $fqcn();
 				$groupedProductHasProduct = $fqcn::findFirst(
 					array(
-						'conditions' => $groupedProductHasProductTmp->prefix . 'fk_groupedproduct_id = :groupedProductId:
-					        AND ' . $groupedProductHasProductTmp->prefix . 'fk_product_id = :productId:',
+						'conditions' => 'fk_groupedproduct_id = :groupedProductId:
+					        AND ' . 'fk_product_id = :productId:',
 						'bind' => array(
 							'groupedProductId' => $this->id,
 							'productId' => $product->id

@@ -16,12 +16,6 @@ abstract class AbstractConfiguredProduct extends AbstractFinalProduct {
 	 */
 	public $configurableProduct;
 
-	public function initialize() {
-		parent::initialize();
-
-		$this->loadConfigurableProduct();
-	}
-
 	/**
 	 * @return mixed
 	 */
@@ -29,7 +23,7 @@ abstract class AbstractConfiguredProduct extends AbstractFinalProduct {
 		return str_replace('Configured', 'Configurable', __CLASS__);
 	}
 
-	private function loadConfigurableProduct() {
+	public function loadConfigurableProduct() {
 		$fqcn = self::getConfigurableClassName();
 		$this->configurableProduct = $fqcn::findFirst($this->getConfigurableProductId());
 	}

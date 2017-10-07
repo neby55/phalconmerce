@@ -26,29 +26,22 @@ abstract class AbstractFinalProduct extends AbstractModel {
 	public $product;
 
 	private function loadProduct() {
-		if ($this->getProductId() > 0) {
-			$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getProductId());
+		if ($this->getRelatedProductId() > 0) {
+			$this->product = \Phalconmerce\Models\Popo\Product::findFirst($this->getRelatedProductId());
 		}
-	}
-
-	public function initialize() {
-		parent::initialize();
-
-		// TODO check if related product is automatically loaded when "find"
-		$this->loadProduct();
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getProductId() {
+	public function getRelatedProductId() {
 		return $this->fk_product_id;
 	}
 
 	/**
 	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractProduct
 	 */
-	public function getProduct() {
+	public function getRelatedroduct() {
 		return $this->product;
 	}
 
@@ -57,7 +50,8 @@ abstract class AbstractFinalProduct extends AbstractModel {
 	 * @param array $whiteList
 	 * @return bool
 	 */
-	public function save($data = null, $whiteList = null) {
+	/*public function save($data = null, $whiteList = null) {
+		echo get_class($this).'<br>';
 		// Force coreType to related product
 		$this->product->coreType = AbstractProduct::PRODUCT_TYPE_SIMPLE;
 
@@ -71,5 +65,5 @@ abstract class AbstractFinalProduct extends AbstractModel {
 		}
 
 		return parent::save($data, $whiteList);
-	}
+	}*/
 }

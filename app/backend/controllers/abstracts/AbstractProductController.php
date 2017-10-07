@@ -10,20 +10,133 @@
 namespace Backend\Controllers\Abstracts;
 
 use Backend\Controllers\ControllerBase;
+use Backend\Forms\ConfigurableForm;
 use Backend\Forms\DesignForm;
+use Backend\Forms\GroupedForm;
 use Phalconmerce\Models\Popo\Abstracts\AbstractFinalProduct;
 use Phalconmerce\Models\Popo\Abstracts\AbstractProduct;
+use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
+use Phalconmerce\Models\Popo\Product;
+use Phalconmerce\Models\Popo\ConfigurableProduct;
+use Phalconmerce\Models\Popo\ConfiguredProduct;
+use Phalconmerce\Models\Popo\GroupedProduct;
+use Phalconmerce\Models\Popo\GroupedProductHasProduct;
+use Phalconmerce\Models\Utils;
 
 class AbstractProductController extends ControllerBase {
 	/**
-	 * @param \Phalconmerce\Models\Popo\Abstracts\AbstractFinalProduct $finalProduct
+	 * Shows the index action
 	 */
-	public function addFinalProductForm($finalProduct) {
-		if ($finalProduct->getProduct()->coreType != AbstractProduct::PRODUCT_TYPE_SIMPLE) {
-			if (!isset($this->view->formFinalProduct) && !is_object($this->view->formFinalProduct)) {
-				$this->view->formFinalProduct = new DesignForm($finalProduct);
+	public function indexAction() {
+		parent::indexAction();
+		$getSearch = $this->request->get('search', 'string');
+		$getType = $this->request->get('type', 'int');
+		$getStatus = $this->request->get('status', 'int');
+
+		// Search filters
+		$findOptions = array('bind'=>array());
+		if (!empty($getSearch)) {
+			$findOptions['conditions'] = (isset($findOptions['conditions']) ? $findOptions['conditions'].' AND ' : '').'(name LIKE :search: OR sku LIKE :search: OR coreType LIKE :search: OR shortDescription LIKE :search:) ';
+			$findOptions['bind']['search'] = '%'.$getSearch.'%';
+		}
+		if (!empty($getType)) {
+			$findOptions['conditions'] = (isset($findOptions['conditions']) ? $findOptions['conditions'].' AND ' : '').' type = :type: ';
+			$findOptions['bind']['type'] = $getType;
+		}
+		if (!empty($getStatus)) {
+			$findOptions['conditions'] = (isset($findOptions['conditions']) ? $findOptions['conditions'].' AND ' : '').' status = :status: ';
+			$findOptions['bind']['status'] = $getStatus;
+		}
+		$findOptions['order'] = 'id DESC';
+		// Get all currencies
+		$list = Product::find($findOptions);
+
+		$this->view->setVar('list', $list);
+
+		$this->view->setVar('listActionProperties', Product::getBackendListProperties());
+	}
+
+	/**
+	 * @param AbstractFinalProduct $finalProduct
+	 */
+	protected function configureEditView($finalProduct) {
+		if (is_a($finalProduct, PhpClass::POPO_ABSTRACT_NAMESPACE.'\AbstractFinalProduct')) {
+			if (is_a($finalProduct, PhpClass::POPO_ABSTRACT_NAMESPACE . '\AbstractSimpleProduct')) {
+				$this->view->setVar('displayTabFinalProduct', false);
+			}
+			else if (is_a($finalProduct, PhpClass::POPO_ABSTRACT_NAMESPACE . '\AbstractGroupedProduct')) {
+				$finalProduct->loadRelatedProducts();
+				$this->view->setVar('displayTabFinalProduct', true);
+				$this->view->setVar('tabFinalProduct', 'grouped');
+				$this->view->setVar('listActionProperties', Product::getBackendListProperties());
+				$this->view->formGroupedProduct = new GroupedForm($finalProduct);
+
+			}
+			else if (is_a($finalProduct, PhpClass::POPO_ABSTRACT_NAMESPACE . '\AbstractConfigurableProduct')) {
+				//$finalProduct->loadConfiguredProducts();
+				$this->view->setVar('displayTabFinalProduct', true);
+				$this->view->setVar('tabFinalProduct', 'configurable');
+				$this->view->setVar('listActionProperties', $finalProduct::getBackendListProperties());
+				$this->view->formConfigurableProduct = new ConfigurableForm($finalProduct);
+			}
+			else if (is_a($finalProduct, PhpClass::POPO_ABSTRACT_NAMESPACE . '\AbstractConfiguredProduct')) {
+				//$finalProduct->loadConfigurableProduct();
+				$this->view->pick($finalProduct->getSource() . '/edit');
+			}
+			$this->view->setVar('finalProduct', $finalProduct);
+		}
+	}
+
+	/**
+	 * Saves current object in screen
+	 */
+	public function saveNewAction() {
+		if (!$this->request->isPost()) {
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "index",
+				]
+			);
+			return false;
+		}
+
+		$name = $this->request->getPost("name", "string");
+		$type = $this->request->getPost("type", "int");
+		$attributeSetId = $this->request->getPost("att_set_id", "int");
+
+		// If creation
+		$object = new Product();
+		$object->name = $name;
+		$object->fk_attributeset_id = $attributeSetId;
+		$object->coreType = $type;
+		$object->sku = '';
+		$object->priceVatExcluded = 0;
+		$object->status = 0;
+
+		if ($object->save() == false) {
+			foreach ($object->getMessages() as $message) {
+				$this->flash->error($message);
+			}
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "new",
+				]
+			);
+			return false;
+		}
+		else {
+			$finalProduct = $object->getFinalProductObject();
+			if (!empty($finalProduct)) {
+				$finalProduct->save();
 			}
 		}
+
+		$this->flash->success("Product successfully created");
+
+		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller' => $this->dispatcher->getControllerName()));
 	}
 
 	/**
@@ -377,5 +490,87 @@ class AbstractProductController extends ControllerBase {
 		$this->flashSession->success("Product's attribute successfully added");
 
 		return $this->redirectToRoute('backend-controller-edit', array('id' => $productId, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-2'));
+	}
+
+	public function saveGroupedProductAddAction() {
+		if (!$this->request->isPost()) {
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "index",
+				]
+			);
+			return false;
+		}
+
+		$groupedProductId = $this->request->getPost("id", "int");
+		$childId = $this->request->getPost("child_id", "int");
+
+		// If creation
+		if (empty($groupedProductId)) {
+			$object = new GroupedProduct();
+		}
+		else {
+			$object = GroupedProduct::findFirstById($groupedProductId);
+		}
+
+		if (!$object) {
+			$this->flash->error("Grouped Product does not exist");
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "edit",
+				]
+			);
+			return false;
+		}
+
+		$form = new GroupedForm;
+
+		$data = $this->request->getPost();
+		if (!$form->isValid($data, $object)) {
+			$this->view->formGroupedProduct = $form;
+			foreach ($form->getMessages() as $message) {
+				$this->flash->error($message);
+			}
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "edit",
+					'params' => array('id' => $object->fk_product_id)
+				]
+			);
+			return false;
+		}
+
+		$groupedProductHasProduct = new GroupedProductHasProduct();
+		$groupedProductHasProduct->fk_groupedproduct_id = $object->id;
+		$groupedProductHasProduct->fk_product_id = $childId;
+
+		if ($groupedProductHasProduct->save() == false) {
+			$this->view->formGroupedProduct = $form;
+			foreach ($groupedProductHasProduct->getMessages() as $message) {
+				$this->flash->error($message);
+			}
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "edit",
+					'params' => array('id' => $object->fk_product_id)
+				]
+			);
+			return false;
+		}
+
+		$form->clear();
+
+		$this->view->formGroupedProduct = $form;
+
+		$this->flash->success("Product was successfully added");
+
+		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->fk_product_id, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-final-grouped'));
 	}
 }

@@ -22,7 +22,7 @@ class AbstractModel extends Model {
 	public function initialize() {
 		// Setting up the table name from current Class Name
 		$classname = (new \ReflectionClass($this))->getShortName();
-		$this->setSource(strtolower($classname));
+		$this->setSource(Utils::getTableNameFromClassName($classname));
 	}
 
 	/**

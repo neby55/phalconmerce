@@ -5,6 +5,7 @@ namespace Phalconmerce\Models\Popo\Abstracts;
 use Phalcon\Db\Column;
 use Phalcon\Mvc\Model\Resultset\Simple;
 use Phalconmerce\Models\AbstractDesignedModel;
+use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Popo\Image;
 use Phalconmerce\Models\Popo\Product;
 use Phalconmerce\Models\Utils;
@@ -147,29 +148,6 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	}
 
 	/**
-	 * Use this method to get the wanted product object (CarPart, TeeShirt, etc.)
-	 * @return mixed|bool
-	 */
-	public function getSubObject() {
-		if ($this->className != '' && $this->id > 0) {
-			$fqcn = '\\Phalconmerce\\Popo\\'.$this->className;
-			$tmpObject = new $fqcn();
-			return $fqcn::findFirst(
-				array(
-					'conditions' => $tmpObject->prefix.'fk_product_id = :productId:',
-					'bind' => array(
-						'productId' => $this->id
-					),
-					'bindTypes' => array(
-						Column::BIND_PARAM_INT
-					)
-				)
-			);
-		}
-		return false;
-	}
-
-	/**
 	 * @return Image
 	 */
 	public function getFirstImage() {
@@ -200,10 +178,9 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	}
 
 	/**
-	 * Methods that return correct Object (simple, configrable, etc.) for given id
-	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractProduct
+	 * @return string
 	 */
-	public function getFinalProductObject() {
+	public function getFinalProductClassName() {
 		$classname = '';
 		switch ($this->coreType) {
 			case self::PRODUCT_TYPE_SIMPLE :
@@ -219,10 +196,28 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 				$classname = 'GroupedProduct';
 				break;
 		}
+		return $classname;
+	}
 
+	/**
+	 * @return string
+	 */
+	public function getFinalProductFQCN() {
+		$classname = $this->getFinalProductClassName();
 		if (!empty($classname)) {
-			$fqcn = '\Phalconmerce\Models\Popo\\'.$classname;
-			$object = $fqcn::findFirstById($this->id);
+			return PhpClass::POPO_NAMESPACE. '\\' . $classname;
+		}
+		return '';
+	}
+
+	/**
+	 * Methods that return correct Object (simple, configrable, etc.) for given id
+	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractProduct
+	 */
+	public function getFinalProductObject() {
+		$fqcn = $this->getFinalProductFQCN();
+		if (!empty($fqcn)) {
+			$object = $fqcn::findFirst('fk_product_id = '.$this->id);
 			if (empty($object)) {
 				$object = new $fqcn;
 				$object->fk_product_id = $this->id;

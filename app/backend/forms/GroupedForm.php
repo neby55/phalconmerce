@@ -20,11 +20,13 @@ class GroupedForm extends FormBase {
 		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractGroupedProduct $entity  */
 		if (is_object($entity) && is_a($entity, '\Phalconmerce\Models\Popo\Abstracts\AbstractGroupedProduct')) {
 			// Adding hidden input
-			$this->add(new Hidden("id"));
+			$item = new Hidden("id");
+			$item->setDefault($entity->id);
+			$this->add($item);
 
 			// SELECT for all products
 			$item = new Select(
-				'fk_product_id',
+				'child_id',
 				Product::fkSelect()->getValues(array('coreType = '.AbstractProduct::PRODUCT_TYPE_SIMPLE), true)
 			);
 			$item->setAttribute('class', 'form-control');
@@ -35,7 +37,7 @@ class GroupedForm extends FormBase {
 					'message' => $this->di->get('backendService')->t('This field is required')
 				))
 			));
-			$this->addElement('fk_product_id', $item);
+			$this->addElement('child_id', $item);
 
 			$this->addElementsToForm();
 		}
