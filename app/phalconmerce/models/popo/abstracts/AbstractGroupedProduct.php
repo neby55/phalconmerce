@@ -11,6 +11,12 @@ abstract class AbstractGroupedProduct extends AbstractFinalProduct {
 	 */
 	public $childrenProductList;
 
+	public function initialize() {
+		parent::initialize();
+
+		$this->loadRelatedProducts();
+	}
+
 	private function loadRelatedProducts() {
 		if ($this->id > 0) {
 			$tmpObject = new \Phalconmerce\Models\Popo\Product();

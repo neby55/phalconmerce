@@ -11,6 +11,12 @@ abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 	 */
 	public $configuredProductList;
 
+	public function initialize() {
+		parent::initialize();
+
+		$this->loadConfiguredProducts();
+	}
+
 	/**
 	 * @return mixed
 	 */
@@ -34,11 +40,5 @@ abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 				)
 			);
 		}
-	}
-
-	public function initialize() {
-		parent::initialize();
-
-		$this->loadConfiguredProducts();
 	}
 }

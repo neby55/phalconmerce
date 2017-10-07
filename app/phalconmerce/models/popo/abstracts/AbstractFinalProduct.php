@@ -46,7 +46,7 @@ abstract class AbstractFinalProduct extends AbstractModel {
 	}
 
 	/**
-	 * @return \Phalconmerce\Models\Popo\Product
+	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractProduct
 	 */
 	public function getProduct() {
 		return $this->product;
