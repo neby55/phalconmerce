@@ -9,7 +9,7 @@ abstract class AbstractConfiguredProduct extends AbstractFinalProduct {
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
-	public $fk_configurableproduct_id;
+	public $fk_configurable_product_id;
 
 	/**
 	 * @var \Phalconmerce\Models\Popo\ConfigurableProduct
@@ -32,7 +32,7 @@ abstract class AbstractConfiguredProduct extends AbstractFinalProduct {
 	 * @return int
 	 */
 	public function getConfigurableProductId() {
-		return $this->fk_configurableproduct_id;
+		return $this->fk_configurable_product_id;
 	}
 
 	/**

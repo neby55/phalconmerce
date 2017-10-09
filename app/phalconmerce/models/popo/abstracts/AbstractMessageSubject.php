@@ -25,7 +25,7 @@ abstract class AbstractMessageSubject extends AbstractModel {
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
-	public $fk_messagecategory_id;
+	public $fk_message_category_id;
 
 	/**
 	 * @Column(type="string", length=32, nullable=false)

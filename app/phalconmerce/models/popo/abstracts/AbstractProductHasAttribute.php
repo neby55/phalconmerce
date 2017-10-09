@@ -31,7 +31,7 @@ abstract class AbstractProductHasAttribute extends AbstractModelManyToMany {
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
-	public $fk_attributevalue_id;
+	public $fk_attribute_value_id;
 
 	/**
 	 * @Column(type="string", length=255, nullable=true)

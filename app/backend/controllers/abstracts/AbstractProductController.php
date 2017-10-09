@@ -36,11 +36,11 @@ class AbstractProductController extends ControllerBase {
 		// Search filters
 		$findOptions = array('bind'=>array());
 		if (!empty($getSearch)) {
-			$findOptions['conditions'] = (isset($findOptions['conditions']) ? $findOptions['conditions'].' AND ' : '').'(name LIKE :search: OR sku LIKE :search: OR coreType LIKE :search: OR shortDescription LIKE :search:) ';
+			$findOptions['conditions'] = (isset($findOptions['conditions']) ? $findOptions['conditions'].' AND ' : '').'(name LIKE :search: OR sku LIKE :search: OR shortDescription LIKE :search:) ';
 			$findOptions['bind']['search'] = '%'.$getSearch.'%';
 		}
 		if (!empty($getType)) {
-			$findOptions['conditions'] = (isset($findOptions['conditions']) ? $findOptions['conditions'].' AND ' : '').' type = :type: ';
+			$findOptions['conditions'] = (isset($findOptions['conditions']) ? $findOptions['conditions'].' AND ' : '').' coreType = :type: ';
 			$findOptions['bind']['type'] = $getType;
 		}
 		if (!empty($getStatus)) {
@@ -48,10 +48,13 @@ class AbstractProductController extends ControllerBase {
 			$findOptions['bind']['status'] = $getStatus;
 		}
 		$findOptions['order'] = 'id DESC';
-		// Get all currencies
+		// Get all Products
 		$list = Product::find($findOptions);
 
 		$this->view->setVar('list', $list);
+		$this->view->setVar('getSearch', $getSearch);
+		$this->view->setVar('getType', $getType);
+		$this->view->setVar('getStatus', $getStatus);
 
 		$this->view->setVar('listActionProperties', Product::getBackendListProperties());
 	}
@@ -108,7 +111,7 @@ class AbstractProductController extends ControllerBase {
 		// If creation
 		$object = new Product();
 		$object->name = $name;
-		$object->fk_attributeset_id = $attributeSetId;
+		$object->fk_attribute_set_id = $attributeSetId;
 		$object->coreType = $type;
 		$object->sku = '';
 		$object->priceVatExcluded = 0;
@@ -227,7 +230,7 @@ class AbstractProductController extends ControllerBase {
 
 					// Setting the value
 					if ($currentAttribute->type == Attribute::TYPE_DROPDOWN) {
-						$currentLine->fk_attributevalue_id = $currentFieldValue;
+						$currentLine->fk_attribute_value_id = $currentFieldValue;
 					}
 					else {
 						$currentLine->value = $currentFieldValue;
@@ -362,7 +365,7 @@ class AbstractProductController extends ControllerBase {
 
 						// Setting the value
 						if ($currentAttribute->type == Attribute::TYPE_DROPDOWN) {
-							$currentLine->fk_attributevalue_id = $currentFieldValue;
+							$currentLine->fk_attribute_value_id = $currentFieldValue;
 						}
 						else {
 							$currentLine->value = $currentFieldValue;
@@ -546,7 +549,7 @@ class AbstractProductController extends ControllerBase {
 		}
 
 		$groupedProductHasProduct = new GroupedProductHasProduct();
-		$groupedProductHasProduct->fk_groupedproduct_id = $object->id;
+		$groupedProductHasProduct->fk_grouped_product_id = $object->id;
 		$groupedProductHasProduct->fk_product_id = $childId;
 
 		if ($groupedProductHasProduct->save() == false) {

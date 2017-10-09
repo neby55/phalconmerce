@@ -18,7 +18,7 @@ abstract class AbstractOrderReturnHasCart extends AbstractModelManyToMany {
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $fk_orderreturn_id;
+	public $fk_order_return_id;
 
 	/**
 	 * @Primary

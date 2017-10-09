@@ -35,7 +35,7 @@ abstract class AbstractGroupedProduct extends AbstractFinalProduct {
 			if (is_a($product, 'AbstractProduct')) {
 				$fqcn = __CLASS__ . 'HasProduct';
 				$groupedProductHasProduct = new $fqcn();
-				$groupedProductHasProduct->fk_groupedproduct_id = $this->id;
+				$groupedProductHasProduct->fk_grouped_product_id = $this->id;
 				$groupedProductHasProduct->fk_product_id = $product->id;
 				return $groupedProductHasProduct->save();
 			}
@@ -58,7 +58,7 @@ abstract class AbstractGroupedProduct extends AbstractFinalProduct {
 				$fqcn = __CLASS__ . 'HasProduct';
 				$groupedProductHasProduct = $fqcn::findFirst(
 					array(
-						'conditions' => 'fk_groupedproduct_id = :groupedProductId:
+						'conditions' => 'fk_grouped_product_id = :groupedProductId:
 					        AND ' . 'fk_product_id = :productId:',
 						'bind' => array(
 							'groupedProductId' => $this->id,

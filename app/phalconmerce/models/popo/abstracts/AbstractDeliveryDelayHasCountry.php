@@ -18,7 +18,7 @@ abstract class AbstractDeliveryDelayHasCountry extends AbstractModelManyToMany {
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $fk_deliverydelay_id;
+	public $fk_delivery_delay_id;
 
 	/**
 	 * @Primary

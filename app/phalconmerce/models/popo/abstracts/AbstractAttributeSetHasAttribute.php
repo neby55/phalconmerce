@@ -11,7 +11,7 @@ abstract class AbstractAttributeSetHasAttribute extends AbstractModelManyToMany 
 	 * @Column(type="integer", nullable=false)
 	 * @var int
 	 */
-	public $fk_attributeset_id;
+	public $fk_attribute_set_id;
 
 	/**
 	 * @Primary

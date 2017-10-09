@@ -19,7 +19,7 @@ abstract class AbstractMenu extends AbstractModel {
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
-	public $fk_menugroup_id;
+	public $fk_menu_group_id;
 
 	/**
 	 * @Column(type="integer", nullable=true)

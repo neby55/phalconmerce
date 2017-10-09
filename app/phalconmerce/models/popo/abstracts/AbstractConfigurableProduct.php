@@ -23,7 +23,7 @@ abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 			$fqcn = self::getConfiguredClassName();
 			$this->configuredProductList = $fqcn::find(
 				array(
-					'conditions' => 'fk_configurableproduct_id = :configurableProductId:',
+					'conditions' => 'fk_configurable_product_id = :configurableProductId:',
 					'bind' => array(
 						'configurableProductId' => $this->id
 					),

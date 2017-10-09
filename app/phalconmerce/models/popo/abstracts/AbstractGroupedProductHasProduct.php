@@ -11,7 +11,7 @@ abstract class AbstractGroupedProductHasProduct extends AbstractModelManyToMany 
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
-	public $fk_groupedproduct_id;
+	public $fk_grouped_product_id;
 
 	/**
 	 * @Primary

@@ -36,7 +36,7 @@ class ProductHasAttributeAddForm extends FormBase {
 			) AND id NOT IN (
 				SELECT fk_attribute_id
 				FROM product
-				INNER JOIN attribute_set_has_attribute ON attribute_set_has_attribute.fk_attributeset_id = product.fk_attributeset_id
+				INNER JOIN attribute_set_has_attribute ON attribute_set_has_attribute.fk_attribute_set_id = product.fk_attribute_set_id
 				WHERE product.id = :pro_id
 			)'
 		);

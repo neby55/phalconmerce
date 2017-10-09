@@ -27,7 +27,7 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
-	public $fk_attributeset_id;
+	public $fk_attribute_set_id;
 
 	/**
 	 * @Column(type="integer", nullable=true)
