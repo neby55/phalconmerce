@@ -18,10 +18,18 @@ class Menu {
 	protected $link;
 	/** @var SubMenu[] */
 	protected $subMenuList;
+	/** @var int */
+	protected $status;
 
-	public function __construct($label, $icon, $link=null) {
+	const STATUS_ACTIVE = 1;
+	const STATUS_NEW = 2;
+	const STATUS_IN_PROGRESS = 3;
+	const STATUS_DEPRECATED = 4;
+
+	public function __construct($label, $icon, $link=null, $status=1) {
 		$this->label = $label;
 		$this->icon = $icon;
+		$this->status = $status;
 		if (is_string($link)) {
 			if (substr($link, 0, 7) == 'http://' || substr($link, 0, 8) == 'https://') {
 				$this->link = new MenuExternalLink($link);
@@ -95,5 +103,12 @@ class Menu {
 	 */
 	public function getSubMenuList() {
 		return $this->subMenuList;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getStatus() {
+		return $this->status;
 	}
 }

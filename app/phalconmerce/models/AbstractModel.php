@@ -41,4 +41,17 @@ class AbstractModel extends Model {
 	public static function getBackendListProperties() {
 		return array();
 	}
+
+	public function cloneModel() {
+		$reflection = new \ReflectionClass($this);
+		$object = $reflection->newInstance();
+		foreach ($reflection->getProperties() as $currentProperty) {
+			if ($currentProperty->isPublic() && !$currentProperty->isStatic() && $currentProperty->getName() != 'inserted') {
+				$currentPropertyName = $currentProperty->getName();
+				echo 'copy '.$currentPropertyName.'<br>';
+				$object->$currentPropertyName = $this->$currentPropertyName;
+			}
+		}
+		return $object;
+	}
 }

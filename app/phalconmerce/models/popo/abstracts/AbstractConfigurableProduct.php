@@ -14,14 +14,15 @@ abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 	/**
 	 * @return mixed
 	 */
-	protected static function getConfiguredClassName() {
-		return str_replace('Configurable', 'Configured', __CLASS__);
+	protected static function getConfiguredClassName($classname) {
+		return str_replace('Configurable', 'Configured', $classname);
 	}
 
 	public function loadConfiguredProducts() {
+		$this->configuredProductList = array();
 		if ($this->id > 0) {
-			$fqcn = self::getConfiguredClassName();
-			$this->configuredProductList = $fqcn::find(
+			$fqcn = self::getConfiguredClassName(get_class($this));
+			$resultSet = $fqcn::find(
 				array(
 					'conditions' => 'fk_configurable_product_id = :configurableProductId:',
 					'bind' => array(
@@ -32,6 +33,12 @@ abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 					)
 				)
 			);
+			if (!empty($resultSet) && $resultSet->count() > 0) {
+				/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractConfiguredProduct $currentConfiguredProduct */
+				foreach ($resultSet as $currentConfiguredProduct) {
+					$this->configuredProductList[] = $currentConfiguredProduct->getRelatedProduct();
+				}
+			}
 		}
 	}
 }

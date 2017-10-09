@@ -21,6 +21,12 @@ abstract class AbstractTax extends AbstractModel {
 	public $fk_country_id;
 
 	/**
+	 * @Column(type="integer", nullable=true)
+	 * @var int
+	 */
+	public $fk_state_id;
+
+	/**
 	 * @Column(type="float", nullable=false)
 	 * @var float
 	 */

@@ -32,7 +32,7 @@ abstract class AbstractCountry extends AbstractModel {
 	public $isoCode3;
 
 	/**
-	 * @Column(type="string", length=32, nullable=false)
+	 * @Column(type="string", length=64, nullable=false)
 	 * @var string
 	 */
 	public $name;

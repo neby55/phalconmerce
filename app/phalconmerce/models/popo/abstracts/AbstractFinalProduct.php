@@ -41,7 +41,10 @@ abstract class AbstractFinalProduct extends AbstractModel {
 	/**
 	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractProduct
 	 */
-	public function getRelatedroduct() {
+	public function getRelatedProduct() {
+		if (empty($this->product) && $this->getRelatedProductId() > 0) {
+			$this->loadProduct();
+		}
 		return $this->product;
 	}
 

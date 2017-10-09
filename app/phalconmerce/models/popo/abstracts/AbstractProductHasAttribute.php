@@ -39,4 +39,14 @@ abstract class AbstractProductHasAttribute extends AbstractModelManyToMany {
 	 * @var string
 	 */
 	public $value;
+
+	public function getCurrentValue() {
+		if ($this->fk_attribute_value_id > 0) {
+			$attributeValue = $this->getAttributeValue();
+			if (!empty($attributeValue)) {
+				return $attributeValue->value;
+			}
+		}
+		return $this->value;
+	}
 }

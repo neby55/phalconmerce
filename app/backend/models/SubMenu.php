@@ -14,9 +14,12 @@ class SubMenu {
 	protected $label;
 	/** @var MenuLink */
 	protected $menuLink;
+	/** @var int */
+	protected $status;
 
-	public function __construct($label, $link) {
+	public function __construct($label, $link, $status=1) {
 		$this->label = $label;
+		$this->status = $status;
 		if (is_string($link)) {
 			if (substr($link, 0, 7) == 'http://' || substr($link, 0, 8) == 'https://') {
 				$this->menuLink = new MenuExternalLink($link);
@@ -49,5 +52,12 @@ class SubMenu {
 	 */
 	public function isActive() {
 		return $this->menuLink->isActive();
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getStatus() {
+		return $this->status;
 	}
 }

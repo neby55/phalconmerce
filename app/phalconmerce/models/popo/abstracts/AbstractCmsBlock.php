@@ -38,9 +38,16 @@ abstract class AbstractCmsBlock extends AbstractModel {
 	 */
 	public $status;
 
+	/**
+	 * @param string $slug
+	 * @param bool $isActive
+	 * @return AbstractCmsBlock|bool
+	 */
 	public static function getBySlug($slug, $isActive=true) {
-		self::findFirst(array(
-			'code = :code:'.($isActive ? ' AND '),
-		))
+		$object = self::findFirstByCode($slug);
+		if (!empty($object) && $object->status == 1) {
+			return $object;
+		}
+		return false;
 	}
 }

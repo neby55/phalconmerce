@@ -11,17 +11,24 @@ namespace Backend\Controllers\Abstracts;
 
 use Backend\Controllers\ControllerBase;
 use Backend\Forms\ConfigurableForm;
+use Backend\Forms\ProductHasAttributeForm;
+use Backend\Forms\ProductAttributeSetForm;
 use Backend\Forms\DesignForm;
 use Backend\Forms\GroupedForm;
 use Phalconmerce\Models\Popo\Abstracts\AbstractFinalProduct;
 use Phalconmerce\Models\Popo\Abstracts\AbstractProduct;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
+use Phalconmerce\Models\Popo\Attribute;
+use Phalconmerce\Models\Popo\AttributeSet;
+use Phalconmerce\Models\Popo\AttributeValue;
 use Phalconmerce\Models\Popo\Product;
 use Phalconmerce\Models\Popo\ConfigurableProduct;
 use Phalconmerce\Models\Popo\ConfiguredProduct;
 use Phalconmerce\Models\Popo\GroupedProduct;
 use Phalconmerce\Models\Popo\GroupedProductHasProduct;
+use Phalconmerce\Models\Popo\ProductHasAttribute;
 use Phalconmerce\Models\Utils;
+use Phalconmerce\Services\BackendService;
 
 class AbstractProductController extends ControllerBase {
 	/**
@@ -76,10 +83,33 @@ class AbstractProductController extends ControllerBase {
 
 			}
 			else if (is_a($finalProduct, PhpClass::POPO_ABSTRACT_NAMESPACE . '\AbstractConfigurableProduct')) {
-				//$finalProduct->loadConfiguredProducts();
+				$finalProduct->loadConfiguredProducts();
 				$this->view->setVar('displayTabFinalProduct', true);
 				$this->view->setVar('tabFinalProduct', 'configurable');
-				$this->view->setVar('listActionProperties', $finalProduct::getBackendListProperties());
+				// Getting attributes
+				$attributesResult = $finalProduct->getRelatedProduct()->getAttribute();
+				if (!empty($attributesResult) && $attributesResult->count() > 0) {
+					$listActionProperties = array();
+					/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractAttribute $currentAttribute */
+					foreach ($attributesResult as $currentAttribute) {
+						$listActionProperties['attribute_'.$currentAttribute->id] =  $this->di->get('backendService')->t($currentAttribute->label);
+					}
+					$listActionProperties['status'] = array(
+						'label' => $this->di->get('backendService')->t('Status'),
+						'values' => BackendService::getBackendListStatusValues()
+					);
+					$this->view->setVar('listActionProperties', $listActionProperties);
+				}
+				else {
+					$this->view->setVar('listActionProperties', array(
+						'sku' => $this->di->get('backendService')->t('SKU'),
+						'name' => $this->di->get('backendService')->t('Name'),
+						'status' => array(
+							'label' => $this->di->get('backendService')->t('Status'),
+							'values' => BackendService::getBackendListStatusValues()
+						)
+					));
+				}
 				$this->view->formConfigurableProduct = new ConfigurableForm($finalProduct);
 			}
 			else if (is_a($finalProduct, PhpClass::POPO_ABSTRACT_NAMESPACE . '\AbstractConfiguredProduct')) {
@@ -552,7 +582,7 @@ class AbstractProductController extends ControllerBase {
 		$groupedProductHasProduct->fk_grouped_product_id = $object->id;
 		$groupedProductHasProduct->fk_product_id = $childId;
 
-		if ($groupedProductHasProduct->save() == false) {
+		if ($groupedProductHasProduct->create() == false) {
 			$this->view->formGroupedProduct = $form;
 			foreach ($groupedProductHasProduct->getMessages() as $message) {
 				$this->flash->error($message);
@@ -575,5 +605,130 @@ class AbstractProductController extends ControllerBase {
 		$this->flash->success("Product was successfully added");
 
 		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->fk_product_id, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-final-grouped'));
+	}
+
+	public function saveConfiguredProductAddAction() {
+		if (!$this->request->isPost()) {
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "index",
+				]
+			);
+			return false;
+		}
+
+		$configurableProductId = $this->request->getPost("id", "int");
+		$name = $this->request->getPost("name", "string");
+		$sku = $this->request->getPost("sku", "string");
+
+		// If creation
+		if (empty($configurableProductId)) {
+			$object = new ConfigurableProduct();
+		}
+		else {
+			$object = ConfigurableProduct::findFirstById($configurableProductId);
+		}
+
+		if (!$object) {
+			$this->flash->error("Configurable Product does not exist");
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "edit",
+				]
+			);
+			return false;
+		}
+
+		$form = new ConfigurableForm();
+
+		$data = $this->request->getPost();
+		if (!$form->isValid($data, $object)) {
+			$this->view->formConfigurableProduct = $form;
+			foreach ($form->getMessages() as $message) {
+				$this->flash->error($message);
+			}
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $this->dispatcher->getControllerName(),
+					"action" => "edit",
+					'params' => array('id' => $object->fk_product_id)
+				]
+			);
+			return false;
+		}
+
+		$originalProduct = $object->getProduct();
+		$product = $originalProduct->cloneModel();
+		if (!empty($product)) {
+			$product->id = null;
+			$product->name = $name;
+			$product->sku = $sku;
+			$product->coreType = Product::PRODUCT_TYPE_CONFIGURED;
+
+			if ($product->create() == false) {
+				foreach ($product->getMessages() as $message) {
+					$this->flash->error($message);
+				}
+
+				$this->dispatcher->forward(
+					[
+						"controller" => $this->dispatcher->getControllerName(),
+						"action" => "edit",
+						'params' => array('id' => $object->fk_product_id)
+					]
+				);
+				return false;
+			}
+
+			$productHasAttributesResultSet = $originalProduct->getProductHasAttribute();
+			if (!empty($productHasAttributesResultSet) && $productHasAttributesResultSet->count() > 0) {
+				/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractProductHasAttribute $currentProductHasAttribute */
+				foreach ($productHasAttributesResultSet as $currentProductHasAttribute) {
+					$newProductHasAttribute = $currentProductHasAttribute->cloneModel();
+					$newProductHasAttribute->fk_product_id = $product->id;
+					$newProductHasAttribute->fk_attribute_value_id = null;
+					$newProductHasAttribute->value = null;
+					if ($newProductHasAttribute->create() == false) {
+						$this->view->formConfigurableProduct = $form;
+						foreach ($newProductHasAttribute->getMessages() as $message) {
+							$this->flash->error($message);
+						}
+					}
+				}
+			}
+
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractConfiguredProduct $configuredProduct */
+			$configuredProduct = new ConfiguredProduct();
+			$configuredProduct->fk_configurable_product_id = $object->id;
+			$configuredProduct->fk_product_id = $product->id;
+
+			if ($configuredProduct->create() == false) {
+				$this->view->formConfigurableProduct = $form;
+				foreach ($configuredProduct->getMessages() as $message) {
+					$this->flash->error($message);
+				}
+
+				$this->dispatcher->forward(
+					[
+						"controller" => $this->dispatcher->getControllerName(),
+						"action" => "edit",
+						'params' => array('id' => $object->fk_product_id)
+					]
+				);
+				return false;
+			}
+		}
+
+		$form->clear();
+
+		$this->view->formConfigurableProduct = $form;
+
+		$this->flash->success("Product was successfully added");
+
+		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->fk_product_id, 'controller' => $this->dispatcher->getControllerName(), 'fragment'=>'tab-final-configurable'));
 	}
 }
