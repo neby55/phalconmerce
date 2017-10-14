@@ -24,6 +24,19 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	public $id;
 
 	/**
+	 * @Column(type="string", length=32, nullable=false)
+	 * @var string
+	 */
+	public $sku;
+
+	/**
+	 * @Column(type="string", length=64, nullable=false)
+	 * @Translate
+	 * @var string
+	 */
+	public $name;
+
+	/**
 	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
@@ -36,16 +49,16 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	public $fk_manufacturer_id;
 
 	/**
+	 * @Column(type="integer", nullable=false)
+	 * @var int
+	 */
+	public $fk_tax_id;
+
+	/**
 	 * @Column(type="integer", length=1, nullable=false, editable=false)
 	 * @var int
 	 */
 	public $coreType;
-
-	/**
-	 * @Column(type="string", length=32, nullable=false)
-	 * @var string
-	 */
-	public $sku;
 
 	/**
 	 * @Column(type="float", nullable=false)
@@ -66,23 +79,16 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	public $stock;
 
 	/**
-	 * @Column(type="timestamp", nullable=true)
+	 * @Column(type="timestamp", nullable=true, default='0000-00-00 00:00:00')
 	 * @var string
 	 */
 	public $newsFromDate;
 
 	/**
-	 * @Column(type="timestamp", nullable=true)
+	 * @Column(type="timestamp", nullable=true, default='0000-00-00 00:00:00')
 	 * @var string
 	 */
 	public $newsToDate;
-
-	/**
-	 * @Column(type="string", length=64, nullable=false)
-	 * @Translate
-	 * @var string
-	 */
-	public $name;
 
 	/**
 	 * @Column(type="string", length=255, nullable=true)

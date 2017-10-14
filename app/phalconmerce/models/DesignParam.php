@@ -14,8 +14,6 @@ class DesignParam {
 	protected $name;
 	/** @var int */
 	protected $type;
-	/** @var string */
-	protected $help;
 
 	const TYPE_INT = 1;
 	const TYPE_FLOAT = 2;
@@ -27,10 +25,11 @@ class DesignParam {
 	const TYPE_URL = 8;
 	const TYPE_IMAGE = 9;
 
-	public function __construct($name='', $type=0, $help='') {
+	const URL_EXTERNAL_SUFFIX = '-urlexternal';
+
+	public function __construct($name='', $type=0) {
 		$this->name = $name;
 		$this->type = $type;
-		$this->help = $help;
 	}
 
 	/**
@@ -111,12 +110,5 @@ class DesignParam {
 	 */
 	public function getType() {
 		return $this->type;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getHelp() {
-		return $this->help;
 	}
 }

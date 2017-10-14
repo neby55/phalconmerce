@@ -32,6 +32,7 @@ class DesignForm extends FormBase {
 
 			// Get Design object
 			$design = Design::loadFromFile($entity->designSlug);
+			$this->view->setVar('design', $design);
 
 			// Generate a form element to each design param
 			foreach ($design->getParams() as $currentDesignParam) {
@@ -73,12 +74,19 @@ class DesignForm extends FormBase {
 					$item->setFilters(array($currentDesignParam->getFilter()));
 				}
 				else if ($currentDesignParam->getType() == DesignParam::TYPE_URL) {
+					$selectValues = Url::fkSelect()->getValues();
+					$selectValues[-1] = $this->di->get('backendService')->t('External link');
 					$item = new Select(
 						$currentDesignParam->getName(),
-						Url::fkSelect()->getValues()
+						$selectValues
 					);
-					$item->setAttribute('class', 'form-control');
+					$item->setAttribute('class', 'form-control urlSelect');
 					$item->setFilters(array($currentDesignParam->getFilter()));
+
+					$urlItem = new Text($currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX);
+					$urlItem->setAttribute('class', 'form-control');
+					$urlItem->setFilters(array('url'));
+					$urlItem->setAttribute('maxlength', 255);
 				}
 				else if ($currentDesignParam->getType() == DesignParam::TYPE_IMAGE) {
 					$item = new Text($currentDesignParam->getName());
@@ -87,12 +95,18 @@ class DesignForm extends FormBase {
 					$item->setAttribute('maxlength', 255);
 				}
 
-				// Ajout au formulaire
+				// Add to form
 				if (isset($item)) {
 					$item->setDefault(isset($entity->designData[$currentDesignParam->getName()]) ? $entity->designData[$currentDesignParam->getName()] : '');
 					$item->setLabel($currentDesignParam->getName());
 					$this->addElement($currentDesignParam->getName(), $item);
-					$this->addHelpBlock($currentDesignParam->getName(), $currentDesignParam->getHelp());
+				}
+				// URL item if needed
+				if (isset($urlItem)) {
+					$urlItem->setDefault(isset($entity->designData[$currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX]) ? $entity->designData[$currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX] : '');
+					$urlItem->setLabel($currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX);
+					$this->addElement($currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX, $urlItem);
+					unset($urlItem);
 				}
 			}
 

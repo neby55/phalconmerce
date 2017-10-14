@@ -17,18 +17,28 @@ class AbstractUrlController extends ControllerBase {
 		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractUrl $urlObject */
 		$urlObject = $this->dispatcher->getParam('url');
 
-		// Defines META
-		$this->getDI()->get('frontendService')->setMetaTitle($urlObject->metaTitle);
-		$this->getDI()->get('frontendService')->setMetaDescription($urlObject->metaDescription);
-		$this->getDI()->get('frontendService')->setMetaKeywords($urlObject->metaKeywords);
+		if ($urlObject->status == 1) {
+			// Defines META
+			$this->getDI()->get('frontendService')->setMetaTitle($urlObject->metaTitle);
+			$this->getDI()->get('frontendService')->setMetaDescription($urlObject->metaDescription);
+			$this->getDI()->get('frontendService')->setMetaKeywords($urlObject->metaKeywords);
+
+			$this->dispatcher->forward(
+				[
+					"controller" => $urlObject->entity,
+					"action" => "index",
+					"params" => array(
+						'id' => $urlObject->entityId
+					),
+				]
+			);
+			return false;
+		}
 
 		$this->dispatcher->forward(
 			[
-				"controller" => $urlObject->entity,
-				"action" => "index",
-				"params" => array(
-					'id' => $urlObject->entityId
-				),
+				"controller" => 'error',
+				"action" => "show404"
 			]
 		);
 		return false;

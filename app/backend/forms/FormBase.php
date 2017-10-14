@@ -294,7 +294,7 @@ class FormBase extends Form {
 	 * @return bool
 	 */
 	public function hasHelpBlock($propertyName) {
-		return array_key_exists($propertyName, $this->helpBlocksList) && !empty($this->helpBlocksList[$propertyName]);
+		return is_array($this->helpBlocksList) && array_key_exists($propertyName, $this->helpBlocksList) && !empty($this->helpBlocksList[$propertyName]);
 	}
 
 	/**

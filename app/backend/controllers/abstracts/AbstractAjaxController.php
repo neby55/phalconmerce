@@ -45,6 +45,7 @@ abstract class AbstractAjaxController extends ControllerBase {
 				foreach ($allResources as $currentResource) {
 					$options =  array("width"=>60, "height"=>60, "crop"=>"limit");
 					$currentResource['thumbnail'] = cloudinary_url_internal($currentResource['public_id'], $options);
+					$currentResource['url'] = substr($currentResource['url'], 5);
 					$jsonData[] = $currentResource;
 				}
 			}

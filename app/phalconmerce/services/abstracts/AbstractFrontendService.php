@@ -79,9 +79,10 @@ abstract class AbstractFrontendService extends MainService {
 	 */
 	public function showCmsBlock($slug) {
 		$object = CmsBlock::findFirst(array(
-			'code = :slug:',
+			'code = :slug: AND status = 1 AND fk_lang_id = :lang_id:',
 			'bind' => array(
-				'slug' => $slug
+				'slug' => $slug,
+				'lang_id' => $this->getDI()->get('translation')->getLangId()
 			)
 		));
 		if (!empty($object) && is_object($object)) {

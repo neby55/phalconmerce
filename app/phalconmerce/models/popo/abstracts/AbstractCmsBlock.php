@@ -15,6 +15,12 @@ abstract class AbstractCmsBlock extends AbstractModel {
 	public $id;
 
 	/**
+	 * @Column(type="integer", nullable=false)
+	 * @var int
+	 */
+	public $fk_lang_id;
+
+	/**
 	 * @Column(type="string", length=32, nullable=false)
 	 * @var string
 	 */

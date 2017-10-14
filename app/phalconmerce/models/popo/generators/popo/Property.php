@@ -90,7 +90,9 @@ class Property {
 		if ($this->isForeignKey()) {
 			$tmp = explode(self::FK_SEPARATOR, $this->name);
 			if (sizeof($tmp) >= 3) {
-				return Utils::getClassNameFromTableName($tmp[1]);
+				array_shift($tmp);
+				array_pop($tmp);
+				return Utils::getClassNameFromTableName(join(self::FK_SEPARATOR, $tmp));
 			}
 			else {
 				throw new \InvalidArgumentException('ForeignKey properties should follow this pattern : fk_tablename_idproperty');
@@ -106,10 +108,8 @@ class Property {
 		if ($this->isForeignKey()) {
 			$tmp = explode(self::FK_SEPARATOR, $this->name);
 			if (sizeof($tmp) >= 3) {
-				$tableName = $tmp[1];
-				unset($tmp[0]);
-				unset($tmp[1]);
-				return join(self::FK_SEPARATOR, $tmp);
+				$property = array_pop($tmp);
+				return $property;
 			}
 			else {
 				throw new \InvalidArgumentException('ForeignKey properties should follow this pattern : fk_tablename_idproperty');

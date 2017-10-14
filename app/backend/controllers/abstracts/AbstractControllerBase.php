@@ -3,10 +3,12 @@
 namespace Backend\Controllers\Abstracts;
 
 use Backend\Forms\DesignForm;
+use Backend\Forms\HelpText;
 use Backend\Forms\Labels;
 use Backend\Forms\UrlForm;
 use Phalcon\Mvc\Controller;
 use Phalconmerce\Models\Design;
+use Phalconmerce\Models\DesignParam;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Popo\Image;
 use Phalconmerce\Models\Popo\Lang;
@@ -47,6 +49,10 @@ abstract class AbstractControllerBase extends Controller {
 		$this->view->setVar('popoClassName', $this->popoClassName);
 
 		$this->view->setTemplateBefore('main_connected');
+
+		// HelpText
+		$helpText = new HelpText($this->popoClassName);
+		$this->view->setVar('pageHelpText', $helpText->getText($this->dispatcher->getActionName()));
 
 		// Disabling default validators requiring all fields to be filled
 		\Phalcon\Mvc\Model::setup(array(
@@ -97,13 +103,27 @@ abstract class AbstractControllerBase extends Controller {
 		return $this->di->get('backendService')->t($str);
 	}
 
-	public function addUrlForm($entityId) {
+	/**
+	 * @param int $entityId
+	 * @param array $langIds
+	 */
+	public function addUrlForm($entityId, $langIds=array()) {
 		if (!isset($this->view->formUrl) && !is_object($this->view->formUrl)) {
 			$urlFormsList = array();
 
-			$langList = Lang::find(array(
-				'status' => 1
-			));
+			if (is_array($langIds) && sizeof($langIds) > 0) {
+				$langList = Lang::find(array(
+					'status = 1 AND id IN (:lang_ids:)',
+					'bind' => array(
+						'lang_ids' => join(', ', $langIds)
+					)
+				));
+			}
+			else {
+				$langList = Lang::find(array(
+					'status = 1'
+				));
+			}
 			/** @var Lang $currentLang */
 			foreach ($langList as $currentLang) {
 				$urlObject = Url::findFirst(array(
@@ -309,6 +329,11 @@ abstract class AbstractControllerBase extends Controller {
 		$design = Design::loadFromFile($object->designSlug);
 		foreach ($design->getParams() as $currentParam) {
 			$object->designData[$currentParam->getName()] = $this->request->getPost($currentParam->getName(), $currentParam->getFilter());
+
+			// URL external exception
+			if ($currentParam->getType() == DesignParam::TYPE_URL) {
+				$object->designData[$currentParam->getName().DesignParam::URL_EXTERNAL_SUFFIX] = $this->request->getPost($currentParam->getName().DesignParam::URL_EXTERNAL_SUFFIX, 'url');
+			}
 		}
 
 		if ($object->save() == false) {
@@ -419,13 +444,19 @@ abstract class AbstractControllerBase extends Controller {
 		$this->sendJson(200);
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function updateUrlCache() {
 		$allUrl = Url::find('status = 1');
 
 		$data = array();
 
+		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractUrl $currentUrlObject */
 		foreach ($allUrl as $currentUrlObject) {
-			$data[$currentUrlObject->permalink] = $currentUrlObject;
+			if (!empty($currentUrlObject->entity)) {
+				$data[$currentUrlObject->permalink] = $currentUrlObject;
+			}
 		}
 
 		return Utils::saveData($data, 'routes');

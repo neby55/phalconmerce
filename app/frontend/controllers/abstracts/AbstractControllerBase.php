@@ -12,7 +12,9 @@ namespace Frontend\Controllers\Abstracts;
 use Phalcon\Mvc\Controller;
 use Phalconmerce\Models\Design;
 use Phalconmerce\Models\DesignParam;
+use Phalconmerce\Models\Popo\Seo;
 use Phalconmerce\Models\Popo\Url;
+use Phalconmerce\Models\Utils;
 
 class AbstractControllerBase extends Controller {
 	public function initialize() {
@@ -26,6 +28,27 @@ class AbstractControllerBase extends Controller {
 		\Phalcon\Mvc\Model::setup(array(
 			'notNullValidations' => false
 		));
+
+		$currentRoute = $this->router->getMatchedRoute();
+		if (!empty($currentRoute)) {
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractSeo $seoObject */
+			$seoObject = Seo::getCacheByRouteName($currentRoute->getName(), $this->getDI()->get('translation')->getLangId());
+			if ($seoObject !== false) {
+				// Defines META
+				$this->getDI()->get('frontendService')->setMetaTitle($seoObject->metaTitle);
+				$this->getDI()->get('frontendService')->setMetaDescription($seoObject->metaDescription);
+				$this->getDI()->get('frontendService')->setMetaKeywords($seoObject->metaKeywords);
+			}
+			else {
+				$seoObject = Seo::getCacheByRouteName('default', $this->getDI()->get('translation')->getLangId());
+				if ($seoObject !== false) {
+					// Defines META
+					$this->getDI()->get('frontendService')->setMetaTitle($seoObject->metaTitle);
+					$this->getDI()->get('frontendService')->setMetaDescription($seoObject->metaDescription);
+					$this->getDI()->get('frontendService')->setMetaKeywords($seoObject->metaKeywords);
+				}
+			}
+		}
 	}
 
 	public function setSubtitle($str) {
@@ -46,19 +69,25 @@ class AbstractControllerBase extends Controller {
 					if (empty($this->view->getVar($currentParam->getName()))) {
 						if (is_array($object->designData) && array_key_exists($currentParam->getName(), $object->designData)) {
 							if ($currentParam->getType() == DesignParam::TYPE_URL) {
-								/** @var Url $urlObject */
-								$urlObject = Url::findFirstById($object->designData[$currentParam->getName()]);
-								if (is_object($urlObject)) {
-									if ($this->di->get('translation')->getLangId() != $object->designData[$currentParam->getName()]) {
-										$newUrlObject = $urlObject->getUrlForOtherLang($this->di->get('translation')->getLangId());
-										if (is_object($newUrlObject)) {
-											$urlObject = $newUrlObject;
-										}
-									}
-									$this->view->setVar($currentParam->getName(), $urlObject->getFullUrl());
+								// URL external exception
+								if ($object->designData[$currentParam->getName()] == -1) {
+									$this->view->setVar($currentParam->getName(), $object->designData[$currentParam->getName().DesignParam::URL_EXTERNAL_SUFFIX]);
 								}
 								else {
-									$this->view->setVar($currentParam->getName(), '');
+									/** @var Url $urlObject */
+									$urlObject = Url::findFirstById($object->designData[$currentParam->getName()]);
+									if (is_object($urlObject)) {
+										if ($this->di->get('translation')->getLangId() != $object->designData[$currentParam->getName()]) {
+											$newUrlObject = $urlObject->getUrlForOtherLang($this->di->get('translation')->getLangId());
+											if (is_object($newUrlObject)) {
+												$urlObject = $newUrlObject;
+											}
+										}
+										$this->view->setVar($currentParam->getName(), $urlObject->getFullUrl());
+									}
+									else {
+										$this->view->setVar($currentParam->getName(), '');
+									}
 								}
 							}
 							else {

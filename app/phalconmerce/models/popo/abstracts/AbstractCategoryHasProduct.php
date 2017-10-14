@@ -21,7 +21,7 @@ abstract class AbstractCategoryHasProduct extends AbstractModelManyToMany {
 	public $fk_product_id;
 
 	/**
-	 * @Column(type="integer", length=4, nullable=false, default=999)
+	 * @Column(type="integer", length=4, nullable=true, default=999)
 	 * @Index
 	 * @var int
 	 */

@@ -92,8 +92,8 @@ class Table {
 				}
 				else {
 					$tmp = explode(self::FK_WORD_SEPARATOR, $propertyName);
-					if (sizeof($tmp) != 3) {
-						throw new \InvalidArgumentException('Foreign Key properies must follow this pattern : fk_tablename_idpropertyname'.PHP_EOL.'For example : fk_product_id');
+					if (sizeof($tmp) < 3) {
+						throw new \InvalidArgumentException('"'.$propertyName.'" Foreign Key properies must follow this pattern : fk_tablename_idpropertyname'.PHP_EOL.'For example : fk_product_id');
 					}
 					$fkData = array(
 						'tableName' => $tmp[1],

@@ -14,18 +14,19 @@ use Phalcon\Di;
 class Design {
 	/** @var string */
 	protected $slug;
-
 	/** @var string */
 	protected $name;
-
+	/** @var string */
+	protected $help;
 	/** @var DesignParam[] */
 	protected $params;
 
 	const VIEWS_DIRECTORY = '_designs';
 
-	public function __construct($slug='', $name='', $params=null) {
+	public function __construct($slug='', $name='', $help='', $params=null) {
 		$this->slug = $slug;
 		$this->name = $name;
+		$this->help = $help;
 		$this->params = $params;
 	}
 
@@ -139,16 +140,43 @@ class Design {
 						}
 					}
 				}
+				$helpText = '';
+				if (isset($data['help'])) {
+					if (!is_array($data['help'])) {
+						$data['help'] = array($data['help']);
+					}
+					$helpText = join('<br>', $data['help']);
+				}
 
 				return new Design(
 					$slug,
 					$data['name'],
+					$helpText,
 					$params
 				);
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasScreenshot() {
+		$absoluteFilename = self::getDesignsDirectory().DIRECTORY_SEPARATOR.$this->getSlug().'.png';
+		return file_exists($absoluteFilename);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getScreenshotBase64Source() {
+		$absoluteFilename = self::getDesignsDirectory().DIRECTORY_SEPARATOR.$this->getSlug().'.png';
+		if (file_exists($absoluteFilename)) {
+			return base64_encode(file_get_contents($absoluteFilename));
+		}
+		return '';
 	}
 
 	/**
@@ -170,6 +198,13 @@ class Design {
 	 */
 	public function getParams() {
 		return $this->params;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHelp() {
+		return $this->help;
 	}
 
 	/**

@@ -32,4 +32,6 @@ abstract class AbstractExpeditor extends AbstractModel {
 	 */
 	public $status;
 
+	// TODO improve this stuff with zone / pricing / etc. (like presta)
+
 }

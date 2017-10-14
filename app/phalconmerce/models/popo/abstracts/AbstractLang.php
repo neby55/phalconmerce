@@ -29,7 +29,7 @@ abstract class AbstractLang extends AbstractModel {
 	public $code;
 
 	/**
-	 * @Column(type="integer", length=2, nullable=false, default=99)
+	 * @Column(type="integer", length=2, nullable=true, default=99)
 	 * @Index
 	 * @var int
 	 */
