@@ -27,11 +27,12 @@ abstract class AbstractFrontendService extends MainService {
 	/** @var string */
 	protected $metaKeywords;
 
-	const PROJECT_NAME = 'Phalconmerce';
-	const DEFAULT_LANG_ID = 2;
-	const COOKIE_LANG_NAME = 'lang';
-	const COOKIE_CURRENCY_NAME = 'currency';
-	const COOKIES_LIFETIME_IN_DAYS = 365;
+	protected static $shopTitle;
+	protected static $defaultCurrency;
+	protected static $defaultLangId;
+	protected static $cookieLangName;
+	protected static $cookieCurrencyName;
+	protected static $cookiesLifetimeInDays;
 
 	public function __construct() {
 		// TODO retriveve infos to complete properties
@@ -41,6 +42,21 @@ abstract class AbstractFrontendService extends MainService {
 		$this->metaTitle = '';
 		$this->metaDescription = '';
 		$this->metaKeywords = '';
+
+		// Setting up data from config file
+		$this->setupFromConfig();
+	}
+
+	protected function setupFromConfig() {
+		/** @var \Phalcon\Config $config */
+		$config = Di::getDefault()->get('config');
+		// Setting static values
+		self::$shopTitle = $config->shop['title'];
+		self::$defaultCurrency = $config->shop['default_currency'];
+		self::$defaultLangId = \Phalconmerce\Services\TranslationService::getLangIdFromLangCode($config->shop['default_lang']);
+		self::$cookieLangName = $config->shop['cookie_lang_name'];
+		self::$cookieCurrencyName = $config->shop['cookie_currency_name'];
+		self::$cookiesLifetimeInDays = $config->shop['cookies_lifetime_in_days'];
 	}
 
 	/**

@@ -49,8 +49,8 @@ abstract class AbstractTranslationService extends MainService {
 		$this->mo = new MO();
 
 		// Load lang from cookie
-		if (isset($_COOKIE[FrontendService::COOKIE_LANG_NAME])) {
-			$this->langCode = $_COOKIE[FrontendService::COOKIE_LANG_NAME];
+		if (isset($_COOKIE[FrontendService::$cookieLangName])) {
+			$this->langCode = $_COOKIE[FrontendService::$cookieLangName];
 		}
 		else {
 			$this->langCode = self::DEFAULT_LANG_CODE;
@@ -58,8 +58,8 @@ abstract class AbstractTranslationService extends MainService {
 		$this->langId = self::getLangIdFromLangCode($this->langCode);
 
 		// Load currency from cookie
-		if (isset($_COOKIE[FrontendService::COOKIE_CURRENCY_NAME])) {
-			$this->currencyCode = $_COOKIE[FrontendService::COOKIE_CURRENCY_NAME];
+		if (isset($_COOKIE[FrontendService::$cookieCurrencyName])) {
+			$this->currencyCode = $_COOKIE[FrontendService::$cookieCurrencyName];
 		}
 		else {
 			$this->currencyCode = self::DEFAULT_CURRENCY_CODE;
@@ -133,7 +133,7 @@ abstract class AbstractTranslationService extends MainService {
 			$this->langCode = self::$validLangList[$langId];
 			$this->langId = $langId;
 			if ($setCookie) {
-				$this->getDI('frontend')->addCookie(FrontendService::COOKIE_LANG_NAME, $this->langCode, FrontendService::COOKIES_LIFETIME_IN_DAYS * 86400);
+				$this->getDI('frontend')->addCookie(FrontendService::$cookieLangName, $this->langCode, FrontendService::$cookiesLifetimeInDays * 86400);
 			}
 			return true;
 		}
@@ -149,7 +149,7 @@ abstract class AbstractTranslationService extends MainService {
 		if (in_array($currencyCode, self::$validCurrenciesList)) {
 			$this->currencyCode = $currencyCode;
 			if ($setCookie) {
-				$this->getDI('frontend')->addCookie(FrontendService::COOKIE_CURRENCY_NAME, $this->currencyCode, FrontendService::COOKIES_LIFETIME_IN_DAYS * 86400);
+				$this->getDI('frontend')->addCookie(FrontendService::$cookieCurrencyName, $this->currencyCode, FrontendService::$cookiesLifetimeInDays * 86400);
 			}
 			return true;
 		}
@@ -180,15 +180,15 @@ abstract class AbstractTranslationService extends MainService {
 	public function handleLangAndCurrencyFormPost() {
 		$modifications = false;
 		// Si modification langue
-		if (!empty($_POST[FrontendService::COOKIE_LANG_NAME])) {
-			$langPost = strtolower(trim($_POST[FrontendService::COOKIE_LANG_NAME]));
+		if (!empty($_POST[FrontendService::$cookieLangName])) {
+			$langPost = strtolower(trim($_POST[FrontendService::$cookieLangName]));
 			$this->setCurrentLang(self::getLangIdFromLangCode($langPost), true);
 			$modifications = true;
 		}
 
 		// Si modification currency
-		if (!empty($_POST[FrontendService::COOKIE_CURRENCY_NAME])) {
-			$currencyPost = strtoupper(trim($_POST[FrontendService::COOKIE_CURRENCY_NAME]));
+		if (!empty($_POST[FrontendService::$cookieCurrencyName])) {
+			$currencyPost = strtoupper(trim($_POST[FrontendService::$cookieCurrencyName]));
 			$this->setCurrentCurrency($currencyPost, true);
 			$modifications = true;
 		}

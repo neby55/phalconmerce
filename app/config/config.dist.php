@@ -11,6 +11,14 @@ return new \Phalcon\Config(array(
 		'dbname' => '',
 		'charset' => 'utf8',
 	),
+	'shop' => array(
+		'title' => '',
+		'default_lang' => '',
+		'default_currency' => '',
+		'cookie_lang_name' => 'lang',
+		'cookie_currency_name' => 'currency',
+		'cookies_lifetime_in_days' => 365
+	),
 	'cacheDir' => APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
 	'baseUri' => (isset($_SERVER['BASE_URI']) ? $_SERVER['BASE_URI'] : '').'/', // BASE_URI index generated thanks to public/.htaccess
 	'imageFolder' => APP_PATH.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'files',
