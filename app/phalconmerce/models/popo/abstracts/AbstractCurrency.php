@@ -15,6 +15,12 @@ abstract class AbstractCurrency extends AbstractModel {
 	public $id;
 
 	/**
+	 * @Column(type="string", length=32, nullable=false)
+	 * @var string
+	 */
+	public $name;
+
+	/**
 	 * @Column(type="string", length=3, nullable=false)
 	 * @var string
 	 */

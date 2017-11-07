@@ -6,7 +6,7 @@
  * @license GPL
  */
 
-namespace POMO\Translations;
+namespace Phalconmerce\Services\POMO\Translations;
 
 /**
  * Provides the same interface as Translations, but doesn't do anything

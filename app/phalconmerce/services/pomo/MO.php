@@ -6,12 +6,12 @@
  * @license GPL
  */
 
-namespace POMO;
+namespace Phalconmerce\Services\POMO;
 
-use POMO\Streams\Reader;
-use POMO\Streams\FileReader;
-use POMO\Translations\GettextTranslations;
-use POMO\Translations\EntryTranslations;
+use Phalconmerce\Services\POMO\Streams\Reader;
+use Phalconmerce\Services\POMO\Streams\FileReader;
+use Phalconmerce\Services\POMO\Translations\GettextTranslations;
+use Phalconmerce\Services\POMO\Translations\EntryTranslations;
 
 /**
  * Class for working with MO files

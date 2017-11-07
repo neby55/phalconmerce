@@ -31,7 +31,6 @@ class Module implements ModuleDefinitionInterface {
 				'Frontend\Models' => __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR,
 				'Frontend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
 				'Frontend\Controllers\Abstracts' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
-				'POMO' => APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR . 'pomo' . DIRECTORY_SEPARATOR,
 			],
 			true
 		);
@@ -100,6 +99,8 @@ class Module implements ModuleDefinitionInterface {
 			$view->setViewsDir(__DIR__ . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . DI::getDefault()->get('config')->frontTheme . DIRECTORY_SEPARATOR);
 			$view->setVar('langId', DI::getDefault()->get('translation')->getLangId());
 			$view->setVar('lang',DI::getDefault()->get('translation')->getLangCode() );
+			$view->setVar('front',DI::getDefault()->get('frontendService'));
+			$view->setVar('translation',DI::getDefault()->get('translation'));
 			return $view;
 		});
 	}

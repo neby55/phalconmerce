@@ -18,7 +18,7 @@ abstract class AbstractAjaxController extends ControllerBase {
 	public function cloudinaryGlobalAction() {
 		$api = \Phalcon\Di::getDefault()->get('cloudinary');
 		/** @var \Cloudinary\Api\Response $result */
-		$result = $api->resources(array("type" => "upload", 'max_results'=>100, 'prefix'=>$this->config->cloudinary['global_folder']));
+		$result = $api->resources(array("type" => "upload", 'max_results'=>500, 'prefix'=>$this->config->cloudinary['global_folder']));
 
 		$this->cloudinaryResponse($result);
 	}
@@ -29,7 +29,7 @@ abstract class AbstractAjaxController extends ControllerBase {
 	public function cloudinaryProductsAction() {
 		$api = \Phalcon\Di::getDefault()->get('cloudinary');
 		/** @var \Cloudinary\Api\Response $result */
-		$result = $api->resources(array("type" => "upload", 'max_results'=>100, 'prefix'=>$this->config->cloudinary['products_folder']));
+		$result = $api->resources(array("type" => "upload", 'max_results'=>500, 'prefix'=>$this->config->cloudinary['products_folder']));
 
 		$this->cloudinaryResponse($result);
 	}

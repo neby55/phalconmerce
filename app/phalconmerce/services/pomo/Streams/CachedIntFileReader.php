@@ -6,7 +6,7 @@
  * @license GPL
  */
 
-namespace POMO\Streams;
+namespace Phalconmerce\Services\POMO\Streams;
 
 /**
  * Reads the contents of the file in the beginning.

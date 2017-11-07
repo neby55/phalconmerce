@@ -40,4 +40,12 @@ abstract class AbstractLang extends AbstractModel {
 	 * @var int
 	 */
 	public $status;
+
+	public function getPoFilename() {
+		return APP_PATH.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'locale'.DIRECTORY_SEPARATOR.$this->code.'.po';
+	}
+
+	public function getMoFilename() {
+		return APP_PATH.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'locale'.DIRECTORY_SEPARATOR.$this->code.'.mo';
+	}
 }

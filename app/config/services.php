@@ -6,6 +6,7 @@
  */
 
 use Phalcon\Di\FactoryDefault;
+use Phalcon\Http\Response\Cookies;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\Url as UrlResolver;
 use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
@@ -162,6 +163,15 @@ $di->set('flashSession', function () {
 		'notice' => 'alert alert-info',
 		'warning' => 'alert alert-warning'
 	));
+});
+
+/**
+ * Start the cookie service
+ */
+$di->set("cookies", function () {
+	$cookies = new Cookies();
+	$cookies->useEncryption(false);
+	return $cookies;
 });
 
 /**

@@ -30,6 +30,7 @@ return new \Phalcon\Config(array(
 	'frontDir' => '',
 	'frontTitle' => 'Phalconmerce.com',
 	'frontTheme' => 'v1',
+	'loadTranslationIndexex' => false, // Store in DB every asked text from the website (useful but it will slow down the website, so be careful)
 	'apiEnabled' => true,
 	'apiDir' => 'api',
 	'apiCorsAllowOrigin' => array('localhost'), // set an array of allowed domains, or just the string *

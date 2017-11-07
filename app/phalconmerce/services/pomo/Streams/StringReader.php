@@ -6,7 +6,7 @@
  * @license GPL
  */
 
-namespace POMO\Streams;
+namespace Phalconmerce\Services\POMO\Streams;
 
 /**
  * Provides file-like methods for manipulating a string instead

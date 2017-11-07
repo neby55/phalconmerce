@@ -44,7 +44,7 @@ class Module implements ModuleDefinitionInterface {
 		);
 		// Adding composer
 		$loader->registerFiles([
-			APP_PATH.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.'autoload.php'
+			APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'autoload.php'
 		]);
 		$loader->register();
 	}
@@ -101,7 +101,7 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * Filter service and add a HTML filter
 		 */
-		$dependencyInjector->setShared('filter', function() {
+		$dependencyInjector->setShared('filter', function () {
 			$filter = new Filter();
 			$filter->add('html', function ($value) {
 				return $value;

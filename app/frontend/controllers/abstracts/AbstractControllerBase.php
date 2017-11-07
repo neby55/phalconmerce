@@ -29,6 +29,11 @@ class AbstractControllerBase extends Controller {
 			'notNullValidations' => false
 		));
 
+		// Handling Currency and Lang forms
+		if ($this->getDI()->get('translation')->handleLangAndCurrencyFormPost()) {
+			return $this->redirection($this->request->getURI());
+		}
+
 		$currentRoute = $this->router->getMatchedRoute();
 		if (!empty($currentRoute)) {
 			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractSeo $seoObject */
@@ -53,6 +58,16 @@ class AbstractControllerBase extends Controller {
 
 	public function setSubtitle($str) {
 		$this->view->setVar('h1', $this->di->get('frontendService')->t($str));
+	}
+
+	/**
+	 * @param string $url
+	 * @return bool
+	 */
+	public function redirection($url) {
+		$this->response->redirect($url);
+		$this->view->disable();
+		return true;
 	}
 
 	/**
@@ -103,5 +118,43 @@ class AbstractControllerBase extends Controller {
 				$this->view->pick($design->getViewPick());
 			}
 		}
+	}
+
+	/**
+	 * @param int $httpResponseCode
+	 * @param mixed $jsonData
+	 */
+	protected function sendJson($httpResponseCode, $jsonData = array()) {
+		// Using HTTP Response object
+		$response = $this->response;
+		// Change the HTTP status
+		switch ($httpResponseCode) {
+			case 200 :
+				$response->setStatusCode(200, "OK");
+				break;
+			case 201 :
+				$response->setStatusCode(201, "Created");
+				break;
+			case 204 :
+				$response->setStatusCode(204, "No Content");
+				break;
+			case 400 :
+				$response->setStatusCode(400, "Bad Request");
+				break;
+			case 404 :
+				$response->setStatusCode(404, "Not Found");
+				break;
+			case 409 :
+				$response->setStatusCode(409, "Conflict");
+				break;
+			default :
+				$response->setStatusCode(405, "Method Not Allowed");
+		}
+
+		$response->setHeader('Content-Type', 'application/json');
+		$response->setJsonContent($jsonData);
+
+		$response->send();
+		exit;
 	}
 }

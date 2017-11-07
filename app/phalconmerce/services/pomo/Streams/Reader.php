@@ -6,7 +6,7 @@
  * @license GPL
  */
 
-namespace POMO\Streams;
+namespace Phalconmerce\Services\POMO\Streams;
 
 /**
  * Classes, which help reading streams of data from files.

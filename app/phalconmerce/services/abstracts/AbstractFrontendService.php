@@ -10,6 +10,7 @@
 namespace Phalconmerce\Services\Abstracts;
 
 use Phalcon\Di;
+use Phalconmerce\Models\Design;
 use Phalconmerce\Models\Popo\Url;
 use Phalconmerce\Models\Popo\CmsBlock;
 
@@ -27,12 +28,12 @@ abstract class AbstractFrontendService extends MainService {
 	/** @var string */
 	protected $metaKeywords;
 
-	protected static $shopTitle;
-	protected static $defaultCurrency;
-	protected static $defaultLangId;
-	protected static $cookieLangName;
-	protected static $cookieCurrencyName;
-	protected static $cookiesLifetimeInDays;
+	public static $shopTitle;
+	public static $defaultCurrency;
+	public static $defaultLangId;
+	public static $cookieLangName;
+	public static $cookieCurrencyName;
+	public static $cookiesLifetimeInDays;
 
 	public function __construct() {
 		// TODO retriveve infos to complete properties
@@ -86,7 +87,8 @@ abstract class AbstractFrontendService extends MainService {
 	public function addCookie($name, $value, $duration) {
 		// Handle if $duration is expire timestamp
 		$expire = $duration > time() ? $duration : time() + $duration;
-		return setcookie($name, $value, $expire, $this->getBaseURL().'/');
+		$this->getDI()->get('cookies')->set($name, $value, $expire, $this->getBaseURL());
+		return true;
 	}
 
 	/**
@@ -237,6 +239,55 @@ abstract class AbstractFrontendService extends MainService {
 	 */
 	public function setMetaKeywords($metaKeywords) {
 		$this->metaKeywords = $metaKeywords;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public static function getShopTitle() {
+		return self::$shopTitle;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public static function getDefaultCurrency() {
+		return self::$defaultCurrency;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public static function getDefaultLangId() {
+		return self::$defaultLangId;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public static function getCookieLangName() {
+		return self::$cookieLangName;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public static function getCookieCurrencyName() {
+		return self::$cookieCurrencyName;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public static function getCookiesLifetimeInDays() {
+		return self::$cookiesLifetimeInDays;
+	}
+
+	/**
+	 * @return \Phalconmerce\Models\Design[]
+	 */
+	public function getDesignsList() {
+		return $this->designsList;
 	}
 
 }

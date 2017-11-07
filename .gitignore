@@ -19,3 +19,4 @@ app/*.log
 ## Composer dir
 app/library
 composer.lock
+app/locale/

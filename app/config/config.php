@@ -30,6 +30,7 @@ return new \Phalcon\Config(array(
 	'frontDir' => '',
 	'frontTitle' => 'Phalconmerce.com',
 	'frontTheme' => 'v1',
+	'loadTranslationIndexex' => true,
 	'apiEnabled' => true,
 	'apiDir' => 'api',
 	'apiCorsAllowOrigin' => array('localhost'), // set an array of allowed domains, or just the string *

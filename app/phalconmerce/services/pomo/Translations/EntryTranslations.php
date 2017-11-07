@@ -6,7 +6,7 @@
  * @license GPL
  */
 
-namespace POMO\Translations;
+namespace Phalconmerce\Services\POMO\Translations;
 
 /**
  * Contains EntryTranslations class

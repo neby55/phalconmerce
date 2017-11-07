@@ -139,6 +139,7 @@ abstract class AbstractBackendService extends MainService {
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Languages'), new MenuControllerIndexLink('lang')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('States'), new MenuControllerIndexLink('state')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Tax'), new MenuControllerIndexLink('tax')));
+		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Translations'), new MenuControllerIndexLink('translation')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Users'), new MenuControllerIndexLink('backend_user')));
 		$this->menuItems['settings'] = $settingsMenuItems;
 	}

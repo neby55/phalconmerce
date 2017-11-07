@@ -6,10 +6,10 @@
  * @license GPL
  */
 
-namespace POMO;
+namespace Phalconmerce\Services\POMO;
 
-use POMO\Translations\GettextTranslations;
-use POMO\Translations\EntryTranslations;
+use Phalconmerce\Services\POMO\Translations\GettextTranslations;
+use Phalconmerce\Services\POMO\Translations\EntryTranslations;
 
 ini_set('auto_detect_line_endings', 1);
 
