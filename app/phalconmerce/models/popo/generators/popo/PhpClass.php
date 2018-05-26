@@ -131,7 +131,7 @@ class ##CLASSNAME## extends ##ABSTRACT_CLASSNAME## {
 	 */
 	/*public static function exampleSelectOptions() {
 		return array(
-			0 => 'choose',
+			0 => '-',
 			1 => 'first option',
 			2 => 'second option',
 			// etc.

@@ -34,13 +34,31 @@ abstract class AbstractNewsletterSignup extends AbstractModel {
 	public $email;
 
 	/**
-	 * @Column(type="boolean", nullable=false)
+	 * @Column(type="boolean", nullable=false, default=0)
 	 * @var boolean
 	 */
 	public $isOptin;
 
 	/**
+	 * @Column(type="string", length=32, nullable=true)
+	 * @var string
+	 */
+	public $token;
+
+	/**
 	 * @Column(type="timestamp", nullable=false)
+	 * @var string
+	 */
+	public $signupDate;
+
+	/**
+	 * @Column(type="string", length=40, nullable=true)
+	 * @var string
+	 */
+	public $ipAddress;
+
+	/**
+	 * @Column(type="timestamp", nullable=true)
 	 * @var string
 	 */
 	public $stopDate;
@@ -50,5 +68,4 @@ abstract class AbstractNewsletterSignup extends AbstractModel {
 	 * @var int
 	 */
 	public $status;
-
 }

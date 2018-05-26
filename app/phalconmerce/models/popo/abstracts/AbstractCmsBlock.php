@@ -2,6 +2,7 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
+use Phalcon\Db\Column;
 use Phalconmerce\Models\AbstractModel;
 
 abstract class AbstractCmsBlock extends AbstractModel {
@@ -27,10 +28,10 @@ abstract class AbstractCmsBlock extends AbstractModel {
 	public $name;
 
 	/**
-	 * @Column(type="string", length=16, nullable=false)
+	 * @Column(type="string", length=32, nullable=false)
 	 * @var string
 	 */
-	public $code;
+	public $slug;
 
 	/**
 	 * @Column(type="text", nullable=true)
@@ -46,13 +47,25 @@ abstract class AbstractCmsBlock extends AbstractModel {
 
 	/**
 	 * @param string $slug
+	 * @param int $langId
 	 * @param bool $isActive
 	 * @return AbstractCmsBlock|bool
 	 */
-	public static function getBySlug($slug, $isActive=true) {
-		$object = self::findFirstByCode($slug);
-		if (!empty($object) && $object->status == 1) {
-			return $object;
+	public static function getBySlugAndLang($slug, $langId, $isActive=true) {
+		/** @var \Phalcon\Mvc\Model\Resultset $resultList */
+		$resultList = self::find(array(
+			'slug = :slug: AND fk_lang_id = :fk_lang_id:'.($isActive ? ' AND status = 1' : ''),
+			'bind' => array(
+				'slug' => $slug,
+				'fk_lang_id' => $langId,
+			),
+			'bindTypes' => array(
+				Column::BIND_PARAM_STR,
+				Column::BIND_PARAM_INT
+			)
+		));
+		if (!empty($resultList) && $resultList->count() > 0) {
+			return $resultList->getFirst();
 		}
 		return false;
 	}

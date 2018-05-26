@@ -13,11 +13,26 @@ return new \Phalcon\Config(array(
 	),
 	'shop' => array(
 		'title' => '',
+		'contact_recipient' => '',
 		'default_lang' => '',
 		'default_currency' => '',
+		'default_country' => 0, // In checkout, use for shipping methods
 		'cookie_lang_name' => 'lang',
 		'cookie_currency_name' => 'currency',
-		'cookies_lifetime_in_days' => 365
+		'cookies_lifetime_in_days' => 365,
+		'date_format' => 'Y-m-d'
+	),
+	'mailer' => array(
+		'sender' => 'no-reply@example.com',
+		'protocol' => 'smtp',
+		'host' => '',
+		'port' => 0,
+		'username' => '',
+		'password' => '',
+		'smtp_secure' => '',
+		'charset' => '',
+		'debugLevel' => 0,
+		'options' => array()
 	),
 	'cacheDir' => APP_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
 	'baseUri' => (isset($_SERVER['BASE_URI']) ? $_SERVER['BASE_URI'] : '').'/', // BASE_URI index generated thanks to public/.htaccess
@@ -30,7 +45,7 @@ return new \Phalcon\Config(array(
 	'frontDir' => '',
 	'frontTitle' => 'Phalconmerce.com',
 	'frontTheme' => 'v1',
-	'loadTranslationIndexex' => false, // Store in DB every asked text from the website (useful but it will slow down the website, so be careful)
+	'loadTranslationIndexes' => false, // Store in DB every asked text from the website (useful but it will slow down the website, so be careful)
 	'apiEnabled' => true,
 	'apiDir' => 'api',
 	'apiCorsAllowOrigin' => array('localhost'), // set an array of allowed domains, or just the string *

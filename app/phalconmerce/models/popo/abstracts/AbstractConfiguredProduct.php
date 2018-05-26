@@ -26,7 +26,7 @@ abstract class AbstractConfiguredProduct extends AbstractFinalProduct {
 	 * @return mixed
 	 */
 	public static function getConfigurableClassName() {
-		return str_replace('Configured', 'Configurable', __CLASS__);
+		return str_replace('Configured', 'Configurable', static::class);
 	}
 
 	public function loadConfigurableProduct() {

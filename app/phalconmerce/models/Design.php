@@ -133,8 +133,16 @@ class Design {
 			if ($data != null && isset($data['name'])) {
 				$params = array();
 				if (isset($data['params']) && is_array($data['params'])) {
-					foreach ($data['params'] as $currentParamName=>$currentParamType) {
-						$currentDesignParam = new DesignParam($currentParamName, DesignParam::getTypeByName($currentParamType));
+					foreach ($data['params'] as $currentParamName=>$currentParamInfos) {
+						if (is_array($currentParamInfos)) {
+							$currentParamType = $currentParamInfos['type'];
+							$currentParamLabel = $currentParamInfos['label'];
+						}
+						else {
+							$currentParamType = $currentParamInfos;
+							$currentParamLabel = '';
+						}
+						$currentDesignParam = new DesignParam($currentParamName, $currentParamLabel, DesignParam::getTypeByName($currentParamType));
 						if ($currentDesignParam->isValid()) {
 							$params[$currentDesignParam->getName()] = $currentDesignParam;
 						}

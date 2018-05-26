@@ -22,6 +22,12 @@ abstract class AbstractMenuGroup extends AbstractModel {
 	public $name;
 
 	/**
+	 * @Column(type="string", length=32, nullable=false)
+	 * @var string
+	 */
+	public $slug;
+
+	/**
 	 * @Column(type="integer", length=4, nullable=true, default=99)
 	 * @var int
 	 */

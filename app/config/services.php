@@ -11,7 +11,6 @@ use Phalcon\Mvc\View;
 use Phalcon\Mvc\Url as UrlResolver;
 use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
-use Phalcon\Session\Adapter\Files as SessionAdapter;
 use Phalcon\Flash\Direct as Flash;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Router\Group as RouterGroup;
@@ -146,6 +145,28 @@ $di->setShared('modelsMetadata', function () {
 });
 
 /**
+ * Set the models cache service
+ */
+$di->set('modelsCache',	function () use ($config) {
+	// Cache data for 5 minutes (default setting)
+	$frontCache = new \Phalcon\Cache\Frontend\Data(
+		array(
+			'lifetime' => 60 * 5,
+		)
+	);
+
+	// File cache
+	$cache = new \Phalcon\Cache\Backend\File(
+		$frontCache,
+		array(
+			'cacheDir' => $config->cacheDir.'models'.DIRECTORY_SEPARATOR,
+		)
+	);
+
+	return $cache;
+});
+
+/**
  * Register the direct flash and session flash services with the Twitter Bootstrap classes
  */
 $di->set('flash', function () {
@@ -172,14 +193,4 @@ $di->set("cookies", function () {
 	$cookies = new Cookies();
 	$cookies->useEncryption(false);
 	return $cookies;
-});
-
-/**
- * Start the session the first time some component request the session service
- */
-$di->setShared('session', function () {
-	$session = new SessionAdapter();
-	$session->start();
-
-	return $session;
 });

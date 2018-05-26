@@ -10,7 +10,7 @@ define('APP_PATH', dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'app');
 
 // TODO maybe improve CLI with docopt
 
-class Console extends \Phalcon\CLI\Console {
+class Console extends \Phalcon\Cli\Console {
 	public static $shortOpts = '';
 
 	public static $longOpts = array(
@@ -89,12 +89,6 @@ class Console extends \Phalcon\CLI\Console {
 			$url->setBaseUri("/");
 			return $url;
 		});
-
-		// registering router (mandatory for namespaces and modules)
-		/*$di->set("router", function () {
-			$router = new Router(true);
-			return $router;
-		});*/
 
 		// Ading phalconmerce namespaces
 		$loader = new \Phalcon\Loader();

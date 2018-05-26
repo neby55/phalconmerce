@@ -19,6 +19,12 @@ abstract class AbstractAddress extends AbstractModel {
 	 * @Column(type="string", length=32, nullable=true)
 	 * @var string
 	 */
+	public $label;
+
+	/**
+	 * @Column(type="string", length=32, nullable=true)
+	 * @var string
+	 */
 	public $lastName;
 
 	/**
@@ -82,7 +88,7 @@ abstract class AbstractAddress extends AbstractModel {
 	public $fk_customer_id;
 
 	/**
-	 * @Column(type="integer", nullable=false)
+	 * @Column(type="integer", nullable=true)
 	 * @var int
 	 */
 	public $fk_state_id;

@@ -2,6 +2,7 @@
 
 namespace Frontend\Controllers\Abstracts;
 
+use Phalcon\Mvc\View;
 use Phalconmerce\Models\Utils;
 use Frontend\Controllers\ControllerBase;
 
@@ -25,5 +26,12 @@ abstract class AbstractErrorsController extends ControllerBase {
 		$this->getDI()->get('frontendService')->setMetaTitle('500');
 	}
 
+	public function maintenanceAction() {
+		$this->view->setRenderLevel(
+			View::LEVEL_ACTION_VIEW
+		);
+		$this->tag->setTitle('Maintenance');
+		$this->getDI()->get('frontendService')->setMetaTitle('Maintenance');
+	}
 }
 

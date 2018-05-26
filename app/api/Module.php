@@ -27,8 +27,6 @@ class Module implements ModuleDefinitionInterface {
 		$loader = new Loader();
 		$loader->registerNamespaces(
 			[
-				// TODO delete namespaces if useless
-				'Api\Models' => __DIR__ . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR,
 				'Api\Controllers' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
 				'Api\Controllers\Abstracts' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
 				'Backend\Forms' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'backend' . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR,

@@ -12,6 +12,7 @@ use Phalconmerce\Models\DesignParam;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Popo\Image;
 use Phalconmerce\Models\Popo\Lang;
+use Phalconmerce\Models\Popo\PaymentMethod;
 use Phalconmerce\Models\Popo\Url;
 use Phalconmerce\Models\Utils;
 
@@ -448,18 +449,51 @@ abstract class AbstractControllerBase extends Controller {
 	 * @return bool
 	 */
 	public function updateUrlCache() {
-		$allUrl = Url::find('status = 1');
+		// Entities inserted in URL but with no real content
+		$excludedEntites = array('seo');
 
+		// --- Url Routes ---
 		$data = array();
+		$allUrl = Url::find('status = 1');
 
 		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractUrl $currentUrlObject */
 		foreach ($allUrl as $currentUrlObject) {
-			if (!empty($currentUrlObject->entity)) {
+			if (!empty($currentUrlObject->entity) && !in_array($currentUrlObject->entity, $excludedEntites)) {
 				$data[$currentUrlObject->permalink] = $currentUrlObject;
 			}
 		}
 
-		return Utils::saveData($data, 'routes');
+		$routesOk = Utils::saveData($data, 'routes');
+
+		// --- PaymentSystems' Routes ---
+		$data = array();
+		$paymentMethodLists = PaymentMethod::find('status = 1');
+
+		// If there is paymentMethods
+		if (!empty($paymentMethodLists) && $paymentMethodLists->count() > 0) {
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractPaymentMethod $currentPaymentMethod */
+			foreach ($paymentMethodLists as $currentPaymentMethod) {
+				$fqcn = $currentPaymentMethod->getPaymentSystemFQCN();
+				// Instanciate the PaymentSystem dynamically
+				/** @var \Phalconmerce\Models\Checkout\Abstracts\AbstractPaymentSystem $currentPaymentSystem */
+				$currentPaymentSystem = new $fqcn($currentPaymentMethod);
+				$currentCheckoutRoutes = $currentPaymentSystem->getRoutes();
+				if (!empty($currentCheckoutRoutes)) {
+					$data = array_merge($data, $currentCheckoutRoutes);
+				}
+			}
+		}
+		$paymentRoutesOk = Utils::saveData($data, 'paymentRoutes');
+
+		// --- Checkout's Routes ---
+		$data = \Phalconmerce\Services\CheckoutService::getRoutes();
+		$checkoutRoutesOk = Utils::saveData($data, 'checkoutRoutes');
+
+		// --- MyAccount's Routes ---
+		$data = \Phalconmerce\Services\MyAccountService::getRoutes();
+		$myAccountRoutesOk = Utils::saveData($data, 'myAccountRoutes');
+
+		return $routesOk && $paymentRoutesOk && $checkoutRoutesOk && $myAccountRoutesOk;
 	}
 
 	/**

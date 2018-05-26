@@ -9,6 +9,7 @@
 
 namespace Phalconmerce\Services\Abstracts;
 
+use Phalconmerce\Models\Popo\Category;
 use Phalconmerce\Models\Design;
 
 abstract class MainService implements \Phalcon\Di\InjectionAwareInterface {
@@ -48,7 +49,7 @@ abstract class MainService implements \Phalcon\Di\InjectionAwareInterface {
 	public function getDesignsSelectOptions() {
 		$this->loadDesignsIfNeeded();
 
-		$options = array('' => $this->getDi()->get('backendService')->t('choose'));
+		$options = array('' => '-');
 
 		if (is_array($this->designsList) && sizeof($this->designsList)) {
 			foreach ($this->designsList as $currentDesign) {
@@ -70,4 +71,30 @@ abstract class MainService implements \Phalcon\Di\InjectionAwareInterface {
 		}
 	}
 
+	/**
+	 * @param int $parentCategoryId
+	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractCategory[]
+	 */
+	public function getCategoriesTree($parentCategoryId=0) {
+		$results = Category::find(array(
+			'fk_category_id = '.intval($parentCategoryId),
+			'order' => 'position'
+		));
+		$resultsArray = array();
+
+		if (!empty($results) && $results->count() > 0) {
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCategory $currentCategory */
+			foreach ($results as $currentCategory) {
+				// Get subcategories if exists
+				$subCategories = $this->getCategoriesTree($currentCategory->id);
+				if (!empty($subCategories) && is_array($subCategories)) {
+					$currentCategory->setSubCategoriesList($subCategories);
+				}
+				// Add current category to the array
+				$resultsArray[$currentCategory->id] = $currentCategory;
+			}
+		}
+
+		return $resultsArray;
+	}
 }

@@ -20,6 +20,7 @@ use Phalcon\Forms\Element\Hidden;
 use Phalcon\Validation\Message;
 use Phalcon\Validation\Message\Group;
 use Phalcon\Validation\Validator\PresenceOf;
+use Phalconmerce\Forms\Element\DateTime;
 use Phalconmerce\Models\FkSelect;
 use Phalconmerce\Models\Utils;
 
@@ -111,11 +112,34 @@ class FormBase extends Form {
 								else {
 									$item = new Text($currentPropertyName);
 									$item->setAttribute('class', 'form-control');
-									$item->setFilters(array('string'));
+									$item->setFilters(array('string', 'trim'));
 									$item->setAttribute('maxlength', $length);
 									$item->setMessages(new Group([new Message('Foreign Key select can\'t be generated. Please configure the static method "fkSelect" for this class')]));
 								}
 							}
+							// If this property means foreign key but Slug FK
+							else if (preg_match('/^fk_([a-zA-Z][a-zA-Z0-9_]*)_slug$/', $currentPropertyName, $matches)) {
+									$currentForeignClassName = Utils::getClassNameFromTableName($matches[1]);
+									$filterType = $type == 'string' ? 'string' : 'int';
+									$fkFcqn = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::POPO_NAMESPACE . '\\' . $currentForeignClassName;
+									$fkSelect = FkSelect::getFromClasseName($fkFcqn);
+
+									if ($fkSelect !== false) {
+										$item = new Select(
+											$currentPropertyName,
+											$fkSelect->getValues()
+										);
+										$item->setAttribute('class', 'form-control');
+										$item->setFilters(array($filterType));
+									}
+									else {
+										$item = new Text($currentPropertyName);
+										$item->setAttribute('class', 'form-control');
+										$item->setFilters(array('string', 'trim'));
+										$item->setAttribute('maxlength', $length);
+										$item->setMessages(new Group([new Message('Foreign Key select can\'t be generated. Please configure the static method "fkSelect" for this class')]));
+									}
+								}
 							// If its design slug
 							else if ($currentPropertyName == 'designSlug') {
 								$item = new Select(
@@ -123,7 +147,7 @@ class FormBase extends Form {
 									$this->di->get('backendService')->getDesignsSelectOptions()
 								);
 								$item->setAttribute('class', 'form-control');
-								$item->setFilters(array('string'));
+								$item->setFilters(array('string', 'trim'));
 							}
 							// If its design data
 							else if ($currentPropertyName == 'designData') {
@@ -139,6 +163,13 @@ class FormBase extends Form {
 									$item->setAttribute('class', 'form-control');
 									$item->setFilters(array('html'));
 								}
+								// If HTML
+								else if ($type == 'html') {
+									$item = new Text($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('html'));
+									$item->setAttribute('maxlength', $length);
+								}
 								// If short string
 								else if ($type == 'string') {
 									if ($currentReflectionClass->hasMethod($currentPropertyName . 'SelectOptions')) {
@@ -147,12 +178,12 @@ class FormBase extends Form {
 											call_user_func(array($fqcn, $currentPropertyName . 'SelectOptions'))
 										);
 										$item->setAttribute('class', 'form-control');
-										$item->setFilters(array('string'));
+										$item->setFilters(array('string', 'trim'));
 									}
 									else {
 										$item = new Text($currentPropertyName);
 										$item->setAttribute('class', 'form-control');
-										$item->setFilters(array('string'));
+										$item->setFilters(array('string', 'trim'));
 										$item->setAttribute('maxlength', $length);
 									}
 								}
@@ -208,9 +239,9 @@ class FormBase extends Form {
 								}
 								// If timestamp
 								else if ($type == 'timestamp') {
-									$item = new Date($currentPropertyName);
+									$item = new DateTime($currentPropertyName);
 									$item->setAttribute('class', 'form-control');
-									$item->setAttribute('type', 'date');
+									$item->setAttribute('type', 'datetime');
 									$item->setAttribute('maxlength', 19);
 								}
 								// If date
@@ -222,13 +253,20 @@ class FormBase extends Form {
 								}
 								// If datetime
 								else if ($type == 'datetime') {
-									$item = new Date($currentPropertyName);
+									$item = new DateTime($currentPropertyName);
 									$item->setAttribute('class', 'form-control');
-									$item->setAttribute('type', 'date');
+									$item->setAttribute('type', 'datetime');
 									$item->setAttribute('maxlength', 19);
 								}
+								// If gps
+								else if ($type == 'gps') {
+									$item = new Text($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('float'));
+									$item->setAttribute('maxlength', \Phalconmerce\Models\Popo\Generators\Db\Table::GPS_SIZE + \Phalconmerce\Models\Popo\Generators\Db\Table::GPS_SCALE + 1);
+								}
 								else {
-									die ($type . '(' . $length . ')');
+									throw new \Exception('FormBase class => unknown type : '.$type . '(' . $length . ')');
 								}
 							}
 

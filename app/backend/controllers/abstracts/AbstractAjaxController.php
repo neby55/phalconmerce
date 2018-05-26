@@ -56,14 +56,21 @@ abstract class AbstractAjaxController extends ControllerBase {
 
 	public function categoryJsTreeAction() {
 		$selectedIds = $this->request->getPost("selectedIds", "trim", array());
-		$options = $this->request->getPost("options", "trim", array());
+		$options = isset($_POST['option']) ? $_POST['option'] : array();
 
-		$results = Category::find(array('fk_category_id = 0'));
+		$results = Category::find(array(
+			'fk_category_id = 0',
+			'order' => 'position'
+		));
 		$jsonData = array();
 
 		if (!empty($results) && $results->count() > 0) {
 			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCategory $currentCategory */
 			foreach ($results as $currentCategory) {
+				// Add data-id attr to each <a>
+				$options['a_attr']['data-id'] = $currentCategory->id;
+				$options['a_attr']['data-type'] = $currentCategory->type;
+
 				$jsonData[] = array(
 					'id' => $currentCategory->id,
 					'text' => $currentCategory->name,
@@ -89,6 +96,10 @@ abstract class AbstractAjaxController extends ControllerBase {
 		if (!empty($results) && $results->count() > 0) {
 			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCategory $currentCategory */
 			foreach ($results as $currentCategory) {
+				// Add data-id attr to each <a>
+				$options['a_attr']['data-id'] = $currentCategory->id;
+				$options['a_attr']['data-type'] = $currentCategory->type;
+
 				$jsonData[] = array(
 					'id' => $currentCategory->id,
 					'text' => $currentCategory->name,

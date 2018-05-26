@@ -35,10 +35,6 @@ class Module implements ModuleDefinitionInterface {
 				'Backend\Controllers' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
 				'Backend\Controllers\Abstracts' => __DIR__ . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
 				'Backend\Forms' => __DIR__ . DIRECTORY_SEPARATOR . 'forms' . DIRECTORY_SEPARATOR,
-				'Phalconmerce\Services' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
-				'Phalconmerce\Services\Abstracts' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
-				'Phalconmerce\Plugins' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR,
-				'Phalconmerce\Plugins\Abstracts' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'phalconmerce' . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'abstracts' . DIRECTORY_SEPARATOR,
 			],
 			true
 		);
@@ -88,6 +84,19 @@ class Module implements ModuleDefinitionInterface {
 			$dispatcher->setEventsManager($eventsManager);
 
 			return $dispatcher;
+		});
+
+		/**
+		 * Sessions for backend
+		 */
+		$dependencyInjector->set("session", function () {
+			$session = new \Phalcon\Session\Adapter\Files(
+				array(
+					"uniqueId" => "backend",
+				)
+			);
+			$session->start();
+			return $session;
 		});
 
 		/**

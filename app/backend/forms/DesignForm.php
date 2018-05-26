@@ -66,6 +66,11 @@ class DesignForm extends FormBase {
 					$item->setFilters(array($currentDesignParam->getFilter()));
 					$item->setAttribute('maxlength', 255);
 				}
+				else if ($currentDesignParam->getType() == DesignParam::TYPE_TEXT) {
+					$item = new TextArea($currentDesignParam->getName());
+					$item->setAttribute('class', 'form-control');
+					$item->setFilters(array($currentDesignParam->getFilter()));
+				}
 				else if ($currentDesignParam->getType() == DesignParam::TYPE_HTML) {
 					/*$item = new Summernote($currentDesignParam->getName());
 					$item->setFilters(array('string'));*/
@@ -98,13 +103,13 @@ class DesignForm extends FormBase {
 				// Add to form
 				if (isset($item)) {
 					$item->setDefault(isset($entity->designData[$currentDesignParam->getName()]) ? $entity->designData[$currentDesignParam->getName()] : '');
-					$item->setLabel($currentDesignParam->getName());
+					$item->setLabel($currentDesignParam->getLabel());
 					$this->addElement($currentDesignParam->getName(), $item);
 				}
 				// URL item if needed
 				if (isset($urlItem)) {
 					$urlItem->setDefault(isset($entity->designData[$currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX]) ? $entity->designData[$currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX] : '');
-					$urlItem->setLabel($currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX);
+					$urlItem->setLabel($currentDesignParam->getLabel().DesignParam::URL_EXTERNAL_SUFFIX);
 					$this->addElement($currentDesignParam->getName().DesignParam::URL_EXTERNAL_SUFFIX, $urlItem);
 					unset($urlItem);
 				}

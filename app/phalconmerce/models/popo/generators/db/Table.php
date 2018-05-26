@@ -36,6 +36,8 @@ class Table {
 
 	const DECIMAL_SIZE = 16;
 	const DECIMAL_SCALE = 2;
+	const GPS_SIZE = 10;
+	const GPS_SCALE = 6;
 	const TABLES_TYPE = 'BASE TABLE';
 	const TABLES_ENGINE = 'InnoDB';
 	const TABLES_CHARSET = 'utf8_general_ci';
@@ -119,6 +121,12 @@ class Table {
 					}
 					$columnOptions['type'] = self::getColmunTypeByAnnotationType($columnCollection->getArgument('type'), $length);
 
+					// GPS exception
+					if (strtolower($columnCollection->getArgument('type')) == 'gps') {
+						$columnOptions['size'] = self::GPS_SIZE;
+						$columnOptions['scale'] = self::GPS_SCALE;
+					}
+
 					// Unsigned
 					if ($columnOptions['type'] == Column::TYPE_INTEGER) {
 						if ($columnCollection->hasArgument('unsigned') && $columnCollection->getArgument('unsigned') === false) {
@@ -167,10 +175,7 @@ class Table {
 					}
 					// Timestamp default value exception to avoid CURRENT_TIMESTAMP limitation to only one column
 					else if ($columnOptions['type'] == Column::TYPE_TIMESTAMP) {
-						// If not null
-						if ($columnOptions['notNull']) {
-							$columnOptions['default'] = '0000-00-00 00:00:00';
-						}
+						$columnOptions['default'] = '0000-00-00 00:00:00';
 					}
 					// unique
 					if ($columnCollection->hasArgument('unique') && $columnCollection->getArgument('unique') == 'true') {
@@ -178,6 +183,13 @@ class Table {
 							$columnName.'Unique',
 							[$columnName],
 							'UNIQUE'
+						));
+					}
+					// index
+					if ($collection->has('Index')) {
+						$this->addIndex(new Index(
+							$columnName.'Index',
+							[$columnName]
 						));
 					}
 					// index for status/active fields
@@ -244,7 +256,7 @@ class Table {
 		else if ($type == 'float') {
 			return Column::TYPE_DECIMAL;
 		}
-		else if ($type == 'string') {
+		else if ($type == 'string' || $type == 'html') {
 			if ($length > 255) {
 				return Column::TYPE_TEXT;
 			}
@@ -266,6 +278,9 @@ class Table {
 		}
 		else if ($type == 'text') {
 			return Column::TYPE_TEXT;
+		}
+		else if ($type == 'gps') {
+			return Column::TYPE_FLOAT;
 		}
 		return 0;
 	}

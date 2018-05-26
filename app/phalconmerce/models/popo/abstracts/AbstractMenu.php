@@ -46,6 +46,12 @@ abstract class AbstractMenu extends AbstractModel {
 	public $name;
 
 	/**
+	 * @Column(type="html", length=128, nullable=true)
+	 * @var string
+	 */
+	public $html;
+
+	/**
 	 * @Column(type="string", length=255, nullable=true)
 	 * @var string
 	 */
@@ -75,6 +81,20 @@ abstract class AbstractMenu extends AbstractModel {
 	 */
 	public function getParentId() {
 		return $this->fk_menu_id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFullUrl() {
+		$urlObject = $this->getUrl();
+		if (!empty($urlObject)) {
+			return $urlObject->getFullUrl();
+		}
+		else if (!empty($this->externalUrl)) {
+			return $this->externalUrl;
+		}
+		return '#';
 	}
 
 }

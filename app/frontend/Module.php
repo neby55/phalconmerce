@@ -11,11 +11,17 @@ namespace Frontend;
 
 use Phalcon\Di;
 use Phalcon\Mvc\Dispatcher;
+use Phalcon\Events\Event;
+use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Loader;
 use Phalcon\Mvc\ModuleDefinitionInterface;
 use Phalcon\DiInterface;
 use Phalcon\Mvc\View;
+use Phalcon\Text;
+use Phalconmerce\Services\CheckoutService;
+use Phalconmerce\Services\EmailService;
 use Phalconmerce\Services\FrontendService;
+use Phalconmerce\Services\MyAccountService;
 use Phalconmerce\Services\TranslationService;
 
 class Module implements ModuleDefinitionInterface {
@@ -59,9 +65,37 @@ class Module implements ModuleDefinitionInterface {
 		 * Dispatcher
 		 */
 		$dependencyInjector->set('dispatcher', function () {
+			// Create an EventsManager
+			$eventsManager = new EventsManager();
+
+			// Camelize actions
+			$eventsManager->attach(
+				"dispatch:beforeDispatchLoop",
+				function (Event $event, $dispatcher) {
+					$dispatcher->setActionName(
+						Text::camelize($dispatcher->getActionName())
+					);
+				}
+			);
+
 			$dispatcher = new Dispatcher();
+			$dispatcher->setEventsManager($eventsManager);
 			$dispatcher->setDefaultNamespace("\\Frontend\\Controllers\\");
 			return $dispatcher;
+		});
+
+		/**
+		 * Sessions for frontend
+		 */
+		$dependencyInjector->set("session", function () {
+			// All variables created will prefixed with "my-app-1"
+			$session = new \Phalcon\Session\Adapter\Files(
+				array(
+					"uniqueId" => "frontend",
+				)
+			);
+			$session->start();
+			return $session;
 		});
 
 		/**
@@ -73,10 +107,34 @@ class Module implements ModuleDefinitionInterface {
 		});
 
 		/**
+		 * Phalconmerce EmailService
+		 */
+		$dependencyInjector->setShared('email', function () {
+			$service = new EmailService();
+			return $service;
+		});
+
+		/**
 		 * Phalconmerce FrontendService
 		 */
 		$dependencyInjector->setShared('frontendService', function () {
 			$service = new FrontendService();
+			return $service;
+		});
+
+		/**
+		 * Phalconmerce CheckoutService
+		 */
+		$dependencyInjector->setShared('checkout', function () {
+			$service = new CheckoutService();
+			return $service;
+		});
+
+		/**
+		 * Phalconmerce MyAccountService
+		 */
+		$dependencyInjector->setShared('myAccount', function () {
+			$service = new MyAccountService();
 			return $service;
 		});
 

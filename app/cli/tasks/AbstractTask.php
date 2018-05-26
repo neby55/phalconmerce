@@ -23,6 +23,9 @@ class AbstractTask extends Task {
 			'frontend'.DIRECTORY_SEPARATOR.'controllers' => 'Frontend\Controllers',
 			'phalconmerce'.DIRECTORY_SEPARATOR.'plugins' => 'Phalconmerce\Plugins',
 			'phalconmerce'.DIRECTORY_SEPARATOR.'services' => 'Phalconmerce\Services',
+			'phalconmerce'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'exceptions' => 'Phalconmerce\Models\Exceptions',
+			'phalconmerce'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'checkout' => 'Phalconmerce\Models\Checkout',
+			'phalconmerce'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'generic' => 'Phalconmerce\Models\Generic',
 		);
 	}
 
@@ -37,10 +40,6 @@ class AbstractTask extends Task {
 			$deletion = $response == 'yes' || $response == 'y';
 		}
 
-		//print_r($options);
-		//print_r($params);
-		//exit;
-
 		// initialize specific class to generate
 		$classNameSpecificList = array();
 
@@ -53,29 +52,44 @@ class AbstractTask extends Task {
 		}
 
 		$directories = self::getAbstractsDirectories();
+		$strTodisplay = '';
 
 		if (sizeof($directories) > 0) {
-			foreach ($directories as $currentDirectory=>$currentNamespace) {
-				$absoluteTargetDirectory = APP_PATH.DIRECTORY_SEPARATOR.$currentDirectory;
-				$absoluteCurrentDirectory = $absoluteTargetDirectory.DIRECTORY_SEPARATOR.'abstracts';
-				if (file_exists($absoluteCurrentDirectory) && is_dir($absoluteCurrentDirectory)) {
-					if ($dh = opendir($absoluteCurrentDirectory)) {
-						while (($file = readdir($dh)) !== false) {
-							if ($file != '.' && $file != '..' && substr($file, 0, 8) == 'Abstract') {
-								$abstractClassName = substr($file, 0, -4);
-								$childClassName = substr($abstractClassName, 8);
+			try {
+				foreach ($directories as $currentDirectory => $currentNamespace) {
+					$absoluteTargetDirectory = APP_PATH . DIRECTORY_SEPARATOR . $currentDirectory;
+					$absoluteCurrentDirectory = $absoluteTargetDirectory . DIRECTORY_SEPARATOR . 'abstracts';
+					if (file_exists($absoluteCurrentDirectory) && is_dir($absoluteCurrentDirectory)) {
+						if ($dh = opendir($absoluteCurrentDirectory)) {
+							while (($file = readdir($dh)) !== false) {
+								if ($file != '.' && $file != '..' && substr($file, 0, 8) == 'Abstract') {
+									$abstractClassName = substr($file, 0, -4);
+									$childClassName = substr($abstractClassName, 8);
 
-								// If no classname asked or current classname is one of asked
-								if (empty($classNameSpecificList) || in_array($childClassName, $classNameSpecificList)) {
-									file_put_contents($absoluteTargetDirectory . DIRECTORY_SEPARATOR . $childClassName . '.php', $this->getPhpContent($currentNamespace, $abstractClassName, $childClassName));
-									echo 'Child class file ' . $currentDirectory . DIRECTORY_SEPARATOR . $childClassName . '.php generated' . PHP_EOL;
+									// If no classname asked or current classname is one of asked
+									if (empty($classNameSpecificList) || in_array($childClassName, $classNameSpecificList)) {
+										$classFilename = $absoluteTargetDirectory . DIRECTORY_SEPARATOR . $childClassName . '.php';
+										// if can't deleted existing class
+										if (file_exists($classFilename) && !$deletion) {
+											$strTodisplay .= 'Can\'t delete existing child class file ' . $currentDirectory . DIRECTORY_SEPARATOR . $childClassName . '.php' . PHP_EOL;
+										}
+										else {
+											file_put_contents($classFilename, $this->getPhpContent($currentNamespace, $abstractClassName, $childClassName));
+											$strTodisplay .= 'Child class file ' . $currentDirectory . DIRECTORY_SEPARATOR . $childClassName . '.php generated' . PHP_EOL;
+										}
+										flush();
+									}
 								}
 							}
+							closedir($dh);
 						}
-						closedir($dh);
 					}
 				}
 			}
+			catch(\Exception $e) {
+				die($e->getMessage());
+			}
+			echo $strTodisplay;
 		}
 		else {
 			$this->displayHelp();

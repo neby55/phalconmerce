@@ -11,6 +11,9 @@
     "vendor-dir": "app/library"
   },
   "require": {
-    "cloudinary/cloudinary_php": "dev-master"
+    "cloudinary/cloudinary_php": "dev-master",
+    "phpmailer/phpmailer": "^6.0",
+    "gettext/gettext": "^4.4",
+    "samdark/sitemap": "^2.2"
   }
 }

@@ -89,9 +89,10 @@ abstract class AbstractUrl extends AbstractModel {
 	 * @param string $entity
 	 * @param int $entityId
 	 * @param int $langId
-	 * @return string
+	 * @return AbstractUrl|bool
 	 */
-	public static function getEntityPermalink($entity, $entityId, $langId) {
+	public static function getByEntity($entity, $entityId, $langId) {
+		/** @var AbstractUrl $object */
 		$object = self::findFirst(array(
 			'entity = :entity: AND entityId = :entity_id: AND fk_lang_id = :fk_lang_id:',
 			'bind' => array(
@@ -101,7 +102,22 @@ abstract class AbstractUrl extends AbstractModel {
 			)
 		));
 		if (!empty($object)) {
-			return Di::getDefault()->get('url')->getBaseUri().$object->permalink;
+			return $object;
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $entity
+	 * @param int $entityId
+	 * @param int $langId
+	 * @return string
+	 */
+	public static function getEntityPermalink($entity, $entityId, $langId) {
+		/** @var AbstractUrl $object */
+		$object = self::getByEntity($entity, $entityId, $langId);
+		if (!empty($object)) {
+			return $object->getFullUrl();
 		}
 		return false;
 	}
@@ -121,6 +137,29 @@ abstract class AbstractUrl extends AbstractModel {
 		));
 		if (!empty($object)) {
 			return $object;
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $entity
+	 * @param int $entityId
+	 * @return bool
+	 */
+	public static function deleteEntity($entity, $entityId) {
+		$results = self::find(array(
+			'entity = :entity: AND entityId = :entity_id:',
+			'bind' => array(
+				'entity' => $entity,
+				'entity_id' => $entityId
+			)
+		));
+		if (!empty($results) && $results->count() > 0) {
+			/** @var AbstractUrl $currentUrlObject */
+			foreach ($results as $currentUrlObject) {
+				$currentUrlObject->delete();
+			}
+			return true;
 		}
 		return false;
 	}

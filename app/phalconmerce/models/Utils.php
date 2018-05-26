@@ -10,6 +10,9 @@ class Utils {
 
 	const DB_ADAPTER_SQLITE = 'Sqlite';
 
+	const CACHE_KEY_PREFIX = 'cache-';
+	const DATA_KEY_PREFIX = 'data-';
+
 	/**
 	 * Converts the underscore_notation to the UpperCamelCase
 	 *
@@ -122,40 +125,93 @@ class Utils {
 	}
 
 	/**
-	 * @param mixed $data
-	 * @param string $filename
-	 * @return bool
+	 * @param int $lifetime
+	 * @return \Phalcon\Cache\Backend\File
 	 */
-	public static function saveData($data, $filename) {
-		$fp = fopen(self::getDataFullFilename($filename), 'w');
-		if ($fp) {
-			fputs($fp, serialize($data));
-			fclose($fp);
+	public static function getCacheObject($lifetime) {
+		// Cache the files for 2 days using a Data frontend
+		$frontCache = new \Phalcon\Cache\Frontend\Data(
+			[
+				"lifetime" => $lifetime,
+			]
+		);
 
-			return true;
-		}
-		return false;
+		return new \Phalcon\Cache\Backend\File(
+			$frontCache,
+			[
+				"cacheDir" => Di::getDefault()->getShared('configPhalconmerce')->cacheDir.DIRECTORY_SEPARATOR,
+			]
+		);
 	}
 
 	/**
-	 * @param string $filename
+	 * @param mixed $data
+	 * @param string $cacheKey
+	 * @param int $lifetime
 	 * @return bool
 	 */
-	public static function loadData($filename) {
-		if (file_exists(self::getDataFullFilename($filename))) {
-			$content = file_get_contents(self::getDataFullFilename($filename));
-			if (!empty($content)) {
-				return unserialize($content);
-			}
-		}
-		return false;
+	public static function saveCacheData($data, $cacheKey, $lifetime=60*5) {
+		return self::saveVar($data, self::CACHE_KEY_PREFIX.$cacheKey, $lifetime);
+	}
+
+	/**
+	 * @param mixed $data
+	 * @param string $cacheKey
+	 * @param int $lifetime
+	 * @return bool
+	 */
+	public static function saveData($data, $cacheKey, $lifetime=86400*365) {
+		return self::saveVar($data, self::DATA_KEY_PREFIX.$cacheKey, $lifetime);
+	}
+
+	/**
+	 * @param string $cacheKey
+	 * @param int $lifetime
+	 * @return mixed|null
+	 */
+	public static function loadCacheData($cacheKey, $lifetime=60*5) {
+		return self::loadVar(self::CACHE_KEY_PREFIX.$cacheKey, $lifetime);
+	}
+
+	/**
+	 * @param string $cacheKey
+	 * @param int $lifetime
+	 * @return mixed|null
+	 */
+	public static function loadData($cacheKey, $lifetime=86400*365) {
+		return self::loadVar(self::DATA_KEY_PREFIX.$cacheKey, $lifetime);
+	}
+
+	/**
+	 * @param string $cacheKey
+	 * @param int $lifetime
+	 * @return mixed|null
+	 */
+	protected static function loadVar($cacheKey, $lifetime) {
+		$cache = self::getCacheObject($lifetime);
+		return $cache->get($cacheKey);
 	}
 
 	/**
 	 * @param mixed $var
+	 * @param string $cacheKey
+	 * @param int $lifetime
+	 * @return bool
 	 */
-	public static function debug($var) {
+	protected static function saveVar($var, $cacheKey, $lifetime) {
+		$cache = self::getCacheObject($lifetime);
+		return $cache->save($cacheKey, $var);
+	}
+
+	/**
+	 * @param mixed $var
+	 * @param bool $forceFull
+	 */
+	public static function debug($var, $forceFull=false) {
 		if (is_a($var, '\Phalcon\Mvc\Model')) {
+			echo '<pre style="background: black;color:white;padding:8px 10px;">'.get_class($var).PHP_EOL.print_r($var->toArray(),1).'</pre>';
+		}
+		else if (is_a($var, '\Phalcon\Mvc\Model\Resultset\Simple')) {
 			echo '<pre style="background: black;color:white;padding:8px 10px;">'.get_class($var).PHP_EOL.print_r($var->toArray(),1).'</pre>';
 		}
 		else {

@@ -17,8 +17,21 @@ use Phalconmerce\Models\Utils;
 
 abstract class AbstractDefaultController extends Controller {
 
+	protected $origin;
+	protected $allowedCorsDomains;
+
 	const POPO_FQCN = '\Phalconmerce\Models\Popo\\';
 	const FORM_FQCN = '\Backend\Forms\\';
+
+	public function initialize() {
+		$this->allowedCorsDomains = Di::getDefault()->get('config')->apiCorsAllowOrigin->toArray();
+		$this->origin = $this->request->getHeader('Origin') ? $this->request->getHeader('Origin') : '*';
+
+		// if not allowed
+		if (!$this->isAllowed()) {
+			$this->send403();
+		}
+	}
 
 	/**
 	 * @param array $params
@@ -233,11 +246,12 @@ abstract class AbstractDefaultController extends Controller {
 				}
 
 				if ($object->save() == false) {
-					// TODO manage if error
 					foreach ($object->getMessages() as $message) {
-						print_r($message);
+						$errorList[] = array(
+							'field' => $message->getField(),
+							'error' => $message->getMessage()
+						);
 					}
-					exit;
 
 					$this->sendJson(400, $errorList);
 					return false;
@@ -337,12 +351,39 @@ abstract class AbstractDefaultController extends Controller {
 	}
 
 	/**
+	 * @return bool
+	 */
+	protected function isAllowed() {
+		// if multiple domain to allow
+		if (is_array($this->allowedCorsDomains) && count($this->allowedCorsDomains) > 1) {
+			foreach ($this->allowedCorsDomains as $currentAllowedDomain) {
+				if (strpos($this->origin, $currentAllowedDomain) !== false) {
+					return true;
+				}
+			}
+		}
+		// then, only one domain (or *) to allow
+		else {
+			if (is_array($this->allowedCorsDomains)) {
+				$allowedDomain = current($this->allowedCorsDomains);
+			}
+			else {
+				$allowedDomain = $this->allowedCorsDomains;
+			}
+
+			if (!empty($allowedDomain) && strpos($this->origin, $allowedDomain) !== false) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @return \Phalcon\Http\Response
 	 */
 	protected function getResponse() {
 		$response = new Response();
-		// TODO really handle cors
-		$response->setHeader('Access-Control-Allow-Origin', '*');
+		$response->setHeader('Access-Control-Allow-Origin', $this->origin);
 		return $response;
 	}
 

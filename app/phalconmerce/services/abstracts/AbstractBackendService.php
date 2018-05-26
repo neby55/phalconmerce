@@ -112,6 +112,8 @@ abstract class AbstractBackendService extends MainService {
 		$cmsMenuItems = new Menu($this->t('CMS'), 'edit', '');
 		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Blocks'), new MenuControllerIndexLink('cms_block')));
 		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Pages'), new MenuControllerIndexLink('cms_page')));
+		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Menu Groups'), new MenuControllerIndexLink('menu_group')));
+		$cmsMenuItems->addSubMenu(new SubMenu($this->t('Menus'), new MenuControllerIndexLink('menu')));
 		$this->menuItems['cms'] = $cmsMenuItems;
 
 		$productsMenuItems = new Menu($this->t('Products'), 'barcode', '');
@@ -122,7 +124,7 @@ abstract class AbstractBackendService extends MainService {
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Manufacturers'), new MenuControllerIndexLink('manufacturer')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Products'), new MenuControllerIndexLink('product')));
 		$productsMenuItems->addSubMenu(new SubMenu($this->t('Promotions'), new MenuControllerIndexLink('promotion')));
-		$productsMenuItems->addSubMenu(new SubMenu($this->t('Vounchers'), new MenuControllerIndexLink('vouncher')));
+		$productsMenuItems->addSubMenu(new SubMenu($this->t('Vouchers'), new MenuControllerIndexLink('voucher')));
 		$this->menuItems['products'] = $productsMenuItems;
 
 		$productsMenuItems = new Menu($this->t('Sells'), 'money', '');
@@ -135,10 +137,15 @@ abstract class AbstractBackendService extends MainService {
 		$settingsMenuItems = new Menu($this->t('Settings'), 'gears', '');
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Countries'), new MenuControllerIndexLink('country')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Currencies'), new MenuControllerIndexLink('currency')));
+		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Deliveries'), new MenuControllerIndexLink('delivery_delay')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Expeditors'), new MenuControllerIndexLink('expeditor')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Languages'), new MenuControllerIndexLink('lang')));
+		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Options'), new MenuControllerIndexLink('shop_option')));
+		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Payment Methods'), new MenuControllerIndexLink('payment_method')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('States'), new MenuControllerIndexLink('state')));
+		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Stores'), new MenuControllerIndexLink('store')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Tax'), new MenuControllerIndexLink('tax')));
+		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Transactional Emails'), new MenuControllerIndexLink('transactional_email')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Translations'), new MenuControllerIndexLink('translation')));
 		$settingsMenuItems->addSubMenu(new SubMenu($this->t('Users'), new MenuControllerIndexLink('backend_user')));
 		$this->menuItems['settings'] = $settingsMenuItems;

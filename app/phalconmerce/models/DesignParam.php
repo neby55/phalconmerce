@@ -12,6 +12,8 @@ namespace Phalconmerce\Models;
 class DesignParam {
 	/** @var string */
 	protected $name;
+	/** @var string */
+	protected $label;
 	/** @var int */
 	protected $type;
 
@@ -24,11 +26,13 @@ class DesignParam {
 	const TYPE_HTML = 7;
 	const TYPE_URL = 8;
 	const TYPE_IMAGE = 9;
+	const TYPE_TEXT = 10;
 
 	const URL_EXTERNAL_SUFFIX = '-urlexternal';
 
-	public function __construct($name='', $type=0) {
+	public function __construct($name='', $label='', $type=0) {
 		$this->name = $name;
+		$this->label = $label;
 		$this->type = $type;
 	}
 
@@ -58,6 +62,7 @@ class DesignParam {
 			'url' => self::TYPE_URL,
 			'img' => self::TYPE_IMAGE,
 			'image' => self::TYPE_IMAGE,
+			'text' => self::TYPE_TEXT,
 		);
 	}
 
@@ -87,6 +92,7 @@ class DesignParam {
 			case self::TYPE_FLOAT :
 				return 'float';
 			case self::TYPE_STRING :
+			case self::TYPE_TEXT :
 				return 'string';
 			case self::TYPE_HTML :
 				return 'html';
@@ -110,5 +116,12 @@ class DesignParam {
 	 */
 	public function getType() {
 		return $this->type;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabel() {
+		return !empty($this->label) ? $this->label : $this->name;
 	}
 }

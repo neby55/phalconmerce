@@ -48,7 +48,7 @@ class AbstractModel extends Model {
 		foreach ($reflection->getProperties() as $currentProperty) {
 			if ($currentProperty->isPublic() && !$currentProperty->isStatic() && $currentProperty->getName() != 'inserted') {
 				$currentPropertyName = $currentProperty->getName();
-				echo 'copy '.$currentPropertyName.'<br>';
+				//echo 'copy '.$currentPropertyName.'<br>';
 				$object->$currentPropertyName = $this->$currentPropertyName;
 			}
 		}

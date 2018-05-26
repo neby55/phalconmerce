@@ -9,28 +9,27 @@
 
 namespace Phalconmerce\Services\Abstracts;
 
+use Gettext\Translations;
+use Gettext\Translator;
 use Phalcon\Di;
 use Phalconmerce\Models\Popo\Currency;
 use Phalconmerce\Models\Popo\Lang;
 use Phalconmerce\Models\Utils;
 use Phalconmerce\Services\FrontendService;
-// TODO include POMO with composer
-use Phalconmerce\Services\POMO\MO;
-use Phalconmerce\Services\POMO\PO;
 
 abstract class AbstractTranslationService extends MainService {
 
-	/** @var MO $mo */
-	protected $mo;
+	/** @var \Gettext\Translator $translator */
+	protected $translator;
 	/** @var string $langCode */
 	protected $langCode;
 	/** @var string $langId */
 	protected $langId;
-	/** @var Lang $lang */
+	/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractLang $lang */
 	protected $lang;
 	/** @var string $currencyCode */
 	protected $currencyCode;
-	/** @var Currency $currency */
+	/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCurrency $currency */
 	protected $currency;
 	/** @var string[] */
 	protected $poIndexesList;
@@ -40,14 +39,14 @@ abstract class AbstractTranslationService extends MainService {
 	protected $currenciesRatesList;
 
 	/** @var array Available Lang Codes and its LangIds (in index) */
-	public static $validLangList = array(1=>'fr', 2=>'en');
+	public static $validLangList = array(1=>'fr', 2=>'en'); // default
 	/** @var array Available Currency Codes and default currencies for LangIds (in index) */
-	public static $validCurrenciesList = array(1=>'EUR', 2=>'USD');
+	public static $validCurrenciesList = array(1=>'EUR', 2=>'USD'); // default
 	/** @var array Sigle for available currencies */
-	public static $currenciesSiglesList = array('EUR'=>'€', 'USD'=>'$');
-	/** @var Lang[] */
+	public static $currenciesSiglesList = array('EUR'=>'€', 'USD'=>'$'); // default
+	/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractLang[] */
 	public static $langsList;
-	/** @var Currency[] */
+	/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCurrency[] */
 	public static $currenciesList;
 
 	public function __construct() {
@@ -55,9 +54,9 @@ abstract class AbstractTranslationService extends MainService {
 		$this->langId = '';
 		$this->currencyCode = '';
 		$this->poIndexesList = array();
-		$this->poIndexesActive = Di::getDefault()->get('config')->loadTranslationIndexex;
+		$this->poIndexesActive = Di::getDefault()->get('config')->loadTranslationIndexes;
 		$this->currenciesRatesList = array();
-		$this->mo = new MO();
+		$this->translator = new Translator();
 
 		// load available currencies
 		$results = Currency::find('status=1');
@@ -83,6 +82,9 @@ abstract class AbstractTranslationService extends MainService {
 			if (isset($_COOKIE[Di::getDefault()->get('frontendService')->getCookieLangName()])) {
 				$this->langCode = $_COOKIE[Di::getDefault()->get('frontendService')->getCookieLangName()];
 			}
+			else if ($this->detectBrowserLanguage() !== false) {
+				$this->langCode = $this->detectBrowserLanguage();
+			}
 			else {
 				$this->langCode = Di::getDefault()->get('config')->shop->default_lang;
 			}
@@ -106,6 +108,9 @@ abstract class AbstractTranslationService extends MainService {
 				$this->currency = self::$currenciesList[$this->currencyCode];
 			}
 
+			// Get PoIndexes value from FrontendService
+			$this->poIndexesActive = Di::getDefault()->get('frontendService')->isPoIndexActive();
+
 			// If PoIndexing is active
 			if ($this->poIndexesActive) {
 				// Callback close method
@@ -115,16 +120,46 @@ abstract class AbstractTranslationService extends MainService {
 	}
 
 	/**
+	 * @return bool|string
+	 */
+	public function detectBrowserLanguage() {
+		$browserLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+		if (in_array($browserLang, self::$validLangList)) {
+			return $browserLang;
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $str
+	 * @param array $data
+	 * @return string
+	 */
+	protected function prepareTranslation($str, $data=array()) {
+		// If Po indexing is active
+		if ($this->poIndexesActive) {
+			$this->addPoIndex($str);
+		}
+		// If empty, escape "%"
+		if (empty($data)) {
+			$str = str_replace(array('%%', '%'), array('%', '%%'), $str);
+		}
+		return $str;
+	}
+
+	/**
 	 * @param string $str
 	 * @param array $data
 	 * @return string
 	 */
 	public function e($str, $data=array()) {
-		// If Po indexing is active
-		if ($this->poIndexesActive) {
-			$this->addPoIndex($str);
+		if (empty($str)) {
+			return $str;
 		}
-		$translated = vsprintf(htmlentities($this->mo->translate($str)), $data);
+
+		$str = $this->prepareTranslation($str, $data);
+
+		$translated = vsprintf(htmlentities($this->translator->gettext($str)), $data);
 		if (trim($translated) != '') {
 			return $translated;
 		}
@@ -137,11 +172,13 @@ abstract class AbstractTranslationService extends MainService {
 	 * @return string
 	 */
 	public function t($str, $data=array()) {
-		// If Po indexing is active
-		if ($this->poIndexesActive) {
-			$this->addPoIndex($str);
+		if (empty($str)) {
+			return $str;
 		}
-		$translated = vsprintf($this->mo->translate($str), $data);
+
+		$str = $this->prepareTranslation($str, $data);
+
+		$translated = vsprintf($this->translator->gettext($str), $data);
 		if (trim($translated) != '') {
 			return $translated;
 		}
@@ -225,14 +262,17 @@ abstract class AbstractTranslationService extends MainService {
 			$langCode = $this->langCode;
 		}
 		if ($this->isValidLangCode($langCode)) {
-			$moFilename = $this->getMoFilename($langCode);
+			$poFilename = $this->getPoFilename($langCode);
 			/*
 			// If Po indexing is active
 			if ($this->poIndexesActive) {
 				echo 'mo file = '.$moFilename.'<br>';
 			}*/
-			if (file_exists($moFilename)) {
-				return $this->mo->import_from_file($moFilename);
+			if (file_exists($poFilename)) {
+				// Setting up the translator
+				$translations = Translations::fromPoFile($poFilename);
+				$this->translator->loadTranslations($translations);
+				return true;
 			}
 		}
 		return false;
@@ -293,7 +333,7 @@ abstract class AbstractTranslationService extends MainService {
 		}
 
 		// Set correct Language MO file
-		$this->setTranslateLangCode($langCode);
+		/*$this->setTranslateLangCode($langCode);
 
 		$content = 'msgid ""
 msgstr ""
@@ -318,9 +358,20 @@ msgstr %s
 			$content .= sprintf($contentLine, PO::poify($currentPoIndex), ($isPotFile ? '""' : PO::poify($this->t($currentPoIndex))));
 		}
 
-		file_put_contents(($isPotFile ? $this->getPotFilename() : $this->getPoFilename($langCode)), $content);
+		file_put_contents(($isPotFile ? $this->getPotFilename() : $this->getPoFilename($langCode)), $content);*/
 
-		return true;
+		// GetText way
+		/** @var Translations $translations */
+		$translations = Translations::fromPoFile($this->getPoFilename($langCode));
+		if (is_object($translations)) {
+			foreach ($this->poIndexesList as $currentPoIndex) {
+				$translations->insert(null, $currentPoIndex);
+			}
+			$translations->toPoFile($this->getPoFilename($langCode));
+
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -340,35 +391,60 @@ msgstr %s
 			$this->loadPoIndexes();
 		}
 
-		// retrieve all translation in MO file
-		$moObject = new PO();
+		// retrieve all translation in PO file
+		/*$moObject = new PO();
 		$moObject->import_from_file($this->getPoFilename($langCode));
+		*/
+		/** @var Translations $translations */
+		$translations = Translations::fromPoFile($this->getPoFilename($langCode));
+
 		$entryToAdd = $this->poIndexesList;
-		// Delete every PoIndex already in MO file
+		// Delete every PoIndex already in PO file
 		foreach ($entryToAdd as $index=>$currentPoIndex) {
-			if (array_key_exists($currentPoIndex, $moObject->entries)) {
+			if (empty($currentPoIndex) || $translations->find(null, $currentPoIndex) !== false) {
 				unset($entryToAdd[$index]);
 			}
 		}
 
+		/*if ($langCode == 'en') {
+			Utils::debug($entryToAdd);
+			exit;
+		}*/
+
 		// If there is PoIndex to add
 		if (!empty($entryToAdd)) {
-			// Set correct Language MO file
-			if ($this->setTranslateLangCode($langCode)) {
-				$fp = fopen($this->getPoFilename(), 'a');
+			// Set correct Language PO file
+			/*if ($this->setTranslateLangCode($langCode)) {
+				$fp = fopen($this->getPoFilename($langCode), 'a');
 				if ($fp) {
 					$contentLine = '
-	msgid %s
-	msgstr %s
-	';
+msgid %s
+msgstr %s
+';
 					foreach ($entryToAdd as $currentPoIndex) {
-						fwrite($fp, sprintf($contentLine, PO::poify($currentPoIndex), PO::poify($this->l($currentPoIndex))));
+						if (strlen($currentPoIndex) > 100) {
+							echo PO::poify($currentPoIndex);
+							exit;
+						}
+						fwrite($fp, sprintf($contentLine, PO::poify($currentPoIndex), PO::poify($this->t($currentPoIndex))));
 					}
 					fclose($fp);
 
 					return true;
 				}
 			}
+			else {
+				Di::getDefault()->get('logger')->error('TranslationService->setTranslateLangCode("'.$langCode.'") return false');
+			}*/
+			// Append translations
+			foreach ($entryToAdd as $currentPoIndex) {
+				$translations->insert(null, $currentPoIndex);
+			}
+
+			// Save PO file
+			$translations->toPoFile($this->getPoFilename($langCode));
+
+			return true;
 		}
 		return false;
 	}
@@ -410,6 +486,8 @@ msgstr %s
 	 * @param string $index
 	 */
 	public function addPoIndex($index) {
+		// removing \r\n and \r
+		$index = str_replace(array("\r\n", "\r"), "\n", trim($index));
 		$this->poIndexesList[$index] = $index;
 	}
 
@@ -418,16 +496,15 @@ msgstr %s
 	 */
 	protected function loadPoIndexes() {
 		$pdo = Di::getDefault()->get('db');
+		$this->poIndexesList = array();
 
 		$sql = '
 			SELECT name
 			FROM poindexes
 		';
 		$stmt = $pdo->query($sql, \PDO::FETCH_ASSOC);
-		$results = $stmt->fetchAll();
-		$this->poIndexesList = array();
-		foreach ($results as $curRow) {
-			$this->poIndexesList[] = $curRow['name'];
+		while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			$this->poIndexesList[] = str_replace(array("\r\n", "\r"), "\n", trim($row['name']));
 		}
 		return (sizeof($this->poIndexesList) > 0);
 	}

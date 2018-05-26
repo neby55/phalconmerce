@@ -4,6 +4,7 @@ namespace Phalconmerce\Models\Popo\Abstracts;
 
 use Phalcon\Db\Column;
 use Phalconmerce\Models\AbstractModel;
+use Phalconmerce\Models\Utils;
 
 abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 	/**
@@ -36,7 +37,7 @@ abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 			if (!empty($resultSet) && $resultSet->count() > 0) {
 				/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractConfiguredProduct $currentConfiguredProduct */
 				foreach ($resultSet as $currentConfiguredProduct) {
-					$this->configuredProductList[] = $currentConfiguredProduct->getRelatedProduct();
+					$this->configuredProductList[] = $currentConfiguredProduct;
 				}
 			}
 		}

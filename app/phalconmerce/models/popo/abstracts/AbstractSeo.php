@@ -61,9 +61,10 @@ abstract class AbstractSeo extends AbstractModel {
 	public static function routeNameSelectOptions() {
 		// You should override this method
 		return array(
-			'' => 'choose',
+			'' => '-',
 			'default' => 'default',
 			'home' => 'home',
+			'newsletter_email_confirm' => 'newsletter_email_confirm'
 		);
 	}
 

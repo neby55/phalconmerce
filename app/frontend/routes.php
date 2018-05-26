@@ -18,6 +18,36 @@ $router->add('/',
 	]
 )->setName('home');
 
+$router->add('/sitemap.xml',
+	[
+		"controller" => "sitemap",
+		"action"     => "index",
+	]
+)->setName('sitemap');
+
+$router->add('/checkout',
+	[
+		"controller" => "checkout",
+		"action"     => "index",
+	]
+)->setName('checkout_index');
+
+$router->add('/newsletter-confirm/([0-9a-z]{32})/',
+	[
+		"controller" => "index",
+		"action"     => "newsletterEmailConfirm",
+		"token" => 1
+	]
+)->setName('newsletter-email-confirm');
+
+$router->add('/friend-sponsoring-confirm/([0-9a-z]{32})/',
+	[
+		"controller" => "index",
+		"action"     => "friendSponsoringConfirm",
+		"token" => 1
+	]
+)->setName('friend-sponsoring-confirm');
+
 // Include developer defined routes
 require __DIR__.DIRECTORY_SEPARATOR.'routes'.DIRECTORY_SEPARATOR.'global.php';
 
@@ -42,8 +72,21 @@ if (is_array($dbUrlList)) {
 			[
 				"controller" => "url",
 				"action"     => "dispatcher",
-				"params" => array($currentUrlObject)
+				"url" => $currentUrlObject
+				//"params" => array($currentUrlObject)
 			]
 		);
 	}
-};
+}
+
+// Gets every checkout routes
+$checkoutRoutes = \Phalconmerce\Models\Utils::loadData('checkoutRoutes');
+$router = \Phalconmerce\Models\Generic\Route::addRoutesToRouter($checkoutRoutes, $router);
+
+// Gets every payments routes
+$paymentRoutes = \Phalconmerce\Models\Utils::loadData('paymentRoutes');
+$router = \Phalconmerce\Models\Generic\Route::addRoutesToRouter($paymentRoutes, $router);
+
+// Gets every myAccount routes
+$myAccountRoutes = \Phalconmerce\Models\Utils::loadData('myAccountRoutes');
+$router = \Phalconmerce\Models\Generic\Route::addRoutesToRouter($myAccountRoutes, $router);

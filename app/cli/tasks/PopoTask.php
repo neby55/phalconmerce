@@ -55,6 +55,16 @@ class PopoTask extends Task {
 							Relationship::TYPE_MANY_TO_1
 						);
 
+						// Second way (hasMany)
+						$relationshipsList[strtolower($currentPropertyObject->getForeignKeyClassName())][$currentPropertyObject->getForeignKeyPropertyName()] = new Relationship(
+							$currentPropertyObject->getForeignKeyPropertyName(),
+							$currentPropertyObject->getForeignKeyClassName(),
+							$currentPropertyName,
+							addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentClassName),
+							$currentClassName,
+							Relationship::TYPE_1_TO_MANY
+						);
+
 						// Check if it can be a nmTable (FK is also PK)
 						if ($currentPropertyReflection->has('Primary')) {
 							$nmRelationshipsList[strtolower($currentPropertyObject->getForeignKeyClassName())] = new RelationshipManyToMany(
@@ -63,17 +73,6 @@ class PopoTask extends Task {
 								'id', // TODO really get the property name
 								'id', // TODO really get the property name
 								addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentClassName)
-							);
-						}
-						else {
-							// Second way (hasMany)
-							$relationshipsList[strtolower($currentPropertyObject->getForeignKeyClassName())][$currentPropertyObject->getForeignKeyPropertyName()] = new Relationship(
-								$currentPropertyObject->getForeignKeyPropertyName(),
-								$currentPropertyObject->getForeignKeyClassName(),
-								$currentPropertyName,
-								addslashes(PhpClass::POPO_NAMESPACE.'\\'.$currentClassName),
-								$currentClassName,
-								Relationship::TYPE_1_TO_MANY
 							);
 						}
 					}

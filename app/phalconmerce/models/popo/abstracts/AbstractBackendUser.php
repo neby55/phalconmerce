@@ -39,7 +39,7 @@ abstract class AbstractBackendUser extends AbstractModel {
 	public $role;
 
 	/**
-	 * @Column(type="string", length=32, unique=true, nullable=true)
+	 * @Column(type="string", length=32, nullable=true)
 	 * @var string
 	 */
 	public $token;

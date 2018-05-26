@@ -2,6 +2,7 @@
 
 namespace Phalconmerce\Models\Popo\Abstracts;
 
+use Phalcon\Di;
 use Phalconmerce\Models\AbstractModel;
 
 abstract class AbstractAttribute extends AbstractModel {
@@ -46,8 +47,31 @@ abstract class AbstractAttribute extends AbstractModel {
 	public $type;
 
 	/**
+	 * @Column(type="boolean", nullable=false, default=1)
+	 * @var int
+	 */
+	public $isConfigurable;
+
+	/**
+	 * @Column(type="string", length=32, nullable=false)
+	 * @var string
+	 */
+	public $cmsBlockSlug;
+
+	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)
 	 * @var int
 	 */
 	public $status;
+
+	/**
+	 * @return bool
+	 */
+	public function isConfigurable() {
+		return $this->isConfigurable == 1;
+	}
+
+	public function hasCmsBlock() {
+		return !empty($this->cmsBlockSlug);
+	}
 }

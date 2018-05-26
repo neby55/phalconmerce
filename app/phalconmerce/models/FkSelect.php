@@ -93,9 +93,26 @@ class FkSelect {
 	 */
 	public function getValues($filters=array(), $noChoose=false) {
 		if (!$noChoose) {
-			$values = array('' => Di::getDefault()->get('backendService')->t('choose'));
+			$values = array('' => '-');
 		}
 		$fqcn = $this->fqcn;
+
+		// Setting up the cache for the query
+		if (is_array($filters)) {
+			$filters['cache'] = array(
+				'key' => 'fkSelect-' . str_replace('\\', '-', $this->getFqcn()),
+				'lifetime' => 3600,
+			);
+		}
+		else if (is_string($filters)) {
+			$filters = array(
+				$filters,
+				'cache' => array(
+					'key' => 'fkSelect-' . str_replace('\\', '-', $this->getFqcn()),
+					'lifetime' => 3600
+				)
+			);
+		}
 
 		$data = $fqcn::find($filters);
 
