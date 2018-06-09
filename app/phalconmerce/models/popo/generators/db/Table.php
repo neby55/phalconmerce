@@ -332,13 +332,16 @@ class Table {
 		}
 		// Adding updated field
 		// TODO faire la partie update => corriger soucis avec default value "On update CURRENT_TIMESTAMP"
+		// Tried with another default but current_timestamp is ok once for default OR ON UPDATE
+		// Only way I can see now is a Trigger, but it's clearly overkill (thanks mysql)
+		// BTW, MariaDb is ok since 5.6 (https://mariadb.com/kb/en/library/timestamp/)
 		/*if (!array_key_exists('updated', $this->columnList)) {
 			$this->addColumn(new Column(
 				'updated',
 				array(
 					'type' => Column::TYPE_TIMESTAMP,
-					'notNull' => true,
-					'default' => 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
+					'notNull' => false,
+					'default' => 'ON UPDATE CURRENT_TIMESTAMP'
 				)
 			));
 		}*/

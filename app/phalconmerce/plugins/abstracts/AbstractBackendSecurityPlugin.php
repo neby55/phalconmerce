@@ -5,6 +5,7 @@ namespace Phalconmerce\Plugins\Abstracts;
 use Phalcon\Acl;
 use Phalcon\Acl\Role;
 use Phalcon\Acl\Resource;
+use Phalcon\Di;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\User\Plugin;
 use Phalcon\Mvc\Dispatcher;
@@ -79,8 +80,11 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 	 * @returns AclList
 	 */
 	public function getAcl() {
-		// TODO uncomment this if for production
-		//if (!isset($this->persistent->acl)) {
+		/** @var \Phalcon\Config $config */
+		$config = Di::getDefault()->get('config');
+		$isDevMode = !empty($config->devMode) && $config->devMode === true;
+
+		if (!isset($this->persistent->acl) ||$isDevMode) {
 
 			$acl = new AclList();
 
@@ -108,7 +112,7 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 
 			//The acl is stored in session, APC would be useful here too
 			$this->persistent->acl = $acl;
-		/*}*/
+		}
 
 		return $this->persistent->acl;
 	}

@@ -53,8 +53,6 @@ abstract class AbstractPromotion extends AbstractDesignedModel {
 	 */
 	public $status;
 
-	// TODO find a way to define available promotion types (const no, static maybe, function last option)
-
 	/**
 	 * Overriding AbstractModel::initialize() to force the prefix
 	 */
