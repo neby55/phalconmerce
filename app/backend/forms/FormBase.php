@@ -72,6 +72,7 @@ class FormBase extends Form {
 		$propertiesList = \Phalconmerce\Models\Popo\Generators\Popo\PhpClass::getClassProperties($fqcn);
 		$labelsObject = new Labels($this->popoClassName);
 		$helpBlocksObject = new HelpBlocks($this->popoClassName);
+		$placeholdersObject = new Placeholders($this->popoClassName);
 		$this->helpBlocksList = array();
 		$currentReflectionClass = new \ReflectionClass($fqcn);
 		//Utils::debug($propertiesList);exit;
@@ -284,6 +285,10 @@ class FormBase extends Form {
 								$item->setLabel($labelsObject->getLongLabelForProperty($currentPropertyName));
 								$this->addElement($currentPropertyName, $item);
 								$this->addHelpBlock($currentPropertyName, $helpBlocksObject->getText($currentPropertyName));
+								// If placeholder exists
+								if ($placeholdersObject->propertyExists($currentPropertyName)) {
+									$item->setAttribute('placeholder', $placeholdersObject->getText($currentPropertyName));
+								}
 							}
 						}
 					}

@@ -142,6 +142,7 @@ class AbstractProductController extends ControllerBase {
 		$object = new Product();
 		$object->name = $name;
 		$object->fk_attribute_set_id = $attributeSetId;
+		$object->fk_tax_id = 0;
 		$object->coreType = $type;
 		$object->sku = '';
 		$object->priceVatExcluded = 0;
