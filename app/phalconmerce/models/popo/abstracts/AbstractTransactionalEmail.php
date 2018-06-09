@@ -41,19 +41,6 @@ abstract class AbstractTransactionalEmail extends AbstractDesignedModel {
 	 */
 	public $status;
 
-	/**
-	 * @var array
-	 */
-	public static $eventsList = array(
-		static::EVENT_NEW_ACCOUNT => 'New account',
-		static::EVENT_FORGOT_PASSWORD => 'Forgotten password',
-		static::EVENT_NEWSLETTER_SIGNUP => 'Signup to newsletter',
-		static::EVENT_NEWSLETTER_EMAIL_CONFIRM => 'Email confirmation for newsletter',
-		static::EVENT_ORDER_CONFIRMED => 'Order confirmed',
-		static::EVENT_ORDER_CANCELLED => 'Order canceled',
-		static::EVENT_FRIEND_SPONSORING => 'Friend sponsoring invitation',
-	);
-
 	const EVENT_NEW_ACCOUNT = 1;
 	const EVENT_FORGOT_PASSWORD = 2;
 	const EVENT_NEWSLETTER_SIGNUP = 3;
@@ -67,7 +54,22 @@ abstract class AbstractTransactionalEmail extends AbstractDesignedModel {
 	 * @return array
 	 */
 	public static function eventSelectOptions() {
-		return array_merge(array(0=>'-'), static::$eventsList);
+		return array_merge(array(0=>'-'), static::getEventsList());
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function getEventsList() {
+		return array(
+			static::EVENT_NEW_ACCOUNT => 'New account',
+			static::EVENT_FORGOT_PASSWORD => 'Forgotten password',
+			static::EVENT_NEWSLETTER_SIGNUP => 'Signup to newsletter',
+			static::EVENT_NEWSLETTER_EMAIL_CONFIRM => 'Email confirmation for newsletter',
+			static::EVENT_ORDER_CONFIRMED => 'Order confirmed',
+			static::EVENT_ORDER_CANCELLED => 'Order canceled',
+			static::EVENT_FRIEND_SPONSORING => 'Friend sponsoring invitation',
+		);
 	}
 
 }

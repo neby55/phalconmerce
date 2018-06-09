@@ -38,15 +38,19 @@ class AbstractShopOption extends AbstractModel {
 	const NAME_ENABLE_WEBSITE_BY_IP = 'enableWebsiteByIP';
 	const NAME_ENABLE_SHOP_BY_IP = 'enableShopByIP';
 
-	// You can add names in the "child" initialize() method
-	public static $names = array(
-		static::NAME_IS_WEBSITE_ACTIVE,
-		static::NAME_IS_SHOP_ACTIVE,
-		'shopTitle',
-		'shopDefaultCurrency',
-		'shopDefaultLang',
-		static::NAME_ENABLE_WEBSITE_BY_IP,
-		static::NAME_ENABLE_SHOP_BY_IP,
-		static::NAME_IS_PO_INDEX_ACTIVE
-	);
+	/**
+	 * @return array
+	 */
+	public static function getNames() {
+		return array(
+			static::NAME_IS_WEBSITE_ACTIVE,
+			static::NAME_IS_SHOP_ACTIVE,
+			'shopTitle',
+			'shopDefaultCurrency',
+			'shopDefaultLang',
+			static::NAME_ENABLE_WEBSITE_BY_IP,
+			static::NAME_ENABLE_SHOP_BY_IP,
+			static::NAME_IS_PO_INDEX_ACTIVE
+		);
+	}
 }

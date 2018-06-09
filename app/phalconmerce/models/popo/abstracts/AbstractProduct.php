@@ -110,20 +110,19 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 */
 	public $status;
 
-	/**
-	 * @var array
-	 */
-	public static $typesList = array(
-		static::PRODUCT_TYPE_SIMPLE => 'Simple',
-		static::PRODUCT_TYPE_CONFIGURABLE => 'Configurable',
-		static::PRODUCT_TYPE_CONFIGURED => 'Configured',
-		static::PRODUCT_TYPE_GROUPED => 'Grouped',
-	);
-
 	const PRODUCT_TYPE_SIMPLE = 1;
 	const PRODUCT_TYPE_CONFIGURABLE = 2;
 	const PRODUCT_TYPE_CONFIGURED = 3;
 	const PRODUCT_TYPE_GROUPED = 4;
+
+	public static function getTypesList() {
+		return  array(
+			static::PRODUCT_TYPE_SIMPLE => 'Simple',
+			static::PRODUCT_TYPE_CONFIGURABLE => 'Configurable',
+			static::PRODUCT_TYPE_CONFIGURED => 'Configured',
+			static::PRODUCT_TYPE_GROUPED => 'Grouped',
+		);
+	}
 
 	/**
 	 * @return bool
@@ -291,8 +290,9 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 * @return string
 	 */
 	public function getCoreTypeLabel() {
-		if (array_key_exists($this->coreType, static::$typesList)) {
-			return static::$typesList[$this->coreType];
+		$typesList = static::getTypesList();
+		if (array_key_exists($this->coreType, $typesList)) {
+			return $typesList[$this->coreType];
 		}
 		return '-';
 	}
