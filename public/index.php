@@ -1,5 +1,7 @@
 <?php
 
+use Phalcon\Di;
+
 error_reporting(E_ALL);
 
 define('APP_PATH', realpath('..'));
@@ -43,7 +45,6 @@ try {
 
 }
 catch (\Exception $e) {
-	// TODO use log system
-	echo $e->getMessage() . '<br>';
-	echo '<pre>' . $e->getTraceAsString() . '</pre>';
+	Di::getDefault()->get('logger')->error('public/index.php : ' . $e->getMessage());
+	Di::getDefault()->get('logger')->error($e->getTraceAsString());
 }
