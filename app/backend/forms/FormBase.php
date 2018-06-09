@@ -155,9 +155,6 @@ class FormBase extends Form {
 								// TODO
 							}
 							else {
-
-								// TODO placeholders
-
 								// If long string
 								if ($type == 'string' && $length > 255 || $type == 'text') {
 									$item = new TextArea($currentPropertyName);

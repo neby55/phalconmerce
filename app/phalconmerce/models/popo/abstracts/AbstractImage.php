@@ -60,13 +60,13 @@ abstract class AbstractImage extends AbstractModel {
 	 */
 	public function getType() {
 		if (!empty($this->localFile)) {
-			return self::TYPE_LOCAL;
+			return static::TYPE_LOCAL;
 		}
 		else if (!empty($this->cloudinaryPublicId)) {
-			return self::TYPE_CLOUDINARY;
+			return static::TYPE_CLOUDINARY;
 		}
 		else if (!empty($this->cloudinaryPublicId)) {
-			return self::TYPE_CLOUDINARY;
+			return static::TYPE_CLOUDINARY;
 		}
 		return 0;
 	}
@@ -76,8 +76,8 @@ abstract class AbstractImage extends AbstractModel {
 	 */
 	public function getTypeLabel() {
 		$typeId = $this->getType();
-		if (array_key_exists($typeId, self::$types)) {
-			return self::$types[$typeId];
+		if (array_key_exists($typeId, static::$types)) {
+			return static::$types[$typeId];
 		}
 		return '';
 	}
@@ -90,11 +90,11 @@ abstract class AbstractImage extends AbstractModel {
 		$typeId = $this->getType();
 
 		switch ($typeId) {
-			case self::TYPE_LOCAL:
+			case static::TYPE_LOCAL:
 				return Di::getDefault()->get('config')->imageUri.'/'.$this->localFile;
-			case self::TYPE_EXTERNAL:
+			case static::TYPE_EXTERNAL:
 				return $this->externalUrl;
-			case self::TYPE_CLOUDINARY:
+			case static::TYPE_CLOUDINARY:
 				return \cloudinary_url_internal($this->cloudinaryPublicId, $options);
 		}
 		return Di::getDefault()->get('config')->image404Uri;

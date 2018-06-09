@@ -8,8 +8,6 @@ use Phalcon\Loader;
 define('CLI_PATH', dirname(__FILE__));
 define('APP_PATH', dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'app');
 
-// TODO maybe improve CLI with docopt
-
 class Console extends \Phalcon\Cli\Console {
 	public static $shortOpts = '';
 

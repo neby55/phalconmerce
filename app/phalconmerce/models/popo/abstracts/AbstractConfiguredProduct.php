@@ -30,7 +30,7 @@ abstract class AbstractConfiguredProduct extends AbstractFinalProduct {
 	}
 
 	public function loadConfigurableProduct() {
-		$fqcn = self::getConfigurableClassName();
+		$fqcn = static::getConfigurableClassName();
 		$this->configurableProduct = $fqcn::findFirst($this->getConfigurableProductId());
 	}
 

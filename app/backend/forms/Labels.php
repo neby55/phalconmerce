@@ -10,6 +10,8 @@
 namespace Backend\Forms;
 
 
+use Phalcon\Di;
+
 class Labels {
 	/**
 	 * @var string[]
@@ -34,10 +36,9 @@ class Labels {
 					fclose($fp);
 				}
 			}
-			// TODO make logs
-			/*else {
-				die($filename. ' does not exists');
-			}*/
+			else {
+				Di::getDefault()->get('logger')->critical('labels.csv file does not exists');
+			}
 		}
 	}
 

@@ -45,13 +45,13 @@ abstract class AbstractTransactionalEmail extends AbstractDesignedModel {
 	 * @var array
 	 */
 	public static $eventsList = array(
-		self::EVENT_NEW_ACCOUNT => 'New account',
-		self::EVENT_FORGOT_PASSWORD => 'Forgotten password',
-		self::EVENT_NEWSLETTER_SIGNUP => 'Signup to newsletter',
-		self::EVENT_NEWSLETTER_EMAIL_CONFIRM => 'Email confirmation for newsletter',
-		self::EVENT_ORDER_CONFIRMED => 'Order confirmed',
-		self::EVENT_ORDER_CANCELLED => 'Order canceled',
-		self::EVENT_FRIEND_SPONSORING => 'Friend sponsoring invitation',
+		static::EVENT_NEW_ACCOUNT => 'New account',
+		static::EVENT_FORGOT_PASSWORD => 'Forgotten password',
+		static::EVENT_NEWSLETTER_SIGNUP => 'Signup to newsletter',
+		static::EVENT_NEWSLETTER_EMAIL_CONFIRM => 'Email confirmation for newsletter',
+		static::EVENT_ORDER_CONFIRMED => 'Order confirmed',
+		static::EVENT_ORDER_CANCELLED => 'Order canceled',
+		static::EVENT_FRIEND_SPONSORING => 'Friend sponsoring invitation',
 	);
 
 	const EVENT_NEW_ACCOUNT = 1;
@@ -67,7 +67,7 @@ abstract class AbstractTransactionalEmail extends AbstractDesignedModel {
 	 * @return array
 	 */
 	public static function eventSelectOptions() {
-		return array_merge(array(0=>'-'), self::$eventsList);
+		return array_merge(array(0=>'-'), static::$eventsList);
 	}
 
 }

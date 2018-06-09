@@ -83,11 +83,11 @@ abstract class AbstractPaymentMethod extends AbstractModel {
 	public static function typeSelectOptions() {
 		return array(
 			0 => 'choose',
-			self::TYPE_CREDIT_CARD => 'credit card',
-			self::TYPE_BANK_TRANSFER => 'bank transfer',
-			self::TYPE_CHECK => 'check',
-			self::TYPE_FREE => 'free',
-			self::TYPE_OTHER => 'other'
+			static::TYPE_CREDIT_CARD => 'credit card',
+			static::TYPE_BANK_TRANSFER => 'bank transfer',
+			static::TYPE_CHECK => 'check',
+			static::TYPE_FREE => 'free',
+			static::TYPE_OTHER => 'other'
 		);
 	}
 

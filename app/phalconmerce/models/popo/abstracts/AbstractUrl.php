@@ -93,7 +93,7 @@ abstract class AbstractUrl extends AbstractModel {
 	 */
 	public static function getByEntity($entity, $entityId, $langId) {
 		/** @var AbstractUrl $object */
-		$object = self::findFirst(array(
+		$object = static::findFirst(array(
 			'entity = :entity: AND entityId = :entity_id: AND fk_lang_id = :fk_lang_id:',
 			'bind' => array(
 				'entity' => $entity,
@@ -115,7 +115,7 @@ abstract class AbstractUrl extends AbstractModel {
 	 */
 	public static function getEntityPermalink($entity, $entityId, $langId) {
 		/** @var AbstractUrl $object */
-		$object = self::getByEntity($entity, $entityId, $langId);
+		$object = static::getByEntity($entity, $entityId, $langId);
 		if (!empty($object)) {
 			return $object->getFullUrl();
 		}
@@ -127,7 +127,7 @@ abstract class AbstractUrl extends AbstractModel {
 	 * @return bool|static
 	 */
 	public function getUrlForOtherLang($langId) {
-		$object = self::findFirst(array(
+		$object = static::findFirst(array(
 			'entity = :entity: AND entityId = :entity_id: AND fk_lang_id = :fk_lang_id:',
 			'bind' => array(
 				'entity' => $this->entity,
@@ -147,7 +147,7 @@ abstract class AbstractUrl extends AbstractModel {
 	 * @return bool
 	 */
 	public static function deleteEntity($entity, $entityId) {
-		$results = self::find(array(
+		$results = static::find(array(
 			'entity = :entity: AND entityId = :entity_id:',
 			'bind' => array(
 				'entity' => $entity,

@@ -114,10 +114,10 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 * @var array
 	 */
 	public static $typesList = array(
-		self::PRODUCT_TYPE_SIMPLE => 'Simple',
-		self::PRODUCT_TYPE_CONFIGURABLE => 'Configurable',
-		self::PRODUCT_TYPE_CONFIGURED => 'Configured',
-		self::PRODUCT_TYPE_GROUPED => 'Grouped',
+		static::PRODUCT_TYPE_SIMPLE => 'Simple',
+		static::PRODUCT_TYPE_CONFIGURABLE => 'Configurable',
+		static::PRODUCT_TYPE_CONFIGURED => 'Configured',
+		static::PRODUCT_TYPE_GROUPED => 'Grouped',
 	);
 
 	const PRODUCT_TYPE_SIMPLE = 1;
@@ -130,9 +130,9 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 */
 	public function isOrderable() {
 		switch ($this->coreType) {
-			case self::PRODUCT_TYPE_SIMPLE :
-			case self::PRODUCT_TYPE_CONFIGURED :
-			case self::PRODUCT_TYPE_GROUPED :
+			case static::PRODUCT_TYPE_SIMPLE :
+			case static::PRODUCT_TYPE_CONFIGURED :
+			case static::PRODUCT_TYPE_GROUPED :
 				return true;
 			default :
 				return false;
@@ -144,9 +144,9 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 */
 	public function isSearchable() {
 		switch ($this->coreType) {
-			case self::PRODUCT_TYPE_SIMPLE :
-			case self::PRODUCT_TYPE_CONFIGURABLE :
-			case self::PRODUCT_TYPE_GROUPED :
+			case static::PRODUCT_TYPE_SIMPLE :
+			case static::PRODUCT_TYPE_CONFIGURABLE :
+			case static::PRODUCT_TYPE_GROUPED :
 				return true;
 			default :
 				return false;
@@ -157,28 +157,28 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 * @return bool
 	 */
 	public function isConfigurable() {
-		return $this->coreType == self::PRODUCT_TYPE_CONFIGURABLE;
+		return $this->coreType == static::PRODUCT_TYPE_CONFIGURABLE;
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function isConfigured() {
-		return $this->coreType == self::PRODUCT_TYPE_CONFIGURED;
+		return $this->coreType == static::PRODUCT_TYPE_CONFIGURED;
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function isGrouped() {
-		return $this->coreType == self::PRODUCT_TYPE_GROUPED;
+		return $this->coreType == static::PRODUCT_TYPE_GROUPED;
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function isSimple() {
-		return $this->coreType == self::PRODUCT_TYPE_SIMPLE;
+		return $this->coreType == static::PRODUCT_TYPE_SIMPLE;
 	}
 
 	/**
@@ -243,16 +243,16 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	public function getFinalProductClassName() {
 		$classname = '';
 		switch ($this->coreType) {
-			case self::PRODUCT_TYPE_SIMPLE :
+			case static::PRODUCT_TYPE_SIMPLE :
 				$classname = 'SimpleProduct';
 				break;
-			case self::PRODUCT_TYPE_CONFIGURABLE :
+			case static::PRODUCT_TYPE_CONFIGURABLE :
 				$classname = 'ConfigurableProduct';
 				break;
-			case self::PRODUCT_TYPE_CONFIGURED :
+			case static::PRODUCT_TYPE_CONFIGURED :
 				$classname = 'ConfiguredProduct';
 				break;
-			case self::PRODUCT_TYPE_GROUPED :
+			case static::PRODUCT_TYPE_GROUPED :
 				$classname = 'GroupedProduct';
 				break;
 		}
@@ -291,8 +291,8 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 * @return string
 	 */
 	public function getCoreTypeLabel() {
-		if (array_key_exists($this->coreType, self::$typesList)) {
-			return self::$typesList[$this->coreType];
+		if (array_key_exists($this->coreType, static::$typesList)) {
+			return static::$typesList[$this->coreType];
 		}
 		return '-';
 	}

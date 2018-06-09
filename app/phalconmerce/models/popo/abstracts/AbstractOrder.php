@@ -115,14 +115,14 @@ abstract class AbstractOrder extends AbstractModel {
 	public static function statusSelectOptions() {
 		return array(
 			0 => 'choose',
-			self::STATUS_NONE => 'none',
-			self::STATUS_PARTIALLY_PAID => 'partially paid',
-			self::STATUS_PAID => 'paid',
-			self::STATUS_PENDING => 'preparation pending',
-			self::STATUS_SHIPPED => 'shipped',
-			self::STATUS_RECEIVED => 'received',
-			self::STATUS_RETURNED => 'returned',
-			self::STATUS_CANCELED => 'canceled',
+			static::STATUS_NONE => 'none',
+			static::STATUS_PARTIALLY_PAID => 'partially paid',
+			static::STATUS_PAID => 'paid',
+			static::STATUS_PENDING => 'preparation pending',
+			static::STATUS_SHIPPED => 'shipped',
+			static::STATUS_RECEIVED => 'received',
+			static::STATUS_RETURNED => 'returned',
+			static::STATUS_CANCELED => 'canceled',
 		);
 	}
 
@@ -131,7 +131,7 @@ abstract class AbstractOrder extends AbstractModel {
 	 */
 	public function canAcceptPayment() {
 		// True if amount > 0 AND status is "none" or "partially paid"
-		return $this->amountVatExcluded > 0 && in_array($this->status, array(self::STATUS_PARTIALLY_PAID, self::STATUS_NONE));
+		return $this->amountVatExcluded > 0 && in_array($this->status, array(static::STATUS_PARTIALLY_PAID, static::STATUS_NONE));
 	}
 
 	/**
@@ -139,6 +139,6 @@ abstract class AbstractOrder extends AbstractModel {
 	 */
 	public function isFree() {
 		// true if the amount is 0 AND the discount total is > 0 AND status is "none"
-		return $this->amountVatExcluded == 0 && $this->amountDiscount > 0 && in_array($this->status, array(self::STATUS_NONE));
+		return $this->amountVatExcluded == 0 && $this->amountDiscount > 0 && in_array($this->status, array(static::STATUS_NONE));
 	}
 }

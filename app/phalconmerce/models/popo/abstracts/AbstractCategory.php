@@ -75,7 +75,7 @@ abstract class AbstractCategory extends AbstractDesignedModel implements FilterI
 	public static function getFilterDataList($id = 0, $slug='category') {
 		$returnedArray = array();
 
-		$results = self::find(array(
+		$results = static::find(array(
 			'fk_category_id = :fk_category_id:',
 			'bind' => array(
 				'fk_category_id' => $id

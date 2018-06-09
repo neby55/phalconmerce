@@ -73,7 +73,7 @@ abstract class AbstractBackendUser extends AbstractModel {
 	 * @return static
 	 */
 	public static function findByEmail($email) {
-		return self::find([
+		return static::find([
 			'conditions' => 'email = :email:',
 			'bind'       => [
 				':email' => $email,

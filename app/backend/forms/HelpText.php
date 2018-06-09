@@ -9,6 +9,7 @@
 
 namespace Backend\Forms;
 
+use Phalcon\Di;
 use Phalconmerce\Models\Utils;
 
 class HelpText {
@@ -32,10 +33,9 @@ class HelpText {
 					fclose($fp);
 				}
 			}
-			// TODO make logs
-			/*else {
-				die($filename. ' does not exists');
-			}*/
+			else {
+				Di::getDefault()->get('logger')->warning('help-text.csv file does not exists');
+			}
 		}
 	}
 

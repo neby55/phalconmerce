@@ -22,7 +22,7 @@ abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 	public function loadConfiguredProducts() {
 		$this->configuredProductList = array();
 		if ($this->id > 0) {
-			$fqcn = self::getConfiguredClassName(get_class($this));
+			$fqcn = static::getConfiguredClassName(get_class($this));
 			$resultSet = $fqcn::find(
 				array(
 					'conditions' => 'fk_configurable_product_id = :configurableProductId:',

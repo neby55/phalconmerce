@@ -10,6 +10,7 @@
 namespace Backend\Forms;
 
 
+use Phalcon\Di;
 use Phalconmerce\Models\Utils;
 
 class HelpBlocks {
@@ -33,10 +34,9 @@ class HelpBlocks {
 					fclose($fp);
 				}
 			}
-			// TODO make logs
-			/*else {
-				die($filename. ' does not exists');
-			}*/
+			else {
+				Di::getDefault()->get('logger')->warning('help-blocks.csv file does not exists');
+			}
 		}
 	}
 

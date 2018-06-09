@@ -40,13 +40,13 @@ class AbstractShopOption extends AbstractModel {
 
 	// You can add names in the "child" initialize() method
 	public static $names = array(
-		self::NAME_IS_WEBSITE_ACTIVE,
-		self::NAME_IS_SHOP_ACTIVE,
+		static::NAME_IS_WEBSITE_ACTIVE,
+		static::NAME_IS_SHOP_ACTIVE,
 		'shopTitle',
 		'shopDefaultCurrency',
 		'shopDefaultLang',
-		self::NAME_ENABLE_WEBSITE_BY_IP,
-		self::NAME_ENABLE_SHOP_BY_IP,
-		self::NAME_IS_PO_INDEX_ACTIVE
+		static::NAME_ENABLE_WEBSITE_BY_IP,
+		static::NAME_ENABLE_SHOP_BY_IP,
+		static::NAME_IS_PO_INDEX_ACTIVE
 	);
 }

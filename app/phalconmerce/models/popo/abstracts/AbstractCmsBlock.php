@@ -53,7 +53,7 @@ abstract class AbstractCmsBlock extends AbstractModel {
 	 */
 	public static function getBySlugAndLang($slug, $langId, $isActive=true) {
 		/** @var \Phalcon\Mvc\Model\Resultset $resultList */
-		$resultList = self::find(array(
+		$resultList = static::find(array(
 			'slug = :slug: AND fk_lang_id = :fk_lang_id:'.($isActive ? ' AND status = 1' : ''),
 			'bind' => array(
 				'slug' => $slug,

@@ -66,6 +66,18 @@ abstract class AbstractPromotion extends AbstractDesignedModel {
 	}
 
 	/**
+	 * Static method returning possibles datas in <select> tag for the field "type"
+	 * @return array
+	 */
+	public static function typeSelectOptions() {
+		return array(
+			0 => 'choose',
+			static::TYPE_PERCENT => 'percent',
+			static::TYPE_AMOUNT => 'amount'
+		);
+	}
+
+	/**
 	 * @param float $price
 	 * @return bool|float
 	 */
@@ -73,10 +85,10 @@ abstract class AbstractPromotion extends AbstractDesignedModel {
 		if (is_numeric($price)) {
 			// casting $price
 			$price = (float) $price;
-			if ($this->type == self::TYPE_AMOUNT) {
+			if ($this->type == static::TYPE_AMOUNT) {
 				return $price - $this->value;
 			}
-			else if ($this->type == self::TYPE_PERCENT) {
+			else if ($this->type == static::TYPE_PERCENT) {
 				return $price - ($price * $this->value / 100);
 			}
 			return $price;
