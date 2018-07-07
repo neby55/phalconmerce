@@ -138,20 +138,20 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 			$controller = $dispatcher->getControllerName();
 			$action = $dispatcher->getActionName();
 
-			$acl = $this->getAcl();
-			if (!$acl->isResource($controller)) {
-				$dispatcher->forward([
-					'controller' => 'errors',
-					'action' => 'show403'
-				]);
+			// If connected
+			if (!empty($role)) {
+				$acl = $this->getAcl();
+				if (!$acl->isResource($controller)) {
+					$dispatcher->forward([
+						'controller' => 'errors',
+						'action' => 'show403'
+					]);
 
-				return false;
-			}
+					return false;
+				}
 
-			$allowed = $acl->isAllowed($role, $controller, $action);
-			if (!$allowed) {
-				// If connected
-				if (!empty($role)) {
+				$allowed = $acl->isAllowed($role, $controller, $action);
+				if (!$allowed) {
 					$this->flash('Can\'t access to '.$controller.'::'.$action);
 					$dispatcher->forward(array(
 						'controller' => 'errors',
@@ -159,18 +159,18 @@ abstract class AbstractBackendSecurityPlugin extends Plugin {
 					));
 					return false;
 				}
-				// If not, redirect to signin
+			}
+			// If not, redirect to signin
+			else {
+				// If login page
+				if ($controller == 'login' && $action == 'index') {
+					return true;
+				}
 				else {
-					// If login page
-					if ($controller == 'errors' || ($controller == 'login' && $action == 'index')) {
-						return true;
-					}
-					else {
-						$this->view->disable();
-						return $this->response->redirect(array(
-							'for' => 'backend-login'
-						));
-					}
+					$this->view->disable();
+					return $this->response->redirect(array(
+						'for' => 'backend-login'
+					))->send();
 				}
 			}
 		}
