@@ -99,10 +99,16 @@ class DesignForm extends FormBase {
 					$item->setFilters(array($currentDesignParam->getFilter()));
 					$item->setAttribute('maxlength', 255);
 				}
+				else if ($currentDesignParam->getType() == DesignParam::TYPE_IMAGES) {
+					$item = new Text($currentDesignParam->getName().'[]');
+					$item->setAttribute('class', 'form-control slide');
+					$item->setFilters(array($currentDesignParam->getFilter()));
+					$item->setAttribute('maxlength', 255);
+				}
 
 				// Add to form
 				if (isset($item)) {
-					$item->setDefault(isset($entity->designData[$currentDesignParam->getName()]) ? $entity->designData[$currentDesignParam->getName()] : '');
+					$item->setDefault(isset($entity->designData[$currentDesignParam->getName()]) ? (is_array($entity->designData[$currentDesignParam->getName()]) ? join(';',$entity->designData[$currentDesignParam->getName()]) : $entity->designData[$currentDesignParam->getName()]) : '');
 					$item->setLabel($currentDesignParam->getLabel());
 					$this->addElement($currentDesignParam->getName(), $item);
 				}

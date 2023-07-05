@@ -9,6 +9,8 @@ use Backend\Forms\UrlForm;
 use Phalcon\Mvc\Controller;
 use Phalconmerce\Models\Design;
 use Phalconmerce\Models\DesignParam;
+use Phalconmerce\Models\Popo\Abstracts\AbstractPromotion;
+use Phalconmerce\Models\Popo\Generators\Db\Table;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Popo\Image;
 use Phalconmerce\Models\Popo\Lang;
@@ -33,6 +35,7 @@ abstract class AbstractControllerBase extends Controller {
 		if (substr($this->popoClassName, -10) == 'Controller') {
 			$this->popoClassName = substr($this->popoClassName, 0, -10);
 		}
+		static::$entity = strtolower($this->popoClassName);
 
 		$config = $this->getDI()->get('config');
 		$this->view->setVar('config', $config);
@@ -446,6 +449,20 @@ abstract class AbstractControllerBase extends Controller {
 	}
 
 	/**
+	 * Method that permits to automatically save data in cache if enabled
+	 * @return bool
+	 */
+	public function updateEntityCache() {
+		$fqcn = PhpClass::POPO_NAMESPACE.'\\'.$this->popoClassName;
+		// Check if "saveCache" method exists on Class
+		if (method_exists($fqcn, 'saveCache')) {
+			return $fqcn::saveCache();
+		}
+
+		return true;
+	}
+
+	/**
 	 * @return bool
 	 */
 	public function updateUrlCache() {
@@ -454,7 +471,7 @@ abstract class AbstractControllerBase extends Controller {
 
 		// --- Url Routes ---
 		$data = array();
-		$allUrl = Url::find('status = 1');
+		$allUrl = Url::find('status = 1 AND (permalink != "" OR entity = "cms_page")');
 
 		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractUrl $currentUrlObject */
 		foreach ($allUrl as $currentUrlObject) {

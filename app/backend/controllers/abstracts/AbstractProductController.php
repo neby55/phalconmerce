@@ -15,6 +15,7 @@ use Backend\Forms\ProductHasAttributeForm;
 use Backend\Forms\ProductAttributeSetForm;
 use Backend\Forms\DesignForm;
 use Backend\Forms\GroupedForm;
+use Phalcon\Di;
 use Phalconmerce\Models\Popo\Abstracts\AbstractFinalProduct;
 use Phalconmerce\Models\Popo\Abstracts\AbstractProduct;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
@@ -113,8 +114,11 @@ class AbstractProductController extends ControllerBase {
 				$this->view->formConfigurableProduct = new ConfigurableForm($finalProduct);
 			}
 			else if (is_a($finalProduct, PhpClass::POPO_ABSTRACT_NAMESPACE . '\AbstractConfiguredProduct')) {
-				//$finalProduct->loadConfigurableProduct();
+				$this->view->setVar('displayTabFinalProduct', false);
+				$finalProduct->loadConfigurableProduct();
 				$this->view->pick($finalProduct->getSource() . '/edit');
+				$configurableProduct = $finalProduct->getConfigurableProduct();
+				$this->view->setVar('configurableProduct', $configurableProduct);
 			}
 			$this->view->setVar('finalProduct', $finalProduct);
 		}

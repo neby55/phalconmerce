@@ -19,6 +19,7 @@ use Phalcon\Mvc\View;
 use Phalcon\Events\Manager as EventsManager;
 use Phalconmerce\Plugins\NotFoundPlugin;
 use Phalconmerce\Plugins\BackendSecurityPlugin;
+use Phalconmerce\Services\StockService;
 use Phalconmerce\Services\BackendService;
 
 class Module implements ModuleDefinitionInterface {
@@ -104,6 +105,14 @@ class Module implements ModuleDefinitionInterface {
 		 */
 		$dependencyInjector->setShared('backendService', function () {
 			$service = new BackendService();
+			return $service;
+		});
+
+		/**
+		 * Phalconmerce stockService
+		 */
+		$dependencyInjector->setShared('stockService', function () {
+			$service = new StockService();
 			return $service;
 		});
 

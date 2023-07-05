@@ -42,4 +42,17 @@ abstract class AbstractConfigurableProduct extends AbstractFinalProduct {
 			}
 		}
 	}
+
+	public function delete() {
+		$ret = parent::delete();
+		// Delete each related configuredProduct
+		$this->loadConfiguredProducts();
+
+		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractConfiguredProduct $currentConfiguredProduct */
+		foreach ($this->configuredProductList as $currentConfiguredProduct) {
+			$ret = $ret && $currentConfiguredProduct->getRelatedProduct()->delete();
+		}
+
+		return $ret;
+	}
 }

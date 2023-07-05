@@ -18,9 +18,10 @@ abstract class AbstractAjaxController extends ControllerBase {
 	public function cloudinaryGlobalAction() {
 		$api = \Phalcon\Di::getDefault()->get('cloudinary');
 		/** @var \Cloudinary\Api\Response $result */
-		$result = $api->resources(array("type" => "upload", 'max_results'=>500, 'prefix'=>$this->config->cloudinary['global_folder']));
+		//$result = $api->resources(array("type" => "upload", 'max_results'=>1000, 'prefix'=>$this->config->cloudinary['global_folder']));
+		$result = $api->resources(array("type" => "upload", 'max_results'=>1000));
 
-		$this->cloudinaryResponse($result);
+		$this->cloudinaryListResponse($result, $this->config->cloudinary['global_folder']);
 	}
 
 	/**
@@ -29,24 +30,65 @@ abstract class AbstractAjaxController extends ControllerBase {
 	public function cloudinaryProductsAction() {
 		$api = \Phalcon\Di::getDefault()->get('cloudinary');
 		/** @var \Cloudinary\Api\Response $result */
-		$result = $api->resources(array("type" => "upload", 'max_results'=>500, 'prefix'=>$this->config->cloudinary['products_folder']));
+		//$result = $api->resources(array("type" => "upload", 'max_results'=>1000, 'prefix'=>$this->config->cloudinary['products_folder']));
+		$result = $api->resources(array("type" => "upload", 'max_results'=>1000));
 
-		$this->cloudinaryResponse($result);
+		$this->cloudinaryListResponse($result, $this->config->cloudinary['products_folder']);
+	}
+
+	/**
+	 * method that returns (display as JSON) every infos on a cloudinary resource
+	 */
+	public function cloudinaryResourceAction() {
+		if ($this->request->isPost()) {
+			$publicId = $this->request->getPost('public_id');
+			$api = \Phalcon\Di::getDefault()->get('cloudinary');
+			/** @var \Cloudinary\Api\Response $result */
+			$result = $api->resource($publicId);
+
+			$this->sendJson(200, $result);
+		}
+	}
+
+	/**
+	 * method that delete a tag on a given resource
+	 */
+	public function cloudinaryUpdateResourceTagAction() {
+		if ($this->request->isPost()) {
+			$publicId = $this->request->getPost('public_id');
+			$tags = $this->request->getPost('tags');
+			if (empty($tags) || !is_array($tags)) {
+				$tags = array();
+			}
+			$api = \Phalcon\Di::getDefault()->get('cloudinary');
+			/** @var \Cloudinary\Api\Response $result */
+			$result = $api->update(
+				$publicId,
+				array(
+					'tags' => join(',', $tags)
+				)
+			);
+
+			$this->sendJson(200, $result);
+		}
 	}
 
 	/**
 	 * @param \Cloudinary\Api\Response $result
+	 * @param string $filter
 	 */
-	protected function cloudinaryResponse($result) {
+	protected function cloudinaryListResponse($result, $filter='') {
 		$jsonData = array();
 
 		foreach ($result as $allResources) {
 			if (is_array($allResources)) {
 				foreach ($allResources as $currentResource) {
-					$options =  array("width"=>60, "height"=>60, "crop"=>"limit");
-					$currentResource['thumbnail'] = cloudinary_url_internal($currentResource['public_id'], $options);
-					$currentResource['url'] = substr($currentResource['url'], 5);
-					$jsonData[] = $currentResource;
+					if (empty($filter) || substr($currentResource['public_id'], 0, strlen($filter)) == $filter) {
+						$options = array("width" => 200, "height" => 200, "crop" => "limit");
+						$currentResource['thumbnail'] = cloudinary_url_internal($currentResource['public_id'], $options);
+						$currentResource['url'] = substr($currentResource['url'], 5);
+						$jsonData[] = $currentResource;
+					}
 				}
 			}
 		}
@@ -90,7 +132,10 @@ abstract class AbstractAjaxController extends ControllerBase {
 	}
 
 	protected function subCcategoryJsTree($id, $selectedIds=array(), $options=array()) {
-		$results = Category::find(array('fk_category_id = '.$id));
+		$results = Category::find(array(
+			'fk_category_id = '.$id,
+			'order' => 'position'
+		));
 		$jsonData = array();
 
 		if (!empty($results) && $results->count() > 0) {

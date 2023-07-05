@@ -3,6 +3,7 @@
 namespace Phalconmerce\Models\Popo\Abstracts;
 
 use Phalconmerce\Models\AbstractDesignedModel;
+use Phalconmerce\Models\Utils;
 
 abstract class AbstractPromotion extends AbstractDesignedModel {
 
@@ -94,4 +95,57 @@ abstract class AbstractPromotion extends AbstractDesignedModel {
 		return false;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getStartDateTimestamp() {
+		return strtotime($this->startDate);
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getEndDateTimestamp() {
+		return strtotime($this->endDate);
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function saveCache() {
+		$data = [
+			'activePromos' => [],
+			'byProducts' => [],
+			'byPromotions' => []
+		];
+		/** @var \Phalcon\Mvc\Model\Resultset\Simple $allPromos */
+		$allPromos = static::find('status=1');
+		if ($allPromos && $allPromos->count() > 0) {
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractPromotion $currentPromotion */
+			foreach ($allPromos as $currentPromotion) {
+				$data['activePromos'][$currentPromotion->id] = array(
+					'object' => $currentPromotion,
+					'start' => $currentPromotion->getStartDateTimestamp(),
+					'end' => $currentPromotion->getEndDateTimestamp()
+				);
+				$data['byPromotions'][$currentPromotion->id] = [];
+
+				// Getting all related products
+				$productsList = $currentPromotion->getProduct('status=1');
+				if (!empty($productsList) && sizeof($productsList) > 0) {
+					/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractProduct $currentProduct */
+					foreach ($productsList as $currentProduct) {
+						$data['byPromotions'][$currentPromotion->id][$currentProduct->id] = $currentProduct->id;
+
+						if (!array_key_exists($currentProduct->id, $data['byProducts'])) {
+							$data['byProducts'][$currentProduct->id] = [];
+						}
+						$data['byProducts'][$currentProduct->id][$currentPromotion->id] = $currentPromotion->id;
+					}
+				}
+			}
+		}
+
+		return Utils::saveData($data, 'promotions');
+	}
 }

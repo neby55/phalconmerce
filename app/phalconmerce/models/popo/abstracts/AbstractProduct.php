@@ -7,7 +7,7 @@ use Phalcon\Mvc\Model\Resultset\Simple;
 use Phalconmerce\Models\AbstractDesignedModel;
 use Phalconmerce\Models\Popo\Generators\Popo\PhpClass;
 use Phalconmerce\Models\Popo\Image;
-use Phalconmerce\Models\Popo\Product;
+use Phalconmerce\Models\Popo\ProductHasAttribute;
 use Phalconmerce\Models\Utils;
 
 /**
@@ -188,6 +188,51 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function hasPromotion() {
+		$promotionData = Utils::loadData('promotions');
+
+		if (is_array($promotionData) && sizeof($promotionData) > 0) {
+			if (array_key_exists($this->id, $promotionData['byProducts'])) {
+				foreach ($promotionData['byProducts'][$this->id] as $currentPromoId) {
+					$currentStart = $promotionData['activePromos'][$currentPromoId]['start'];
+					$currentEnd = $promotionData['activePromos'][$currentPromoId]['end'];
+
+					// If still active
+					if ($currentStart <= time() && time() <= $currentEnd) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return AbstractPromotion|bool
+	 */
+	public function getPromotion() {
+		$promotionData = Utils::loadData('promotions');
+
+		if (is_array($promotionData) && sizeof($promotionData) > 0) {
+			if (array_key_exists($this->id, $promotionData['byProducts'])) {
+				foreach ($promotionData['byProducts'][$this->id] as $currentPromoId) {
+					$currentStart = $promotionData['activePromos'][$currentPromoId]['start'];
+					$currentEnd = $promotionData['activePromos'][$currentPromoId]['end'];
+
+					// If still active
+					if ($currentStart <= time() && time() <= $currentEnd) {
+						return $promotionData['activePromos'][$currentPromoId]['object'];
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * @return Image
 	 */
 	public function getFirstImage() {
@@ -228,7 +273,7 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 */
 	public static function getProductById($id) {
 		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractProduct $product */
-		$product = Product::findFirstById($id);
+		$product = static::findFirstById($id);
 
 		if (!empty($product)) {
 			return $product->getFinalProductObject();
@@ -321,7 +366,9 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 			/** @var AbstractConfiguredProduct $currentConfiguredProduct */
 			foreach ($finalProduct->configuredProductList as $currentConfiguredProduct) {
 				$currentProduct = $currentConfiguredProduct->getRelatedProduct();
-				$idsList[$currentProduct->id] = $currentProduct->id;
+				if (is_object($currentProduct)) {
+					$idsList[$currentProduct->id] = $currentProduct->id;
+				}
 			}
 		}
 		// If ConfiguredProduct
@@ -330,7 +377,9 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 			$finalProduct = $this->getFinalProductObject();
 			$finalProduct->loadConfigurableProduct();
 			$currentProduct = $finalProduct->getConfigurableProduct()->getRelatedProduct();
-			$idsList[$currentProduct->id] = $currentProduct->id;
+			if (is_object($currentProduct)) {
+				$idsList[$currentProduct->id] = $currentProduct->id;
+			}
 		}
 		return $idsList;
 	}
@@ -339,12 +388,20 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	 * @return float
 	 */
 	public function getPriceVatIncluded() {
+		return $this->convertPriceToVatIncluded($this->priceVatExcluded);
+	}
+
+	/**
+	 * @param $priceVatExcluded float
+	 * @return float
+	 */
+	public function convertPriceToVatIncluded($priceVatExcluded) {
 		/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractTax $taxObject */
 		$taxObject = $this->getTax();
 		if (!empty($taxObject)) {
-			return $this->priceVatExcluded + ($this->priceVatExcluded * $taxObject->percent / 100);
+			return $priceVatExcluded + ($priceVatExcluded * $taxObject->percent / 100);
 		}
-		return $this->priceVatExcluded;
+		return $priceVatExcluded;
 	}
 
 	/**
@@ -353,4 +410,17 @@ abstract class AbstractProduct extends AbstractDesignedModel {
 	public function getPriceVatExcluded() {
 		return $this->priceVatExcluded;
 	}
+
+	public function delete() {
+		// Delete all attributes related to this product
+		$results = ProductHasAttribute::find('fk_product_id = '.$this->id);
+		if (!empty($results)) {
+			$results->delete();
+		}
+
+		// Delete product & final Product
+		return (parent::delete() && $this->getFinalProductObject()->delete());
+	}
+
+
 }

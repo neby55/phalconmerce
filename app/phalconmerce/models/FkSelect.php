@@ -114,50 +114,59 @@ class FkSelect {
 			);
 		}
 
-		$data = $fqcn::find($filters);
-
-		foreach ($data as $currentObject) {
-			$labelList = array();
-			if (!is_array($this->labelFields)) {
-				$this->labelFields = array($this->labelFields);
+		// If method "getDropdownArray" exists
+		if (method_exists($fqcn, 'getDropdownArray')) {
+			$newValues = $fqcn::getDropdownArray();
+			foreach ($newValues as $index=>$value) {
+				$values[$index] = $value;
 			}
-			foreach ($this->labelFields as $currentLabelField) {
-				// if FK field
-				if (Property::isForeignKeyFromName($currentLabelField)) {
-					$currentPropertyObject = new Property($currentLabelField);
-					$fqcn = PhpClass::POPO_NAMESPACE.'\\'.$currentPropertyObject->getForeignKeyClassName();
-					$fkSubSelect = self::getFromClasseName($fqcn);
-					if ($fkSubSelect !== false) {
-						$fkValues = $fkSubSelect->getValues();
-						if (is_array($fkValues) && sizeof($fkValues) > 0 && array_key_exists($currentObject->$currentLabelField, $fkValues)) {
-							$labelList[] = $fkValues[$currentObject->$currentLabelField];
+		}
+		else {
+			$data = $fqcn::find($filters);
+
+			foreach ($data as $currentObject) {
+				$labelList = array();
+				if (!is_array($this->labelFields)) {
+					$this->labelFields = array($this->labelFields);
+				}
+				foreach ($this->labelFields as $currentLabelField) {
+					// if FK field
+					if (Property::isForeignKeyFromName($currentLabelField)) {
+						$currentPropertyObject = new Property($currentLabelField);
+						$fqcn = PhpClass::POPO_NAMESPACE . '\\' . $currentPropertyObject->getForeignKeyClassName();
+						$fkSubSelect = self::getFromClasseName($fqcn);
+						if ($fkSubSelect !== false) {
+							$fkValues = $fkSubSelect->getValues();
+							if (is_array($fkValues) && sizeof($fkValues) > 0 && array_key_exists($currentObject->$currentLabelField, $fkValues)) {
+								$labelList[] = $fkValues[$currentObject->$currentLabelField];
+							}
+						}
+						else {
+							$labelList[] = $currentPropertyObject->getForeignKeyClassName() . '::' . $currentObject->$currentLabelField;
+						}
+					}
+					// Specific pseudo-label for Url "entity"
+					else if ($currentLabelField == 'entityName' && is_a($currentObject, PhpClass::POPO_NAMESPACE . '\\Url')) {
+						$currentForeignObject = $currentObject->getEntityObject();
+						if (!empty($currentForeignObject)) {
+							if (isset($currentForeignObject->name)) {
+								$labelList[] = $currentForeignObject->name;
+							}
+							else if (isset($currentForeignObject->title)) {
+								$labelList[] = $currentForeignObject->title;
+							}
+							else if (isset($currentForeignObject->sku)) {
+								$labelList[] = $currentForeignObject->sku;
+							}
 						}
 					}
 					else {
-						$labelList[] = $currentPropertyObject->getForeignKeyClassName().'::'.$currentObject->$currentLabelField;
+						$labelList[] = $currentObject->$currentLabelField;
 					}
 				}
-				// Specific pseudo-label for Url "entity"
-				else if ($currentLabelField == 'entityName' && is_a($currentObject, PhpClass::POPO_NAMESPACE.'\\Url')) {
-					$currentForeignObject = $currentObject->getEntityObject();
-					if (!empty($currentForeignObject)) {
-						if (isset($currentForeignObject->name)) {
-							$labelList[] = $currentForeignObject->name;
-						}
-						else if (isset($currentForeignObject->title)) {
-							$labelList[] = $currentForeignObject->title;
-						}
-						else if (isset($currentForeignObject->sku)) {
-							$labelList[] = $currentForeignObject->sku;
-						}
-					}
-				}
-				else {
-					$labelList[] = $currentObject->$currentLabelField;
-				}
+				$idField = $this->valueField;
+				$values[$currentObject->$idField] = vsprintf($this->pattern, $labelList);
 			}
-			$idField = $this->valueField;
-			$values[$currentObject->$idField] = vsprintf($this->pattern, $labelList);
 		}
 
 		return $values;

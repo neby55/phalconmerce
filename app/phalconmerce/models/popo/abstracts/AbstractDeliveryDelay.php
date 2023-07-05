@@ -42,6 +42,12 @@ abstract class AbstractDeliveryDelay extends AbstractModel {
 	public $description;
 
 	/**
+	 * @Column(type="float", nullable=false, default=0)
+	 * @var float
+	 */
+	public $minimumAmountVatIncluded;
+
+	/**
 	 * @Column(type="integer", length=2, nullable=false, default=0)
 	 * @var int
 	 */

@@ -27,6 +27,7 @@ class DesignParam {
 	const TYPE_URL = 8;
 	const TYPE_IMAGE = 9;
 	const TYPE_TEXT = 10;
+	const TYPE_IMAGES = 11;
 
 	const URL_EXTERNAL_SUFFIX = '-urlexternal';
 
@@ -62,6 +63,7 @@ class DesignParam {
 			'url' => self::TYPE_URL,
 			'img' => self::TYPE_IMAGE,
 			'image' => self::TYPE_IMAGE,
+			'images' => self::TYPE_IMAGES,
 			'text' => self::TYPE_TEXT,
 		);
 	}
@@ -99,6 +101,7 @@ class DesignParam {
 			case self::TYPE_URL :
 				return 'int';
 			case self::TYPE_IMAGE :
+			case self::TYPE_IMAGES :
 				return 'url';
 		}
 		return '';

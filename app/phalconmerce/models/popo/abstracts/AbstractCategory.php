@@ -118,4 +118,38 @@ abstract class AbstractCategory extends AbstractDesignedModel implements FilterI
 	public function setSubCategoriesList($subCategoriesList) {
 		$this->subCategoriesList = $subCategoriesList;
 	}
+
+	/**
+	 * Static method returning fkSelect object used to generated <select> tag in form where category is a foreign key
+	 * @return array
+	 */
+	public static function getDropdownArray($parentCategoryId=0, $namePrefix='') {
+		$results = static::find(array(
+			'fk_category_id = '.$parentCategoryId,
+			'order' => 'position',
+			'cache' => array(
+				'key' => 'getDropdownArray-' . str_replace('\\', '-', static::class).'#'.$parentCategoryId,
+				'lifetime' => 3600
+			)
+		));
+
+		$selectData = array();
+
+		if (!empty($results) && $results->count() > 0) {
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCategory $currentCategory */
+			foreach ($results as $currentCategory) {
+				$selectData[$currentCategory->id] = $namePrefix.$currentCategory->name;
+				//Utils::debug($selectData);
+				$subSelectData = static::getDropdownArray($currentCategory->id, $namePrefix.$currentCategory->name.' > ');
+				//Utils::debug($subSelectData);
+				if (is_array($subSelectData) && sizeof($subSelectData) > 0) {
+					foreach ($subSelectData as $currentIndex=>$currentValue) {
+						$selectData[$currentIndex] = $currentValue;
+					}
+				}
+			}
+		}
+
+		return $selectData;
+	}
 }

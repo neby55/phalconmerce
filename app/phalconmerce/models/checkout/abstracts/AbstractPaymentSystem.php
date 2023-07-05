@@ -106,7 +106,7 @@ abstract class AbstractPaymentSystem {
 					$payment->params = json_encode($this->paymentParams, JSON_PRETTY_PRINT);
 					$payment->refundAmount = 0;
 					$payment->paymentAmount = $amount;
-					$payment->paymentDate = time();
+					$payment->paymentDate = date('Y-m-d H:i:s');
 
 					// If error during storing data in DB
 					if (!$payment->save()) {

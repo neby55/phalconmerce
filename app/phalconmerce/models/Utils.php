@@ -6,6 +6,9 @@ use Phalcon\Config;
 use Phalcon\Di;
 
 class Utils {
+	public static $loadedData = [];
+	public static $loadedCacheData = [];
+
 	const DB_ADAPTER_POSTGRESQL = 'Postgresql';
 
 	const DB_ADAPTER_SQLITE = 'Sqlite';
@@ -170,7 +173,11 @@ class Utils {
 	 * @return mixed|null
 	 */
 	public static function loadCacheData($cacheKey, $lifetime=60*5) {
-		return self::loadVar(self::CACHE_KEY_PREFIX.$cacheKey, $lifetime);
+		// If not loaded yet
+		if (!array_key_exists($cacheKey, self::$loadedCacheData)) {
+			self::$loadedCacheData[$cacheKey] = self::loadVar(self::CACHE_KEY_PREFIX.$cacheKey, $lifetime);
+		}
+		return self::$loadedCacheData[$cacheKey];
 	}
 
 	/**
@@ -179,7 +186,11 @@ class Utils {
 	 * @return mixed|null
 	 */
 	public static function loadData($cacheKey, $lifetime=86400*365) {
-		return self::loadVar(self::DATA_KEY_PREFIX.$cacheKey, $lifetime);
+		// If not loaded yet
+		if (!array_key_exists($cacheKey, self::$loadedData)) {
+			self::$loadedData[$cacheKey] = self::loadVar(self::DATA_KEY_PREFIX.$cacheKey, $lifetime);
+		}
+		return self::$loadedData[$cacheKey];
 	}
 
 	/**

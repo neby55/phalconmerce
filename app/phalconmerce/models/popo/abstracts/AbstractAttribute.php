@@ -22,7 +22,7 @@ abstract class AbstractAttribute extends AbstractModel {
 	public $id;
 
 	/**
-	 * @Column(type="string", length=32, nullable=false)
+	 * @Column(type="slug", length=32, nullable=false)
 	 * @var string
 	 */
 	public $name;

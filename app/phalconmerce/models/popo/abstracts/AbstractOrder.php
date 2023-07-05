@@ -70,7 +70,13 @@ abstract class AbstractOrder extends AbstractModel {
 	 * @Column(type="float", nullable=false)
 	 * @var float
 	 */
-	public $amountDiscount;
+	public $amountDiscountVatExcluded;
+
+	/**
+	 * @Column(type="float", nullable=false)
+	 * @var float
+	 */
+	public $amountDiscountVatIncluded;
 
 	/**
 	 * @Column(type="float", nullable=false)
@@ -139,6 +145,13 @@ abstract class AbstractOrder extends AbstractModel {
 	 */
 	public function isFree() {
 		// true if the amount is 0 AND the discount total is > 0 AND status is "none"
-		return $this->amountVatExcluded == 0 && $this->amountDiscount > 0 && in_array($this->status, array(static::STATUS_NONE));
+		return $this->amountVatExcluded == 0 && $this->amountDiscountVatExcluded > 0 && in_array($this->status, array(static::STATUS_NONE));
+	}
+
+	public function getNumber() {
+		if ($this->id < 1000) {
+			return str_pad($this->id, 4, "0", STR_PAD_LEFT);
+		}
+		return $this->id;
 	}
 }

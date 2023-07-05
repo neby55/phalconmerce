@@ -38,4 +38,7 @@ abstract class AbstractTax extends AbstractModel {
 	 */
 	public $status;
 
+	public function getRatio() {
+		return 1 + ($this->percent/100);
+	}
 }

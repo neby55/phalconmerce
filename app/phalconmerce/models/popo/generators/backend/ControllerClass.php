@@ -167,6 +167,9 @@ class ##CLASSNAME##Controller extends ControllerBase {
 
 		$this->flash->success("##CLASSNAME## was updated successfully");
 
+		// update entity file cache if enabled
+		$this->updateEntityCache();
+
 		return $this->redirectToRoute('backend-controller-edit', array('id' => $object->id, 'controller'=>$this->dispatcher->getControllerName()));
 	}
 
@@ -206,6 +209,9 @@ class ##CLASSNAME##Controller extends ControllerBase {
 		}
 
 		$this->flashSession->success("##CLASSNAME## was deleted");
+
+		// update entity file cache if enabled
+		$this->updateEntityCache();
 
 		$redirectRoute = $this->request->get('redirect', 'string', '');
 		$redirectData = $this->request->get('data', 'string', '');

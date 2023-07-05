@@ -192,6 +192,13 @@ class FormBase extends Form {
 									$item->setFilters(array('float'));
 									$item->setAttribute('maxlength', \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SIZE + \Phalconmerce\Models\Popo\Generators\Db\Table::DECIMAL_SCALE + 1);
 								}
+								// If slug (a-z + -)
+								else if ($type == 'slug') {
+									$item = new Text($currentPropertyName);
+									$item->setAttribute('class', 'form-control');
+									$item->setFilters(array('url', 'trim', 'lower'));
+									$item->setAttribute('maxlength', $length);
+								}
 								// If int
 								else if ($type == 'integer' || $type == 'int') {
 									// Status case

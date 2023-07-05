@@ -34,6 +34,8 @@ abstract class AbstractCheckoutService extends LoginService {
 	const CHECKOUT_RESETPASSWORD_ROUTE_NAME = 'checkout_resetpassword';
 	const CHECKOUT_ONEPAGE_ROUTE_NAME = 'checkout_onepage';
 	const CHECKOUT_PAYMENT_ROUTE_NAME = 'checkout_payment';
+	const CHECKOUT_ORDER_CONFIRMED_ROUTE_NAME = 'checkout_order_confirmed';
+	const CHECKOUT_ORDER_CANCELLED_ROUTE_NAME = 'checkout_order_cancelled';
 
 	public function __construct() {
 
@@ -97,6 +99,20 @@ abstract class AbstractCheckoutService extends LoginService {
 			'payment',
 			static::CHECKOUT_PAYMENT_ROUTE_NAME
 		);
+		// Order OK
+		$routesList[] = new CheckoutRoute(
+			static::CHECKOUT_URL_FOLDER.'/order-confirmed',
+			'Checkout',
+			'orderConfirmed',
+			static::CHECKOUT_ORDER_CONFIRMED_ROUTE_NAME
+		);
+		// Order cancelled
+		$routesList[] = new CheckoutRoute(
+			static::CHECKOUT_URL_FOLDER.'/order-cancelled',
+			'Checkout',
+			'orderCancelled',
+			static::CHECKOUT_ORDER_CANCELLED_ROUTE_NAME
+		);
 
 		return $routesList;
 	}
@@ -151,7 +167,7 @@ abstract class AbstractCheckoutService extends LoginService {
 	 */
 	public function signIn($email, $password) {
 		if (parent::signIn($email, $password)) {
-			$this->newOrder($this->customer->id);
+			$this->updateOrder($this->customer->id);
 			return true;
 		}
 		return false;
@@ -164,7 +180,7 @@ abstract class AbstractCheckoutService extends LoginService {
 	 */
 	public function signUp($customerId) {
 		if (parent::signUp($customerId)) {
-			$this->newOrder($this->customer->id);
+			$this->updateOrder($this->customer->id);
 			return true;
 		}
 		return false;
@@ -175,58 +191,60 @@ abstract class AbstractCheckoutService extends LoginService {
 	 * @param int $customerId
 	 * @return bool
 	 */
-	public function newOrder($customerId=0) {
+	public function updateOrder($customerId=0) {
 		// Services
 		/** @var \Phalconmerce\Services\Abstracts\AbstractTranslationService $translationService */
 		$translationService = Di::getDefault()->get('translation');
 		/** @var \Phalconmerce\Services\Abstracts\AbstractFrontendService $frontendService */
 		$frontendService = Di::getDefault()->get('frontendService');
 
-		// If already added to DB
+		// If order already exists in DB
 		if ($this->order->id > 0) {
-			// Then, save each cart content to DB and Session
-			$frontendService->saveCartToDb($this->order->id);
+			// Delete all cart lines in DB
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCart $currentCartLine */
+			foreach ($this->order->getCart() as $currentCartLine) {
+				$currentCartLine->delete();
+			}
+		}
+		else {
+			// Create the order
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractOrder $orderObject */
+			$this->order = new Order();
 
 			// save order in session
 			$this->saveOrder();
-
-			return true;
 		}
-		else {
-			// First get Cart Content
-			$cartLines = $frontendService->getCart();
-			// If there is a cart
-			if (!empty($cartLines)) {
-				// Create the order
-				/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractOrder $orderObject */
-				$this->order = new Order();
-				$this->order->fk_currency_id = $translationService->getCurrency()->id;
-				$this->order->fk_lang_id = $translationService->getLangId();
-				$this->order->fk_customer_id = $customerId;
-				$this->order->fk_payment_method_id = 0;
-				$this->order->fk_address_id = 0;
-				$this->order->fk_delivery_delay_id = 0;
-				$this->order->fk_voucher_id = 0; // TODO
-				$this->order->amountDiscount = 0; // TODO
-				$this->order->amountVatIncluded = $frontendService->getCartSubTotalVatIncluded(); // TODO check Totals
-				$this->order->amountVatExcluded = $frontendService->getCartSubTotalVatExcluded();
-				$this->order->isGift = false;
-				$this->order->giftMessage = '';
-				$this->order->status = Order::STATUS_NONE;
 
-				// save the order on DB
-				if ($this->order->save()) {
-					// Then, save each cart content to DB and Session
-					$frontendService->saveCartToDb($this->order->id);
+		// First get Cart Content
+		$cartLines = $frontendService->getCart();
+		// If there is a cart
+		if (!empty($cartLines)) {
+			$this->order->fk_currency_id = $translationService->getCurrency()->id;
+			$this->order->fk_lang_id = $translationService->getLangId();
+			$this->order->fk_customer_id = $customerId;
+			$this->order->fk_payment_method_id = !empty($this->order->fk_payment_method_id) ? $this->order->fk_payment_method_id : 0;
+			$this->order->fk_address_id = !empty($this->order->fk_address_id) ? $this->order->fk_address_id : 0;
+			$this->order->fk_delivery_delay_id = !empty($this->order->fk_delivery_delay_id) ? $this->order->fk_delivery_delay_id : 0;
+			$this->order->fk_voucher_id = $frontendService->getVoucherId();
+			$this->order->amountDiscountVatExcluded = $frontendService->getVoucherId() > 0 ? $frontendService->getVoucherAmountVatExcluded() : 0;
+			$this->order->amountDiscountVatIncluded = $frontendService->getVoucherId() > 0 ? $frontendService->getVoucherAmountVatIncluded() : 0;
+			$this->order->amountVatIncluded = $frontendService->getCartSubTotalVatIncluded(); // TODO check Totals
+			$this->order->amountVatExcluded = $frontendService->getCartSubTotalVatExcluded();
+			$this->order->isGift = !empty($this->order->isGift) ? $this->order->isGift : false;
+			$this->order->giftMessage = !empty($this->order->giftMessage) ? $this->order->giftMessage : '';
+			$this->order->status = Order::STATUS_NONE;
 
-					// save order in session
-					$this->saveOrder();
+			// save the order on DB
+			if ($this->order->save()) {
+				// Then, save each cart content to DB and Session
+				$frontendService->saveCartToDb($this->order->id);
 
-					return true;
-				}
+				// save order in session
+				$this->saveOrder();
+
+				return true;
 			}
 		}
-		return false;
 	}
 
 	/**
@@ -248,6 +266,13 @@ abstract class AbstractCheckoutService extends LoginService {
 	 */
 	public function saveOrder() {
 		return Di::getDefault()->get('session')->set('order', $this->order);
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function removeOrder() {
+		return Di::getDefault()->get('session')->remove('order');
 	}
 
 	/**
@@ -382,6 +407,7 @@ abstract class AbstractCheckoutService extends LoginService {
 			// If enabled
 			if ($currentDeliveryDelay->status == 1) {
 				$this->order->fk_delivery_delay_id = $currentDeliveryDelay->id;
+				// TODO update totals if voucher "free shipping"
 				// Save to DB
 				$this->order->save();
 				// Save to session

@@ -14,6 +14,7 @@ use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Flash\Direct as Flash;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Router\Group as RouterGroup;
+use Phalcon\Events\Manager as EventsManager;
 
 /**
  * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
@@ -25,6 +26,17 @@ $di = new FactoryDefault();
  */
 $di->setShared('config', $config);
 $di->setShared('configPhalconmerce', $configPhalconmerce);
+
+/**
+ * Events Manager
+ */
+$eventsManager = new EventsManager;
+$di->setShared('eventsManager', $eventsManager);
+
+/**
+ * Automatically includes all declared listeners in /listeners directory
+ */
+require __DIR__.'/listeners.php';
 
 /**
  * The Logger component

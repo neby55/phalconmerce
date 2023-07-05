@@ -35,6 +35,10 @@ abstract class AbstractFrontendService extends MainService {
 	/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCart[] */
 	protected $cart;
 	/** @var float */
+	protected $cartProductsTotalVatExcluded;
+	/** @var float */
+	protected $cartProductsTotalVatIncluded;
+	/** @var float */
 	protected $cartSubTotalVatExcluded;
 	/** @var float */
 	protected $cartSubTotalVatIncluded;
@@ -44,6 +48,10 @@ abstract class AbstractFrontendService extends MainService {
 	protected $cartShipping;
 	/** @var float */
 	protected $cartTotal;
+	/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractVoucher */
+	protected $voucher;
+	/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractDeliveryDelay */
+	protected $shipping;
 	/** @var Breadcrumb[] */
 	protected $breadcrumbs;
 	/** @var string[] */
@@ -56,18 +64,14 @@ abstract class AbstractFrontendService extends MainService {
 	public static $cookieCurrencyName;
 	public static $cookiesLifetimeInDays;
 	public static $dateFormat;
+	public static $freeShippingAmountVatIncluded;
 
-	// Used in setupFromShopOption method
-	public static $shopOptionMatchesInConfig = array(
-		'shopTitle' => 'shopTitle',
-		'shopDefaultCurrency' => 'defaultCurrency',
-		'shopDefaultLang' => 'defaultLangId',
-	);
 	// Used in setupFromShopOption method
 	public static $shopOptionDefaultValues = array(
 		ShopOption::NAME_IS_WEBSITE_ACTIVE => '1',
 		ShopOption::NAME_IS_SHOP_ACTIVE => '1',
 		ShopOption::NAME_IS_PO_INDEX_ACTIVE => '0',
+		ShopOption::NAME_FREE_SHIPPING_AMOUNT => '0'
 	);
 
 	// The route name for the checkout index configured in app/frontend/routes.php
@@ -91,28 +95,66 @@ abstract class AbstractFrontendService extends MainService {
 		$this->breadcrumbs = array();
 		$this->shopOptionList = array();
 
-		// Setting up data from config file
-		$this->setupFromConfig();
 		// Setting up data from shopOptions
-		$this->setupFromShopOption();
+		$this->loadShopOptions();
+		// Setting up data
+		$this->setup();
+		// Load voucher from session
+		$this->loadVoucher();
+		// Load Shipping from session
+		$this->loadShipping();
 		// Load Cart from session
 		$this->loadCart();
 	}
 
-	protected function setupFromConfig() {
+	protected function setup() {
 		/** @var \Phalcon\Config $config */
 		$config = Di::getDefault()->get('config');
 		// Setting static values
-		self::$shopTitle = $config->shop['title'];
-		self::$defaultCurrency = $config->shop['default_currency'];
-		self::$defaultLangId = \Phalconmerce\Services\TranslationService::getLangIdFromLangCode($config->shop['default_lang']);
-		self::$cookieLangName = $config->shop['cookie_lang_name'];
-		self::$cookieCurrencyName = $config->shop['cookie_currency_name'];
-		self::$cookiesLifetimeInDays = $config->shop['cookies_lifetime_in_days'];
-		self::$dateFormat = $config->shop['date_format'];
+		self::$shopTitle = $this->getOption('shop-title');
+		self::$defaultCurrency = $this->getOption('shop-default_currency');
+		self::$defaultLangId = \Phalconmerce\Services\TranslationService::getLangIdFromLangCode($this->getOption('shop-default_lang'));
+		self::$cookieLangName = $this->getOption('shop-cookie_lang_name');
+		self::$cookieCurrencyName = $this->getOption('shop-cookie_currency_name');
+		self::$cookiesLifetimeInDays = $this->getOption('shop-cookies_lifetime_in_days');
+		self::$dateFormat = $this->getOption('shop-date_format');
+		self::$freeShippingAmountVatIncluded = $this->getOption(ShopOption::NAME_FREE_SHIPPING_AMOUNT);
 	}
 
-	protected function setupFromShopOption() {
+	/**
+	 * @param string $key
+	 * @return bool
+	 */
+	public function getOption($key) {
+		/** @var \Phalcon\Config $config */
+		$config = Di::getDefault()->get('config');
+
+		// First, shopOptions
+		if (array_key_exists($key, $this->shopOptionList)) {
+			return $this->shopOptionList[$key];
+		}
+
+		// From config
+		if (strpos($key, '-') !== false) {
+			$subConfig = explode('-', $key);
+			for ($i=0;$i < count($subConfig); $i++) {
+				$currentSubConfigName = $subConfig[$i];
+				if (isset($config->$currentSubConfigName)) {
+					$config = $config->$currentSubConfigName;
+				}
+				else if (isset($config[$currentSubConfigName])) {
+					$config = $config[$currentSubConfigName];
+				}
+				else {
+					Di::getDefault()->get('logger')->notice('FrontendService::getOption() :: key "'.$key.'" can\'t be reached => $config->'.$currentSubConfigName.' or $config['.$currentSubConfigName.'] do not exists');
+					return false;
+				}
+			}
+			return $config;
+		}
+	}
+
+	protected function loadShopOptions() {
 		// Insert default values
 		$this->shopOptionList = self::$shopOptionDefaultValues;
 
@@ -121,14 +163,7 @@ abstract class AbstractFrontendService extends MainService {
 		if (!empty($result) && $result->count() > 0) {
 			/** @var ShopOption $currentShopOption */
 			foreach ($result as $currentShopOption) {
-				// if config reset
-				if (array_key_exists($currentShopOption->name, self::$shopOptionMatchesInConfig)) {
-					$var = self::$shopOptionMatchesInConfig[$currentShopOption->name];
-					self::$$var = $currentShopOption->value;
-				}
-				else {
-					$this->shopOptionList[$currentShopOption->name] = $currentShopOption->value;
-				}
+				$this->shopOptionList[$currentShopOption->name] = $currentShopOption->value;
 			}
 		}
 
@@ -303,6 +338,8 @@ abstract class AbstractFrontendService extends MainService {
 		// Initializations
 		$this->cartSubTotalVatExcluded = 0;
 		$this->cartSubTotalVatIncluded = 0;
+		$this->cartProductsTotalVatExcluded = 0;
+		$this->cartProductsTotalVatIncluded = 0;
 		$this->cartShipping = 0;
 		$this->cartTaxTotal = 0;
 		$this->cartTotal = 0;
@@ -311,13 +348,39 @@ abstract class AbstractFrontendService extends MainService {
 		if (is_array($this->cart)) {
 			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractCart $currentCart */
 			foreach ($this->cart as $currentCart) {
-				$this->cartSubTotalVatExcluded += $currentCart->getTotalVatExcluded();
-				$this->cartSubTotalVatIncluded += $currentCart->getTotalVatIncluded();
+				$this->cartProductsTotalVatExcluded += $currentCart->getTotalVatExcluded();
+				$this->cartProductsTotalVatIncluded += $currentCart->getTotalVatIncluded();
 				$this->cartTaxTotal += $currentCart->getTotalTax();
 			}
 		}
+
+		// SubTotals
+		$this->cartSubTotalVatIncluded = $this->cartProductsTotalVatIncluded;
+		$this->cartSubTotalVatExcluded = $this->cartProductsTotalVatExcluded;
+
+		// Shipping
+		if (isset($this->shipping) && is_object($this->shipping)) {
+			/** @var \Phalconmerce\Models\Popo\Abstracts\AbstractExpeditor $expeditor */
+			$expeditor = $this->shipping->getExpeditor();
+
+			if (is_object($expeditor)) {
+				// Get shipping amount VAT included
+				$this->cartShipping = $expeditor->amountVatExcluded * $this->getVatRatio();
+
+				// Adding VAT
+				$this->cartTaxTotal += $this->cartShipping - $expeditor->amountVatExcluded;
+			}
+		}
+
+		// If Voucher in session
+		if ($this->getVoucherId() > 0) {
+			$this->cartSubTotalVatExcluded -= $this->getVoucherAmountVatExcluded();
+			$this->cartSubTotalVatIncluded -= $this->getVoucherAmountVatIncluded();
+			$this->cartTaxTotal = $this->cartSubTotalVatIncluded - $this->cartSubTotalVatExcluded;
+		}
+
 		// Total at the end
-		$this->cartTotal = $this->cartSubTotalVatExcluded + $this->cartTaxTotal + $this->cartShipping;
+		$this->cartTotal = $this->cartSubTotalVatIncluded + $this->cartShipping;
 	}
 
 	public function loadCart() {
@@ -335,6 +398,10 @@ abstract class AbstractFrontendService extends MainService {
 
 	public function saveCart() {
 		Di::getDefault()->get('session')->set('cart', $this->cart);
+	}
+
+	public function removeCart() {
+		Di::getDefault()->get('session')->remove('cart');
 	}
 
 	public function saveCartToDb($orderId) {
@@ -424,9 +491,70 @@ abstract class AbstractFrontendService extends MainService {
 	}
 
 	/**
+	 * Load voucher Object from session, if exists
+	 */
+	public function loadVoucher() {
+		if (Di::getDefault()->get('session')->has('voucher')) {
+			$voucherTmp = Di::getDefault()->get('session')->get('voucher');
+			if (is_a($voucherTmp, '\\Phalconmerce\\Models\\Popo\\Abstracts\\AbstractVoucher')) {
+				$this->voucher = $voucherTmp;
+			}
+		}
+	}
+
+	/**
+	 * Save voucher Object on session, if exists
+	 */
+	public function saveVoucher() {
+		if (!empty($this->voucher)) {
+			Di::getDefault()->get('session')->set('voucher', $this->voucher);
+		}
+	}
+
+	/**
+	 * Delete voucher Object on session, if exists
+	 */
+	public function deleteVoucher() {
+		if (!empty($this->voucher)) {
+			Di::getDefault()->get('session')->remove('voucher');
+		}
+	}
+
+	/**
+	 * Load DeliveryDelay Method Object from session, if exists
+	 */
+	public function loadShipping() {
+		if (Di::getDefault()->get('session')->has('shipping')) {
+			$shippingTmp = Di::getDefault()->get('session')->get('shipping');
+			if (is_a($shippingTmp, '\\Phalconmerce\\Models\\Popo\\Abstracts\\AbstractDeliveryDelay')) {
+				$this->shipping = $shippingTmp;
+			}
+		}
+	}
+
+	/**
+	 * Save DeliveryDelay Object on session, if exists
+	 */
+	public function saveShipping() {
+		if (!empty($this->shipping)) {
+			Di::getDefault()->get('session')->set('shipping', $this->shipping);
+		}
+	}
+
+	/**
+	 * Delete DeliveryDelay Object on session, if exists
+	 */
+	public function deleteShipping() {
+		if (!empty($this->shipping)) {
+			Di::getDefault()->get('session')->remove('shipping');
+		}
+	}
+
+	/**
 	 * @return float
 	 */
 	public function getVatRatio() {
+		// TODO get the ratio from lang/country
 		return 1.2;
 	}
 
@@ -451,6 +579,20 @@ abstract class AbstractFrontendService extends MainService {
 	 */
 	public function addBreadcrumb(Breadcrumb $breadcrumb) {
 		$this->breadcrumbs[] = $breadcrumb;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isThereFreeShippingamount() {
+		return (static::getFreeShippingAmount() > 0);
+	}
+
+	/**
+	 * @return float
+	 */
+	public static function getFreeShippingAmount() {
+		return (float) static::$freeShippingAmountVatIncluded;
 	}
 
 	/**
@@ -631,6 +773,20 @@ abstract class AbstractFrontendService extends MainService {
 	/**
 	 * @return float
 	 */
+	public function getCartProductsTotalVatExcluded() {
+		return $this->cartProductsTotalVatExcluded;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getCartProductsTotalVatIncluded() {
+		return $this->cartProductsTotalVatIncluded;
+	}
+
+	/**
+	 * @return float
+	 */
 	public function getCartTaxTotal() {
 		return $this->cartTaxTotal;
 	}
@@ -645,7 +801,90 @@ abstract class AbstractFrontendService extends MainService {
 	/**
 	 * @return float
 	 */
+	public function setCartShipping($shippingAmount) {
+		return $this->cartShipping;
+	}
+
+	/**
+	 * @return float
+	 */
 	public function getCartTotal() {
 		return $this->cartTotal;
+	}
+
+	/**
+	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractVoucher
+	 */
+	public function getVoucher() {
+		return $this->voucher;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getVoucherId() {
+		if (is_a($this->voucher, '\\Phalconmerce\\Models\\Popo\\Abstracts\\AbstractVoucher')) {
+			return $this->voucher->id;
+		}
+		return 0;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getVoucherAmountVatExcluded() {
+		if (is_a($this->voucher, '\\Phalconmerce\\Models\\Popo\\Abstracts\\AbstractVoucher')) {
+			return $this->voucher->getCartTotalReduction($this->getCartProductsTotalVatExcluded(), $this->getCartShipping());
+		}
+		return 0;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getVoucherAmountVatIncluded() {
+		if (is_a($this->voucher, '\\Phalconmerce\\Models\\Popo\\Abstracts\\AbstractVoucher')) {
+			return $this->voucher->getCartTotalReduction($this->getCartProductsTotalVatExcluded(), $this->getCartShipping()) * $this->getVatRatio();
+		}
+		return 0;
+	}
+
+	/**
+	 * @param \Phalconmerce\Models\Popo\Abstracts\AbstractVoucher $voucher
+	 */
+	public function setVoucher($voucher) {
+		if (is_a($voucher, '\\Phalconmerce\\Models\\Popo\\Abstracts\\AbstractVoucher')) {
+			$this->voucher = $voucher;
+			// Totals
+			$this->cartTotals();
+			$this->saveCart();
+		}
+	}
+
+	/**
+	 * @return \Phalconmerce\Models\Popo\Abstracts\AbstractDeliveryDelay
+	 */
+	public function getShipping() {
+		return $this->shipping;
+	}
+
+	/**
+	 * @param \Phalconmerce\Models\Popo\Abstracts\AbstractDeliveryDelay $shipping
+	 */
+	public function setShipping($shipping) {
+		if (is_a($shipping, '\\Phalconmerce\\Models\\Popo\\Abstracts\\AbstractDeliveryDelay')) {
+			$this->shipping = $shipping;
+			// Totals
+			$this->cartTotals();
+			$this->saveCart();
+		}
+	}
+
+	/**
+	 * To be override
+	 * @return string
+	 */
+	public function getSearchUrl() {
+		return '';
 	}
 }

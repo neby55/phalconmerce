@@ -22,6 +22,7 @@ use Phalconmerce\Services\CheckoutService;
 use Phalconmerce\Services\EmailService;
 use Phalconmerce\Services\FrontendService;
 use Phalconmerce\Services\MyAccountService;
+use Phalconmerce\Services\StockService;
 use Phalconmerce\Services\TranslationService;
 
 class Module implements ModuleDefinitionInterface {
@@ -54,6 +55,11 @@ class Module implements ModuleDefinitionInterface {
 	 */
 	public function registerServices(DiInterface $dependencyInjector) {
 		/**
+		 * Trigger beforeRegisterServices
+		 */
+		$dependencyInjector->get('eventsManager')->fire('frontend:beforeRegisterServices', $dependencyInjector);
+
+		/**
 		 * The Logger component
 		 */
 		$dependencyInjector->setShared('logger', function () {
@@ -64,12 +70,9 @@ class Module implements ModuleDefinitionInterface {
 		/**
 		 * Dispatcher
 		 */
-		$dependencyInjector->set('dispatcher', function () {
-			// Create an EventsManager
-			$eventsManager = new EventsManager();
-
+		$dependencyInjector->set('dispatcher', function () use ($dependencyInjector) {
 			// Camelize actions
-			$eventsManager->attach(
+			$dependencyInjector->get('eventsManager')->attach(
 				"dispatch:beforeDispatchLoop",
 				function (Event $event, $dispatcher) {
 					$dispatcher->setActionName(
@@ -79,7 +82,7 @@ class Module implements ModuleDefinitionInterface {
 			);
 
 			$dispatcher = new Dispatcher();
-			$dispatcher->setEventsManager($eventsManager);
+			$dispatcher->setEventsManager($dependencyInjector->get('eventsManager'));
 			$dispatcher->setDefaultNamespace("\\Frontend\\Controllers\\");
 			return $dispatcher;
 		});
@@ -139,6 +142,14 @@ class Module implements ModuleDefinitionInterface {
 		});
 
 		/**
+		 * Phalconmerce StockService
+		 */
+		$dependencyInjector->setShared('stockService', function () use ($dependencyInjector) {
+			$service = new StockService();
+			return $service;
+		});
+
+		/**
 		 * Cloudinary API
 		 */
 		if (class_exists('\Cloudinary')) {
@@ -161,6 +172,11 @@ class Module implements ModuleDefinitionInterface {
 			$view->setVar('translation',DI::getDefault()->get('translation'));
 			return $view;
 		});
+
+		/**
+		 * Trigger afterRegisterServices
+		 */
+		$dependencyInjector->get('eventsManager')->fire('frontend:afterRegisterServices', $dependencyInjector);
 	}
 
 }
